@@ -1,0 +1,19 @@
+{
+  "name": "Typescript & Node 24",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+      },
+      "extensions": [
+        "nrwl.angular-console",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+      ],
+    },
+  },
+  "forwardPorts": [3000, 4200],
+  "postCreateCommand": "npm install",
+}
