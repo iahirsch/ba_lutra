@@ -1,0 +1,35 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:24
+    container_name: heybuddy-app
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    ports:
+      - '3000:3000'
+      - '4200:4200'
+    depends_on:
+      - db
+
+  db:
+    image: postgres:18-alpine
+    container_name: heybuddy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: heybuddy
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+secrets:
+  postgres_password:
+    file: ./postgres_password.txt

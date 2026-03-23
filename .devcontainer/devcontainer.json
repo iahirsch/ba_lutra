@@ -1,19 +1,23 @@
 {
   "name": "Typescript & Node 24",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/workspace",
   "features": {},
   "customizations": {
     "vscode": {
       "settings": {
-        "editor.formatOnSave": true,
+        "editor.formatOnSave": true
       },
       "extensions": [
         "nrwl.angular-console",
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-      ],
-    },
+        "ms-azuretools.vscode-containers"
+      ]
+    }
   },
-  "forwardPorts": [3000, 4200],
+  "forwardPorts": [3000, 4200, 5432],
   "postCreateCommand": "npm install",
+  "shutdownAction": "stopCompose"
 }
