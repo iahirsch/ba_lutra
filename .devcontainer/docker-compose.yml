@@ -1,7 +1,7 @@
 services:
   app:
     image: mcr.microsoft.com/devcontainers/typescript-node:24
-    container_name: heybuddy-app
+    container_name: lutra-app
     volumes:
       - ..:/workspace:cached
     working_dir: /workspace
@@ -14,11 +14,11 @@ services:
 
   db:
     image: postgres:18-alpine
-    container_name: heybuddy-db
+    container_name: lutra-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: heybuddy
+      POSTGRES_DB: lutra-db
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     secrets:
       - postgres_password
