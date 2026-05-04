@@ -1,0 +1,54 @@
+.tabBar {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab {
+  position: relative;
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 400;
+  color: #888;
+  letter-spacing: 0.01em;
+  scroll-snap-align: start;
+  transition: color 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid #333;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.tabActive {
+  color: #111;
+  font-weight: 600;
+}
+
+.tabIndicator {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: #111;
+}
