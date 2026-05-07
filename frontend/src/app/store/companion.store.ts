@@ -5,9 +5,9 @@ export type PartCategory =
   | 'eyes'
   | 'nose'
   | 'clothing'
-  | 'ears' // reserved — UI hidden for now
-  | 'tail' // reserved — UI hidden for now
-  | 'backpack'; // reserved — UI hidden for now
+  | 'ears' // reserved
+  | 'tail' // reserved
+  | 'backpack'; // reserved
 
 export interface CompanionConfig {
   fur: string;
@@ -35,7 +35,7 @@ export const DEFAULT_CONFIG: CompanionConfig = {
   ears: '',
   tail: '',
   backpack: '',
-  bodyMorphs: { chubby: 0.5 },
+  bodyMorphs: { body_fat: 0.5, face_fat: 0.5 },
 };
 
 export const useCompanionStore = create<CompanionStore>((set) => ({
