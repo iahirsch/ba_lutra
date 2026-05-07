@@ -20,7 +20,7 @@ import { ActivityModule } from './activity/activity.module';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: false, //initially set true
+      synchronize: true, //initially set true
       ssl: process.env.DATABASE_SSL === 'true',
     }),
     ActivityModule,

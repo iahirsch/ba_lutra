@@ -1,20 +1,42 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Activity } from '../activity/activity.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'companions' })
 export class Companion {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'varchar', length: 80 })
+  @Column({ type: 'varchar', length: 80, default: 'My Lutra' })
   name!: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  glbAssetPath!: string;
+  @Column({ type: 'varchar', length: 50, default: 'fur01' })
+  fur!: string;
+
+  @Column({ type: 'varchar', length: 50 })
+  eyes!: string;
+
+  @Column({ type: 'varchar', length: 50 })
+  nose!: string;
+
+  @Column({ type: 'varchar', length: 50, default: '' })
+  clothing!: string;
+
+  @Column({ type: 'varchar', length: 50, default: 'ears01' })
+  ears!: string;
+
+  @Column({ type: 'varchar', length: 50, default: 'tail01' })
+  tail!: string;
+
+  @Column({ type: 'varchar', length: 50, default: '' })
+  backpack!: string;
 
   @Column({ type: 'jsonb', default: () => "'{}'" })
-  morphTargets!: Record<string, number>;
+  bodyMorphs!: Record<string, number>;
 
-  @OneToMany(() => Activity, (activity) => activity.companion)
-  activities!: Activity[];
+  @CreateDateColumn()
+  createdAt!: Date;
 }
