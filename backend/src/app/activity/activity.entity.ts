@@ -33,10 +33,10 @@ export class Activity {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt!: Date;
 
-  @ManyToOne(() => Companion, (companion) => companion.activities, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'companion_id' })
-  companion!: Companion;
+  // @ManyToOne(() => Companion, (companion) => companion.activities, {
+  //   nullable: false,
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'companion_id' })
+  // companion!: Companion;
 }
