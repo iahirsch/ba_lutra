@@ -1,8 +1,10 @@
+@use '../../styles/index' as s;
+
 .page {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #0a1220;
+  background: s.$color-slate-950;
 }
 
 .canvas {
@@ -18,8 +20,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent);
+  padding: s.$space-lg s.$space-2xl;
+  background: linear-gradient(to bottom, s.$color-black-500, transparent);
   pointer-events: none;
 
   > * {
@@ -30,117 +32,114 @@
 .left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: s.$space-md;
 }
 
 .title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-0;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .count {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: s.$font-size-sm;
+  color: s.$color-neutral-400;
 }
 
 .badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  gap: s.$space-xs;
+  font-size: s.$font-size-xs;
+  font-weight: s.$font-weight-semibold;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  @include s.pill(s.$space-xs, s.$space-md);
 }
 
 .badgeOnline {
-  background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
+  background: s.$color-green-500-12;
+  color: s.$color-green-500;
 }
 
 .badgeOffline {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  background: s.$color-red-500-12;
+  color: s.$color-red-500;
 }
 
 .badgeDot {
-  width: 6px;
-  height: 6px;
+  width: s.$space-xs;
+  height: s.$space-xs;
   border-radius: 50%;
 
   .badgeOnline & {
-    background: #4ade80;
-    box-shadow: 0 0 6px #4ade80;
+    background: s.$color-green-500;
+    box-shadow: 0 0 s.$space-sm s.$color-green-500;
   }
 
   .badgeOffline & {
-    background: #f87171;
+    background: s.$color-red-500;
   }
 }
 
 .nav {
   display: flex;
-  gap: 1rem;
+  gap: s.$space-lg;
 }
 
 .navLink {
-  color: rgba(255, 255, 255, 0.7);
+  color: s.$color-neutral-400;
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: color 0.15s;
+  font-size: s.$font-size-md;
+  font-weight: s.$font-weight-medium;
+  @include s.interactive-transition(color s.$duration-fast s.$easing-standard);
+  @include s.focus-ring(s.$space-2xs, s.$radius-sm, s.$color-neutral-0);
 
   &:hover {
-    color: #fff;
+    color: s.$color-neutral-0;
   }
 }
 
 .errorBanner {
   position: absolute;
-  bottom: 1.5rem;
+  bottom: s.$space-2xl;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(239, 68, 68, 0.9);
-  color: #fff;
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  background: s.$color-red-500;
+  color: s.$color-neutral-0;
+  padding: s.$space-sm s.$space-xl;
+  border-radius: s.$radius-md;
+  font-size: s.$font-size-md;
 }
 
 .emptyState {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
+  @include s.flex-center(column, s.$space-md);
   pointer-events: none;
 
   p {
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 1rem;
+    color: s.$color-neutral-400;
+    font-size: s.$font-size-lg;
   }
 }
 
 .emptyLink {
   pointer-events: auto;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  color: s.$color-neutral-400;
+  font-size: s.$font-size-md;
   text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  padding-bottom: 2px;
-  transition:
-    color 0.15s,
-    border-color 0.15s;
+  border-bottom: 1px solid s.$color-white-50;
+  padding-bottom: s.$space-2xs;
+  @include s.interactive-transition(
+    color s.$duration-fast s.$easing-standard,
+    border-color s.$duration-fast s.$easing-standard
+  );
 
   &:hover {
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.7);
+    color: s.$color-neutral-0;
+    border-color: s.$color-neutral-0;
   }
 }

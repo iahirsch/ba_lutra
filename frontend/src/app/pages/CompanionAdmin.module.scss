@@ -1,140 +1,141 @@
+@use '../../styles/index' as s;
+
 .page {
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: 100dvh;
-  background: #f0ede8;
+  background: s.$color-neutral-50;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  background: rgba(245, 243, 240, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: s.$space-xl s.$space-2xl s.$space-lg;
+  border-bottom: 1px solid s.$color-black-50;
   position: sticky;
   top: 0;
   z-index: 10;
+  @include s.glass-surface(
+    s.$color-neutral-100-75,
+    s.$blur-sm,
+    s.$color-black-50,
+    null
+  );
 }
 
 .titleRow {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: s.$space-md;
 }
 
 .title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #111;
+  font-size: s.$font-size-xl;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-900;
   margin: 0;
 }
 
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 3px 8px;
-  border-radius: 100px;
+  @include s.chip-base(s.$space-xs, s.$space-sm);
 }
 
 .badgeDot {
-  width: 6px;
-  height: 6px;
+  width: s.$space-xs;
+  height: s.$space-xs;
   border-radius: 50%;
 }
 
 .badgeOnline {
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
+  background: s.$color-green-500-12;
+  color: s.$color-green-600;
 
   .badgeDot {
-    background: #22c55e;
+    background: s.$color-green-500;
   }
 }
 
 .badgeOffline {
-  background: rgba(0, 0, 0, 0.06);
-  color: #999;
+  background: s.$color-black-50;
+  color: s.$color-neutral-400;
 
   .badgeDot {
-    background: #ccc;
+    background: s.$color-neutral-500;
   }
 }
 
 .builderLink {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111;
+  @include s.button-base(s.$radius-pill, s.$space-sm, s.$space-lg);
+  font-size: s.$font-size-md;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-900;
   text-decoration: none;
-  padding: 8px 16px;
-  border: 1.5px solid #111;
-  border-radius: 100px;
-  transition:
-    background 0.15s ease,
-    color 0.15s ease;
+  border: 1.5px solid s.$color-neutral-900;
+  @include s.interactive-transition(
+    background s.$duration-fast s.$easing-standard,
+    color s.$duration-fast s.$easing-standard
+  );
+  @include s.focus-ring(s.$space-2xs, s.$radius-pill);
 
   &:hover {
-    background: #111;
-    color: #fff;
+    background: s.$color-neutral-900;
+    color: s.$color-neutral-0;
   }
 }
 
 .navLink {
-  font-size: 14px;
-  font-weight: 500;
-  color: #555;
+  @include s.button-base(s.$radius-pill, s.$space-xs, s.$space-md);
+  font-size: s.$font-size-md;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-600;
   text-decoration: none;
-  padding: 6px 14px;
-  margin-right: 10px;
-  border: 1.5px solid #ccc;
-  border-radius: 100px;
-  transition:
-    border-color 0.15s ease,
-    color 0.15s ease;
+  margin-right: s.$space-sm;
+  border: 1.5px solid s.$color-black-50;
+  @include s.interactive-transition(
+    border-color s.$duration-fast s.$easing-standard,
+    color s.$duration-fast s.$easing-standard
+  );
+  @include s.focus-ring(s.$space-2xs, s.$radius-pill);
 
   &:hover {
-    border-color: #333;
-    color: #111;
+    border-color: s.$color-neutral-700;
+    color: s.$color-neutral-900;
   }
 }
 
 .main {
   flex: 1;
-  padding: 20px 16px;
+  padding: s.$space-xl s.$space-lg;
   overflow-y: auto;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+  gap: s.$space-lg;
 }
 
 .emptyState {
   text-align: center;
-  padding: 60px 24px;
-  color: #888;
-  font-size: 15px;
+  padding: 3.75rem s.$space-2xl;
+  color: s.$color-neutral-500;
+  font-size: s.$font-size-base;
   line-height: 1.6;
 
   a {
-    color: #111;
-    font-weight: 600;
+    color: s.$color-neutral-900;
+    font-weight: s.$font-weight-semibold;
     text-decoration: underline;
   }
 }
 
 .errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  color: #b91c1c;
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 13px;
-  margin-bottom: 16px;
+  background: s.$color-red-500-12;
+  color: s.$color-red-600;
+  border-radius: s.$radius-lg;
+  padding: s.$space-md s.$space-lg;
+  font-size: s.$font-size-sm;
+  margin-bottom: s.$space-lg;
 }

@@ -1,20 +1,25 @@
+@use '../../../styles/index' as s;
+
 .card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  padding: 16px;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+  gap: s.$space-md;
+  padding: s.$space-lg;
+  border-radius: s.$radius-2xl;
+  @include s.glass-surface(
+    s.$color-neutral-100,
+    s.$blur-sm,
+    s.$color-black-50,
+    null
+  );
+  @include s.interactive-transition(
+    transform s.$duration-fast s.$easing-standard,
+    box-shadow s.$duration-fast s.$easing-standard
+  );
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(calc(-1 * s.$space-2xs));
+    box-shadow: s.$shadow-soft;
   }
 }
 
@@ -22,60 +27,57 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: s.$space-sm;
 }
 
 .meta {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: s.$space-2xs;
   min-width: 0;
 }
 
 .name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #111;
+  font-size: s.$font-size-base;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-900;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .date {
-  font-size: 11px;
-  color: #999;
+  font-size: s.$font-size-xs;
+  color: s.$color-neutral-400;
 }
 
 .deleteBtn {
+  @include s.button-base(s.$radius-md, 0, 0);
+  @include s.flex-center;
+  @include s.focus-ring(s.$space-2xs, s.$radius-md);
+  @include s.interactive-transition(
+    background s.$duration-fast s.$easing-standard,
+    color s.$duration-fast s.$easing-standard,
+    width s.$duration-fast s.$easing-standard
+  );
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(0, 0, 0, 0.05);
-  color: #bbb;
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    width 0.15s ease;
-
+  width: 1.75rem;
+  height: 1.75rem;
+  background: s.$color-black-50;
+  color: s.$color-neutral-600;
   &:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background: s.$color-red-500-12;
+    color: s.$color-red-500;
   }
 }
 
 .deleteBtnConfirm {
   width: auto;
-  padding: 0 10px;
-  background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
-  font-weight: 600;
-  font-size: 12px;
+  padding: 0 s.$space-md;
+  background: s.$color-red-500-12;
+  color: s.$color-red-600;
+  font-weight: s.$font-weight-semibold;
+  font-size: s.$font-size-sm;
 }
 
 .confirmText {
@@ -85,46 +87,41 @@
 .parts {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: s.$space-sm;
 }
 
 .partThumb {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  width: 44px;
+  @include s.flex-center(column, s.$space-xs);
+  width: 2.75rem;
 }
 
 .thumbImg {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   object-fit: contain;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.04);
+  border-radius: s.$radius-md;
+  background: s.$color-black-50;
 }
 
 .thumbFallback {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 500;
-  color: #888;
+  @include s.flex-center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: s.$radius-md;
+  background: s.$color-black-50;
+  font-size: s.$font-size-xs;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-500;
 }
 
 .thumbEmpty {
-  background: rgba(0, 0, 0, 0.03);
-  color: #ccc;
+  background: s.$color-black-50;
+  color: s.$color-neutral-400;
 }
 
 .partLabel {
-  font-size: 9px;
-  color: #aaa;
+  font-size: s.$font-size-2xs;
+  color: s.$color-neutral-400;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   text-align: center;
@@ -133,13 +130,11 @@
 .morphs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: s.$space-xs;
 }
 
 .morphTag {
-  font-size: 11px;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 100px;
-  padding: 2px 8px;
-  color: #555;
+  @include s.chip-base(s.$space-xs, s.$space-md);
+  background: s.$color-black-50;
+  color: s.$color-neutral-600;
 }
