@@ -1,10 +1,28 @@
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, MathUtils } from 'three';
+import { Mesh, type Object3D } from 'three';
 import type { PartCategory } from '../../store/companion.store';
 
-const MORPH_LERP_SPEED = 0.08;
+function applyBodyMorphs(target: Object3D, bodyMorphs: Record<string, number>) {
+  target.traverse((node) => {
+    if (
+      !(node instanceof Mesh) ||
+      !node.morphTargetDictionary ||
+      !node.morphTargetInfluences
+    ) {
+      return;
+    }
+    const {
+      morphTargetDictionary: dictionary,
+      morphTargetInfluences: influences,
+    } = node;
+    for (const [morphName, value] of Object.entries(bodyMorphs)) {
+      const index = dictionary[morphName];
+      if (index === undefined) continue;
+      influences[index] = value;
+    }
+  });
+}
 
 interface WorldCompanionPartProps {
   category: PartCategory;
@@ -19,37 +37,15 @@ export function WorldCompanionPart({
 }: WorldCompanionPartProps) {
   const url = `/assets/companion/glb/${category}/${variantId}.glb`;
   const gltf = useGLTF(url);
-  const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]); // Deep clone to avoid caching problems
 
-  const morphMeshesRef = useRef<Mesh[]>([]);
+  // Value-based key so parents can pass a new `bodyMorphs` object each render without re-cloning.
+  const morphKey = JSON.stringify(bodyMorphs);
 
-  useEffect(() => {
-    morphMeshesRef.current = [];
-    scene.traverse((node) => {
-      if (node instanceof Mesh && node.morphTargetDictionary) {
-        morphMeshesRef.current.push(node);
-      }
-    });
-  }, [scene]);
-
-  useFrame(() => {
-    for (const mesh of morphMeshesRef.current) {
-      if (!mesh.morphTargetDictionary || !mesh.morphTargetInfluences) continue;
-
-      const dictionary = mesh.morphTargetDictionary;
-      const influences = mesh.morphTargetInfluences;
-
-      Object.entries(bodyMorphs).forEach(([morphName, target]) => {
-        const index = dictionary[morphName];
-        if (index === undefined) return;
-        influences[index] = MathUtils.lerp(
-          influences[index],
-          target,
-          MORPH_LERP_SPEED,
-        );
-      });
-    }
-  });
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone(true); // Deep clone to avoid caching problems
+    applyBodyMorphs(cloned, JSON.parse(morphKey) as Record<string, number>);
+    return cloned;
+  }, [gltf.scene, morphKey]);
 
   return <primitive object={scene} />;
 }

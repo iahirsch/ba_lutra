@@ -27,6 +27,7 @@ export class CompanionService {
     });
     return this.companionRepository.save(companion).then((saved) => {
       this.companionGateway.broadcastNewCompanion(saved);
+      this.companionGateway.startFlowSession(saved);
       return saved;
     });
   }

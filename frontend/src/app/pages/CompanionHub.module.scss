@@ -19,7 +19,6 @@
   right: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: s.$space-lg s.$space-2xl;
   background: linear-gradient(to bottom, s.$color-black-500, transparent);
   pointer-events: none;
@@ -84,24 +83,6 @@
   }
 }
 
-.nav {
-  display: flex;
-  gap: s.$space-lg;
-}
-
-.navLink {
-  color: s.$color-neutral-400;
-  text-decoration: none;
-  font-size: s.$font-size-md;
-  font-weight: s.$font-weight-medium;
-  @include s.interactive-transition(color s.$duration-fast s.$easing-standard);
-  @include s.focus-ring(s.$space-2xs, s.$radius-sm, s.$color-neutral-0);
-
-  &:hover {
-    color: s.$color-neutral-0;
-  }
-}
-
 .errorBanner {
   position: absolute;
   bottom: s.$space-2xl;
@@ -121,25 +102,7 @@
   pointer-events: none;
 
   p {
-    color: s.$color-neutral-400;
+    color: s.$color-neutral-100-75;
     font-size: s.$font-size-lg;
-  }
-}
-
-.emptyLink {
-  pointer-events: auto;
-  color: s.$color-neutral-400;
-  font-size: s.$font-size-md;
-  text-decoration: none;
-  border-bottom: 1px solid s.$color-white-50;
-  padding-bottom: s.$space-2xs;
-  @include s.interactive-transition(
-    color s.$duration-fast s.$easing-standard,
-    border-color s.$duration-fast s.$easing-standard
-  );
-
-  &:hover {
-    color: s.$color-neutral-0;
-    border-color: s.$color-neutral-0;
   }
 }

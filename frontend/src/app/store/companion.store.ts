@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import type { CompanionConfig } from '@ba-praktisch/shared-types';
+export type { CompanionConfig } from '@ba-praktisch/shared-types';
 
 export type PartCategory =
   | 'fur'
@@ -8,17 +10,6 @@ export type PartCategory =
   | 'ears' // reserved
   | 'tail' // reserved
   | 'backpack'; // reserved
-
-export interface CompanionConfig {
-  fur: string;
-  eyes: string;
-  nose: string;
-  clothing: string;
-  ears: string;
-  tail: string;
-  backpack: string;
-  bodyMorphs: Record<string, number>;
-}
 
 interface CompanionStore extends CompanionConfig {
   activeCategory: PartCategory | 'body';

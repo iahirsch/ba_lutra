@@ -53,7 +53,7 @@ interface MorphSliderDef {
 }
 
 const MORPH_SLIDERS: MorphSliderDef[] = [
-  { morphName: 'body_fat', label: 'Size' },
+  { morphName: 'body_fat', label: 'Body' },
   { morphName: 'face_fat', label: 'Face' },
 ];
 

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useCompanionSocket } from '../store/useCompanionSocket';
 import { HubScene } from '../components/hub/HubScene';
 import styles from './CompanionHub.module.scss';
@@ -33,24 +32,13 @@ export function CompanionHub() {
             </span>
           )}
         </div>
-        <nav className={styles.nav}>
-          <Link to="/companion" className={styles.navLink}>
-            Builder
-          </Link>
-          <Link to="/admin" className={styles.navLink}>
-            Admin
-          </Link>
-        </nav>
       </header>
 
       {error && <div className={styles.errorBanner}>{error}</div>}
 
       {!error && companions.length === 0 && connected && (
         <div className={styles.emptyState}>
-          <p>No companions yet.</p>
-          <Link to="/companion" className={styles.emptyLink}>
-            Create the first one →
-          </Link>
+          <p>Waiting for the first companion to arrive…</p>
         </div>
       )}
     </div>
