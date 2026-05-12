@@ -1,4 +1,6 @@
+import { useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
+import { applyCelShading } from '../../utils/celShading';
 
 export const HUB_GLTF_URL = '/assets/backgrounds/hub.glb';
 
@@ -29,5 +31,12 @@ export function HubSharedLights() {
 export function HubEnvironment() {
   const { scene } = useGLTF(HUB_GLTF_URL);
   const { position, scale } = HUB_ENVIRONMENT_TRANSFORM;
-  return <primitive object={scene} position={position} scale={scale} />;
+
+  const celScene = useMemo(() => {
+    const cloned = scene.clone(true);
+    applyCelShading(cloned);
+    return cloned;
+  }, [scene]);
+
+  return <primitive object={celScene} position={position} scale={scale} />;
 }

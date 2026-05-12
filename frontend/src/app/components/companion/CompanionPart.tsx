@@ -3,6 +3,7 @@ import { useGLTF } from '@react-three/drei';
 import { Mesh } from 'three';
 import type { PartCategory } from '../../store/companion.store';
 import { useCompanionStore } from '../../store/companion.store';
+import { applyCelShading } from '../../utils/celShading';
 
 const ASSET_BASE = '/assets/companion/glb';
 
@@ -53,7 +54,11 @@ interface CompanionPartProps {
 function PartMesh({ category, variantId }: CompanionPartProps) {
   const url = variantUrl(category, variantId);
   const gltf = useGLTF(url);
-  const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone(true);
+    applyCelShading(cloned);
+    return cloned;
+  }, [gltf.scene]);
 
   const bodyMorphs = useCompanionStore((s) => s.bodyMorphs);
 
