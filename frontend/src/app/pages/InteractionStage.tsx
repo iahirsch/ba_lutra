@@ -3,48 +3,61 @@ import { Canvas } from '@react-three/fiber';
 import type { CompanionConfig } from '@ba-praktisch/shared-types';
 import type { PartCategory } from '../store/companion.store';
 import { useFlowSocket, SCREENS } from '../store/useFlowSocket';
+import {
+  HubEnvironment,
+  HubSharedLights,
+  HUB_CAMERA,
+} from '../components/hub/HubEnvironment';
 import { WorldCompanionPart } from '../components/hub/WorldCompanionPart';
 import styles from './InteractionStage.module.scss';
 
-// Constants
 const RENDERED_PARTS: PartCategory[] = ['fur', 'eyes', 'nose', 'clothing'];
 
 // TODO: Replace with a real animation callback once 3D exit animations exist
 const EXIT_HOLD_MS = 3_500;
 
-// 3D scene
-function InteractionScene({ config }: { config: CompanionConfig }) {
+interface InteractionSceneProps {
+  companionConfig: CompanionConfig | null;
+}
+
+const INTERACTION_CANVAS_CAMERA = {
+  position: [...HUB_CAMERA.position] as [number, number, number],
+  fov: HUB_CAMERA.fov,
+  near: HUB_CAMERA.near,
+  far: HUB_CAMERA.far,
+};
+
+function InteractionScene({ companionConfig }: InteractionSceneProps) {
   return (
     <Canvas
-      camera={{ position: [0, 0.5, 3.25], fov: 38, near: 0.1, far: 100 }}
+      camera={INTERACTION_CANVAS_CAMERA}
+      gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
-      gl={{ alpha: true }}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[3, 5, 3]} intensity={1.2} />
-      <directionalLight position={[-2, 2, -2]} intensity={0.3} />
+      <HubSharedLights />
       <Suspense fallback={null}>
-        {/* Lower in world space so the rig sits nearer the vertical center of the view. */}
-        <group position={[0, -1.1, 0]}>
-          {RENDERED_PARTS.map((part) => {
-            const variantId = config[part];
-            if (!variantId) return null;
-            return (
-              <WorldCompanionPart
-                key={part}
-                category={part}
-                variantId={variantId}
-                bodyMorphs={config.bodyMorphs}
-              />
-            );
-          })}
-        </group>
+        <HubEnvironment />
+        {companionConfig && (
+          <group position={[0, 0.4, 8.5]}>
+            {RENDERED_PARTS.map((part) => {
+              const variantId = companionConfig[part];
+              if (!variantId) return null;
+              return (
+                <WorldCompanionPart
+                  key={part}
+                  category={part}
+                  variantId={variantId}
+                  bodyMorphs={companionConfig.bodyMorphs}
+                />
+              );
+            })}
+          </group>
+        )}
       </Suspense>
     </Canvas>
   );
 }
 
-// Dialogue bubble
 interface DialogueBubbleProps {
   companionName: string | null;
   text: string;
@@ -64,7 +77,6 @@ function DialogueBubble({ companionName, text, stepId }: DialogueBubbleProps) {
   );
 }
 
-// Page
 export function InteractionStage() {
   const { flowState, notifyExitComplete } = useFlowSocket(SCREENS.INTERACTION);
 
@@ -76,20 +88,20 @@ export function InteractionStage() {
 
   return (
     <div className={styles.page}>
-      {flowState && (
-        <>
-          <div className={styles.canvas}>
-            <InteractionScene config={flowState.companionConfig} />
-          </div>
+      <div className={styles.canvas}>
+        <InteractionScene
+          companionConfig={flowState?.companionConfig ?? null}
+        />
+      </div>
 
-          <div className={styles.dialogueOverlay}>
-            <DialogueBubble
-              companionName={flowState.companionName}
-              text={flowState.companionDialogue}
-              stepId={flowState.stepId}
-            />
-          </div>
-        </>
+      {flowState && (
+        <div className={styles.dialogueOverlay}>
+          <DialogueBubble
+            companionName={flowState.companionName}
+            text={flowState.companionDialogue}
+            stepId={flowState.stepId}
+          />
+        </div>
       )}
     </div>
   );

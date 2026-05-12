@@ -13,9 +13,9 @@ const CATEGORIES: { key: AnyCategory; label: string }[] = [
   { key: 'eyes', label: 'Eyes' },
   { key: 'nose', label: 'Nose' },
   { key: 'clothing', label: 'Clothing' },
+  // { key: 'backpack', label: 'Backpack' }, // reserved
   // { key: 'ears',    label: 'Ears'    },  // reserved
   // { key: 'tail',   label: 'Tail'    },  // reserved
-  // { key: 'backpack', label: 'Backpack' }, // reserved
 ];
 
 function CategoryTabs() {

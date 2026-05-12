@@ -37,13 +37,14 @@ class SceneErrorBoundary extends Component<
 }
 
 function SceneContents() {
-  const { fur, eyes, nose, clothing } = useCompanionStore();
+  const { fur, eyes, nose, clothing, backpack } = useCompanionStore();
   return (
     <>
       {fur && <CompanionPart category="fur" variantId={fur} />}
       {eyes && <CompanionPart category="eyes" variantId={eyes} />}
       {nose && <CompanionPart category="nose" variantId={nose} />}
       {clothing && <CompanionPart category="clothing" variantId={clothing} />}
+      {backpack && <CompanionPart category="backpack" variantId={backpack} />}
       {/* TODO: ears, tail, backpack: reserved — add when GLB assets are ready */}
     </>
   );

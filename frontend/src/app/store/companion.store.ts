@@ -25,7 +25,7 @@ export const DEFAULT_CONFIG: CompanionConfig = {
   clothing: '', // no clothing by default
   ears: '',
   tail: '',
-  backpack: '',
+  backpack: 'backpack01',
   bodyMorphs: { body_fat: 0.5, face_fat: 0.5 },
 };
 

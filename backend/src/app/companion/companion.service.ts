@@ -15,7 +15,7 @@ export class CompanionService {
 
   async create(dto: CreateCompanionConfigDto): Promise<Companion> {
     const companion = this.companionRepository.create({
-      name: dto.name ?? 'My Companion',
+      name: dto.name ?? 'My Lutra',
       fur: dto.fur,
       eyes: dto.eyes,
       nose: dto.nose,
