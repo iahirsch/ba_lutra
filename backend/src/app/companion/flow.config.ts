@@ -11,10 +11,10 @@ export interface FlowStep {
 export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'companion_appeared',
-    companionDialogue: 'Hi there! What do you want to call me?',
+    companionDialogue: 'Huhu! Da bin ich.✨ Ich brenne darauf, mit dir das Ödland wieder zum Blühen zu bringen! Aber sag mal... wie soll ich eigentlich heissen?',
     creatorView: {
       type: 'name-input',
-      prompt: 'Give your companion a name',
+      prompt: 'Gib deinem Buddy einen Namen',
     },
     transitions: {
       [FLOW_EVENTS.NAME_SUBMITTED]: 'activity_question',
@@ -23,13 +23,13 @@ export const FLOW_STEPS: FlowStep[] = [
 
   {
     id: 'activity_question',
-    companionDialogue: '[name]!? I love it. Mach Sport!',
+    companionDialogue: '[name]!? Oh, das klingt fantastisch! Wollen wir direkt loslegen und die erste Stelle auf der Karte durch physische Aktivität vom Ödland befreien und wieder zum Blühen bringen?',
     creatorView: {
       type: 'choices',
       prompt: '',
       choices: [
-        { id: 'active', label: 'Denn halt' },
-        { id: 'passive', label: 'Sicher nit' },
+        { id: 'active', label: 'Jaaa, packen wir es an! 🌿' },
+        { id: 'passive', label: 'Vielleicht später...' },
       ],
     },
     transitions: {
@@ -42,11 +42,11 @@ export const FLOW_STEPS: FlowStep[] = [
 
   {
     id: 'active_reaction',
-    companionDialogue: "Coolio. Let's go!",
+    companionDialogue: "Otter-stark! ⚡️ Ich halte hier die Stellung und bereite alles vor, während du Energie durch deine reale physische Aktivität sammelst.",
     creatorView: {
       type: 'confirm',
-      prompt: "Tap 'Done' when you're finished.",
-      confirmLabel: 'Done?',
+      prompt: "Mach 10 Hampelmänner und tippe auf 'Fertig', wenn du dein Training beendet hast.",
+      confirmLabel: 'Fertig!',
     },
     transitions: {
       [FLOW_EVENTS.ACTION_CONFIRMED]: 'active_exit',
@@ -54,10 +54,10 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'active_exit',
-    companionDialogue: 'Mega guet. Tschüssi. Ich gang in Hub',
+    companionDialogue: 'Wow, was für eine Power! 😍 Das wird dem Ödland guttun. Ich flitze schon mal vor ins Zeltlager. Bis gleich!',
     creatorView: {
       type: 'transition',
-      prompt: 'Your companion is heading to the hub…',
+      prompt: 'Dein Buddy flitzt zum Hub…',
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,
@@ -66,11 +66,11 @@ export const FLOW_STEPS: FlowStep[] = [
 
   {
     id: 'passive_reaction',
-    companionDialogue: 'Schad wies machsch. Tschüss demfall',
+    companionDialogue: 'Alles klar, kein Stress! 🔋 Auch ein Otter braucht mal eine Pause. Melde dich einfach, wenn du bereit bist.',
     creatorView: {
       type: 'confirm',
       prompt: '',
-      confirmLabel: 'Continue',
+      confirmLabel: 'Okay, ich komme wieder auf dich zu!',
     },
     transitions: {
       [FLOW_EVENTS.ACTION_CONFIRMED]: 'passive_exit',
@@ -78,10 +78,10 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'passive_exit',
-    companionDialogue: 'Adeeeeeeeee',
+    companionDialogue: 'Ich mach es mir im Zeltlager gemütlich. Wir sehen uns später! Adeeee! ✨',
     creatorView: {
       type: 'transition',
-      prompt: 'Your companion is heading to the hub…',
+      prompt: 'Dein Buddy zieht sich ins Zeltlager zurück…',
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,
