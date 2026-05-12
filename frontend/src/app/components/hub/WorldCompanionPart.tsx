@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { Mesh, type Object3D } from 'three';
 import type { PartCategory } from '../../store/companion.store';
+import { applyCelShading } from '../../utils/celShading';
 
 function applyBodyMorphs(target: Object3D, bodyMorphs: Record<string, number>) {
   target.traverse((node) => {
@@ -44,6 +45,7 @@ export function WorldCompanionPart({
   const scene = useMemo(() => {
     const cloned = gltf.scene.clone(true); // Deep clone to avoid caching problems
     applyBodyMorphs(cloned, JSON.parse(morphKey) as Record<string, number>);
+    applyCelShading(cloned);
     return cloned;
   }, [gltf.scene, morphKey]);
 

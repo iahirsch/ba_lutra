@@ -40,6 +40,9 @@ export function CompanionAdmin() {
           <Link to="/hub" className={styles.navLink}>
             Hub
           </Link>
+          <Link to="/interaction" className={styles.navLink}>
+            Interaction
+          </Link>
         </nav>
       </header>
 
