@@ -150,6 +150,17 @@
   object-fit: contain;
 }
 
+.nonePlaceholder {
+  @include s.flex-center;
+
+  width: 3rem;
+  height: 3rem;
+  font-size: s.$font-size-2xl;
+  font-weight: s.$font-weight-regular;
+  color: s.$color-neutral-400;
+  user-select: none;
+}
+
 .variantLabel {
   font-size: s.$font-size-xs;
   color: s.$color-neutral-600;

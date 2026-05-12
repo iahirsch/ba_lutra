@@ -5,7 +5,13 @@ import type { SavedCompanion } from '../../store/companion-socket.types';
 import type { PartCategory } from '../../store/companion.store';
 import { WorldCompanionPart } from './WorldCompanionPart';
 
-const RENDERED_PARTS: PartCategory[] = ['fur', 'eyes', 'nose', 'clothing'];
+const RENDERED_PARTS: PartCategory[] = [
+  'fur',
+  'eyes',
+  'nose',
+  'clothing',
+  'backpack',
+];
 
 interface CompanionInWorldProps {
   companion: SavedCompanion;

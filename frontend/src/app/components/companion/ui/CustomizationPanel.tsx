@@ -18,6 +18,9 @@ const CATEGORIES: { key: AnyCategory; label: string }[] = [
   // { key: 'tail',   label: 'Tail'    },  // reserved
 ];
 
+/** Categories where an empty string means “no part” (matches DEFAULT_CONFIG). */
+const OPTIONAL_PART_CATEGORIES: PartCategory[] = ['clothing'];
+
 function CategoryTabs() {
   const activeCategory = useCompanionStore((s) => s.activeCategory);
   const setActiveCategory = useCompanionStore((s) => s.setActiveCategory);
@@ -106,10 +109,26 @@ function PartGrid({ category }: { category: PartCategory }) {
     );
   }
 
+  const allowNone = OPTIONAL_PART_CATEGORIES.includes(category);
+
   return (
     <div className={styles.grid}>
+      {allowNone && (
+        <button
+          type="button"
+          className={`${styles.cell} ${selected === '' ? styles.cellActive : ''}`}
+          onClick={() => setPartVariant(category, '')}
+          aria-pressed={selected === ''}
+        >
+          <span className={styles.nonePlaceholder} aria-hidden="true">
+            —
+          </span>
+          <span className={styles.variantLabel}>None</span>
+        </button>
+      )}
       {variants.map((variantId) => (
         <button
+          type="button"
           key={variantId}
           className={`${styles.cell} ${selected === variantId ? styles.cellActive : ''}`}
           onClick={() => setPartVariant(category, variantId)}
