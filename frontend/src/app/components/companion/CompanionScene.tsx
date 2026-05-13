@@ -1,8 +1,12 @@
-import { Suspense, useRef, useEffect } from 'react';
+import { Suspense, useRef, useLayoutEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Vector3, MathUtils } from 'three';
+import { OrbitControls } from '@react-three/drei';
+import { Vector3, MathUtils, Spherical } from 'three';
 import { useCompanionStore } from '../../store/companion.store';
-import { CAMERA_PRESETS } from '../../constants/camera-presets';
+import {
+  CAMERA_PRESETS,
+  isHorizontalOrbitCategory,
+} from '../../constants/camera-presets';
 
 function CameraRig() {
   const { camera } = useThree();
@@ -10,24 +14,62 @@ function CameraRig() {
   const targetPosition = useRef(new Vector3(0, 1.0, 4.5));
   const targetLookAt = useRef(new Vector3(0, 0.8, 0));
   const currentLookAt = useRef(new Vector3(0, 0.8, 0));
+  const offset = useRef(new Vector3());
+  const spherical = useRef(new Spherical());
 
   const activeCategory = useCompanionStore((s) => s.activeCategory);
+  const [cameraTransitioning, setCameraTransitioning] = useState(true);
+  const [polarLock, setPolarLock] = useState(Math.PI / 2);
+  const prevCategoryRef = useRef(activeCategory);
+  const categoryJustChanged = prevCategoryRef.current !== activeCategory;
 
-  useEffect(() => {
-    const preset = CAMERA_PRESETS[activeCategory];
-    targetPosition.current.set(...preset.position);
-    targetLookAt.current.set(...preset.target);
+  const preset = CAMERA_PRESETS[activeCategory];
+  const orbitEnabled =
+    isHorizontalOrbitCategory(activeCategory) &&
+    !cameraTransitioning &&
+    !categoryJustChanged;
+
+  useLayoutEffect(() => {
+    const p = CAMERA_PRESETS[activeCategory];
+    targetPosition.current.set(...p.position);
+    targetLookAt.current.set(...p.target);
+    setCameraTransitioning(true);
+    prevCategoryRef.current = activeCategory;
   }, [activeCategory]);
 
   useFrame((_state, delta) => {
-    const preset = CAMERA_PRESETS[activeCategory];
-    const speed = MathUtils.clamp(delta / preset.duration, 0, 1);
-    camera.position.lerp(targetPosition.current, speed);
-    currentLookAt.current.lerp(targetLookAt.current, speed);
+    if (!cameraTransitioning) return;
+
+    const p = CAMERA_PRESETS[activeCategory];
+    const t = MathUtils.clamp(delta / p.duration, 0, 1);
+    camera.position.lerp(targetPosition.current, t);
+    currentLookAt.current.lerp(targetLookAt.current, t);
     camera.lookAt(currentLookAt.current);
+
+    const eps = 0.02;
+    if (
+      camera.position.distanceToSquared(targetPosition.current) < eps * eps &&
+      currentLookAt.current.distanceToSquared(targetLookAt.current) < eps * eps
+    ) {
+      if (isHorizontalOrbitCategory(activeCategory)) {
+        offset.current.subVectors(camera.position, currentLookAt.current);
+        setPolarLock(spherical.current.setFromVector3(offset.current).phi);
+      }
+      setCameraTransitioning(false);
+    }
   });
 
-  return null;
+  return (
+    <OrbitControls
+      enabled={orbitEnabled}
+      target={[preset.target[0], preset.target[1], preset.target[2]]}
+      minPolarAngle={polarLock}
+      maxPolarAngle={polarLock}
+      enablePan={false}
+      enableZoom={false}
+      enableDamping
+    />
+  );
 }
 
 function SceneLighting() {
