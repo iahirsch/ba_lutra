@@ -1,0 +1,168 @@
+@use '../../../styles/index' as s;
+
+.panel {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: s.$space-3xl s.$space-2xl;
+  background: s.$color-black-500;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 34rem;
+  animation: slideUp s.$duration-normal s.$easing-standard both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(s.$space-xl);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: s.$space-3xl;
+  width: 100%;
+}
+
+.prompt {
+  margin: 0;
+  font-size: s.$font-size-xl;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-0;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.nameInput {
+  @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-neutral-0);
+
+  width: 100%;
+  min-height: 3.5rem;
+  padding: s.$space-lg s.$space-2xl;
+  background: s.$color-neutral-0;
+  color: s.$color-neutral-900;
+  font-size: s.$font-size-xl;
+  font-weight: s.$font-weight-medium;
+  border: 2px solid transparent;
+  border-radius: s.$radius-xl;
+  text-align: center;
+  caret-color: s.$color-neutral-900;
+
+  &::placeholder {
+    color: s.$color-neutral-400;
+    font-weight: s.$font-weight-regular;
+  }
+}
+
+.actionButton {
+  @include s.button-base(s.$radius-xl, 0, 0);
+  @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-neutral-0);
+  @include s.interactive-transition(
+    opacity s.$duration-fast s.$easing-standard,
+    transform 0.1s s.$easing-standard
+  );
+
+  display: block;
+  width: 100%;
+  min-height: 3.5rem;
+  background: s.$color-neutral-0;
+  color: s.$color-neutral-900;
+  font-size: s.$font-size-xl;
+  font-weight: s.$font-weight-semibold;
+  letter-spacing: 0.01em;
+  text-align: center;
+
+  &:active {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.choiceList {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-xl;
+}
+
+.choiceButton {
+  @include s.button-base(s.$radius-xl, 0, 0);
+  @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-neutral-0);
+  @include s.interactive-transition(
+    background s.$duration-fast s.$easing-standard,
+    transform 0.1s s.$easing-standard
+  );
+
+  display: block;
+  width: 100%;
+  min-height: 4rem;
+  background: s.$color-white-400;
+  color: s.$color-neutral-0;
+  font-size: s.$font-size-xl;
+  font-weight: s.$font-weight-semibold;
+  border: 2px solid s.$color-white-400;
+  border-radius: s.$radius-xl;
+  text-align: center;
+  backdrop-filter: blur(s.$blur-sm);
+
+  &:active {
+    background: s.$color-white-900;
+    border-color: s.$color-neutral-0;
+    transform: scale(0.98);
+  }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: s.$space-md;
+
+  span {
+    width: s.$space-md;
+    height: s.$space-md;
+    border-radius: 50%;
+    background: s.$color-white-400;
+    animation: pulse 1.2s s.$easing-standard infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -31,7 +31,7 @@ export class Companion {
   @Column({ type: 'varchar', length: 50, default: 'tail01' })
   tail!: string;
 
-  @Column({ type: 'varchar', length: 50, default: '' })
+  @Column({ type: 'varchar', length: 50, default: 'backpack01' })
   backpack!: string;
 
   @Column({ type: 'jsonb', default: () => "'{}'" })

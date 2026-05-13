@@ -1,0 +1,244 @@
+@use '../../../../styles/index' as s;
+
+.tabBar {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 s.$space-lg;
+  scrollbar-width: none;
+  flex-shrink: 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab {
+  @include s.button-reset;
+  @include s.focus-ring(s.$space-2xs, s.$radius-sm);
+  @include s.interactive-transition(
+    color s.$duration-normal s.$easing-standard
+  );
+
+  position: relative;
+  flex-shrink: 0;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: s.$space-md s.$space-lg;
+  cursor: pointer;
+  font-size: s.$font-size-base;
+  font-weight: s.$font-weight-regular;
+  color: s.$color-neutral-500;
+  letter-spacing: 0.01em;
+  scroll-snap-align: start;
+}
+
+.tabActive {
+  color: s.$color-neutral-900;
+  font-weight: s.$font-weight-semibold;
+}
+
+.tabIndicator {
+  position: absolute;
+  bottom: s.$space-xs;
+  left: 50%;
+  transform: translateX(-50%);
+  width: s.$space-xl;
+  height: s.$space-2xs;
+  border-radius: s.$radius-sm;
+  background: s.$color-neutral-900;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-top-left-radius: s.$radius-3xl;
+  border-top-right-radius: s.$radius-3xl;
+  border-top: 1px solid s.$color-white-50;
+  padding-top: s.$space-sm;
+  @include s.glass-surface(
+    s.$color-neutral-100-75,
+    s.$blur-lg,
+    s.$color-white-50,
+    1.4
+  );
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: s.$space-md s.$space-2xl;
+  padding-bottom: max(s.$space-xl, env(safe-area-inset-bottom));
+  border-top: 1px solid s.$color-black-50;
+  background: s.$color-neutral-100-50;
+}
+
+.saveButton {
+  @include s.button-base(s.$radius-lg, 0, 0);
+  @include s.focus-ring(s.$space-xs);
+  @include s.interactive-transition(
+    opacity s.$duration-fast s.$easing-standard,
+    transform 0.1s s.$easing-standard
+  );
+
+  display: block;
+  width: 100%;
+  min-height: 3.125rem;
+  background: s.$color-neutral-900;
+  color: s.$color-neutral-0;
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-semibold;
+  letter-spacing: 0.02em;
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: s.$space-md;
+  padding: s.$space-lg;
+}
+
+.cell {
+  @include s.button-base(s.$radius-xl, s.$space-md, s.$space-sm);
+  @include s.focus-ring(s.$space-2xs);
+  @include s.interactive-transition(
+    border-color s.$duration-fast s.$easing-standard,
+    background s.$duration-fast s.$easing-standard
+  );
+
+  @include s.flex-center(column, s.$space-xs);
+
+  min-height: 5.625rem;
+  min-width: 2.75rem;
+  background: s.$color-white-400;
+  border: 2px solid transparent;
+  border-radius: s.$radius-xl;
+  &:active {
+    background: s.$color-white-900;
+  }
+}
+
+.cellActive {
+  border-color: s.$color-neutral-900;
+  background: s.$color-white-900;
+}
+
+.thumbnail {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+}
+
+.nonePlaceholder {
+  @include s.flex-center;
+
+  width: 3rem;
+  height: 3rem;
+  font-size: s.$font-size-2xl;
+  font-weight: s.$font-weight-regular;
+  color: s.$color-neutral-400;
+  user-select: none;
+}
+
+.variantLabel {
+  font-size: s.$font-size-xs;
+  color: s.$color-neutral-600;
+  text-align: center;
+  word-break: break-all;
+  line-height: 1.3;
+}
+
+.emptyCategory {
+  @include s.flex-center;
+  height: 100%;
+  padding: s.$space-3xl;
+  color: s.$color-neutral-500;
+  font-size: s.$font-size-sm;
+  text-align: center;
+}
+
+.sliderList {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-2xl;
+  padding: s.$space-xl s.$space-2xl;
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-sm;
+}
+
+.sliderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sliderLabel {
+  font-size: s.$font-size-md;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-900;
+}
+
+.sliderValue {
+  font-size: s.$font-size-sm;
+  color: s.$color-neutral-500;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider {
+  @include s.focus-ring(s.$space-xs, s.$radius-sm);
+
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: s.$space-xs;
+  border-radius: s.$radius-sm;
+  background: s.$color-black-200;
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: s.$space-2xl;
+    height: s.$space-2xl;
+    border-radius: 50%;
+    background: s.$color-neutral-900;
+    cursor: pointer;
+    box-shadow: s.$shadow-thumb;
+  }
+
+  &::-moz-range-thumb {
+    width: s.$space-2xl;
+    height: s.$space-2xl;
+    border-radius: 50%;
+    background: s.$color-neutral-900;
+    cursor: pointer;
+    border: none;
+    box-shadow: s.$shadow-thumb;
+  }
+}

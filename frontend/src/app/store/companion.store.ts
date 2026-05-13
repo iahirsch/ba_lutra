@@ -1,24 +1,15 @@
 import { create } from 'zustand';
+import type { CompanionConfig } from '@ba-praktisch/shared-types';
+export type { CompanionConfig } from '@ba-praktisch/shared-types';
 
 export type PartCategory =
   | 'fur'
   | 'eyes'
   | 'nose'
   | 'clothing'
-  | 'ears' // reserved — UI hidden for now
-  | 'tail' // reserved — UI hidden for now
-  | 'backpack'; // reserved — UI hidden for now
-
-export interface CompanionConfig {
-  fur: string;
-  eyes: string;
-  nose: string;
-  clothing: string;
-  ears: string;
-  tail: string;
-  backpack: string;
-  bodyMorphs: Record<string, number>;
-}
+  | 'ears' // reserved
+  | 'tail' // reserved
+  | 'backpack'; // reserved
 
 interface CompanionStore extends CompanionConfig {
   activeCategory: PartCategory | 'body';
@@ -34,8 +25,8 @@ export const DEFAULT_CONFIG: CompanionConfig = {
   clothing: '', // no clothing by default
   ears: '',
   tail: '',
-  backpack: '',
-  bodyMorphs: { chubby: 0.5 },
+  backpack: 'backpack01',
+  bodyMorphs: { body_fat: 0.5, face_fat: 0.5 },
 };
 
 export const useCompanionStore = create<CompanionStore>((set) => ({
