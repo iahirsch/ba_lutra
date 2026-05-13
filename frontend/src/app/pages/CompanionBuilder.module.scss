@@ -8,15 +8,6 @@
   height: 100dvh;
   overflow: hidden;
   touch-action: none;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -1.25rem;
-    background: url('/assets/backgrounds/desert.png') center / cover no-repeat;
-    filter: blur(s.$blur-md);
-    z-index: 0;
-  }
 }
 
 .canvasZone {

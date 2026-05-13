@@ -1,4 +1,12 @@
-import { Component, useEffect, useRef, type ReactNode } from 'react';
+import { Component, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useGLTF } from '@react-three/drei';
+import {
+  Color,
+  Mesh,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+  type Material,
+} from 'three';
 import { CompanionScene } from '../components/companion/CompanionScene';
 import { CompanionPart } from '../components/companion/CompanionPart';
 import { CustomizationPanel } from '../components/companion/ui/CustomizationPanel';
@@ -7,6 +15,42 @@ import { useCompanionStore, DEFAULT_CONFIG } from '../store/companion.store';
 import { useFlowSocket, SCREENS } from '../store/useFlowSocket';
 import type { FlowStateUpdate } from '@ba-praktisch/shared-types';
 import styles from './CompanionBuilder.module.scss';
+
+const BUILDER_ENV_GLTF = '/assets/backgrounds/hub.glb';
+
+useGLTF.preload(BUILDER_ENV_GLTF);
+
+function BuilderEnvironment() {
+  const { scene } = useGLTF(BUILDER_ENV_GLTF);
+
+  const dimmedScene = useMemo(() => {
+    const root = scene.clone(true);
+    root.traverse((node) => {
+      if (!(node instanceof Mesh) || !node.material) return;
+
+      const tintMaterial = (mat: Material) => {
+        const m = mat.clone();
+        const c = (m as { color?: Color }).color;
+        if (c instanceof Color) c.multiplyScalar(0.9);
+        if (
+          m instanceof MeshStandardMaterial ||
+          m instanceof MeshPhysicalMaterial
+        ) {
+          m.roughness = Math.min(1, m.roughness + 0.06);
+          m.metalness *= 0.9;
+        }
+        return m;
+      };
+
+      node.material = Array.isArray(node.material)
+        ? node.material.map(tintMaterial)
+        : tintMaterial(node.material);
+    });
+    return root;
+  }, [scene]);
+
+  return <primitive object={dimmedScene} />;
+}
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -45,7 +89,7 @@ function SceneContents() {
       {nose && <CompanionPart category="nose" variantId={nose} />}
       {clothing && <CompanionPart category="clothing" variantId={clothing} />}
       {backpack && <CompanionPart category="backpack" variantId={backpack} />}
-      {/* TODO: ears, tail, backpack: reserved — add when GLB assets are ready */}
+      {/* TODO: ears, tail: reserved — add when GLB assets are ready */}
     </>
   );
 }
@@ -88,6 +132,7 @@ export function CompanionBuilder() {
       <div className={styles.canvasZone}>
         <SceneErrorBoundary>
           <CompanionScene>
+            <BuilderEnvironment />
             <SceneContents />
           </CompanionScene>
         </SceneErrorBoundary>

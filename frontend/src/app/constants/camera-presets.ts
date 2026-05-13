@@ -1,5 +1,15 @@
 import type { PartCategory } from '../store/companion.store';
 
+export const HORIZONTAL_ORBIT_CATEGORIES = ['body', 'fur', 'clothing'] as const;
+export type HorizontalOrbitCategory =
+  (typeof HORIZONTAL_ORBIT_CATEGORIES)[number];
+
+export function isHorizontalOrbitCategory(
+  category: PartCategory | 'body',
+): category is HorizontalOrbitCategory {
+  return (HORIZONTAL_ORBIT_CATEGORIES as readonly string[]).includes(category);
+}
+
 export interface CategoryCameraPreset {
   position: [number, number, number];
   target: [number, number, number];
