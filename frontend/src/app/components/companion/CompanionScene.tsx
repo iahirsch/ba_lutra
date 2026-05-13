@@ -1,12 +1,24 @@
 import { Suspense, useRef, useLayoutEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import {
+  EffectComposer,
+  DepthOfField,
+  BrightnessContrast,
+  Vignette,
+} from '@react-three/postprocessing';
 import { Vector3, MathUtils, Spherical } from 'three';
 import { useCompanionStore } from '../../store/companion.store';
 import {
   CAMERA_PRESETS,
   isHorizontalOrbitCategory,
 } from '../../constants/camera-presets';
+import { HUB_CAMERA } from '../hub/HubEnvironment';
+
+const COMPANION_DOF = {
+  bokehScale: 20,
+  focusRange: 40,
+} as const;
 
 function CameraRig() {
   const { camera } = useThree();
@@ -75,9 +87,9 @@ function CameraRig() {
 function SceneLighting() {
   return (
     <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[3, 5, 3]} intensity={1.2} />
-      <directionalLight position={[-2, 2, -2]} intensity={0.3} />
+      {/* Uniform fill + one key sun — minimal setup so toon materials get one clear N·L term */}
+      <ambientLight intensity={0.75} />
+      <directionalLight position={[5, 8, 7]} intensity={1.7} />
     </>
   );
 }
@@ -91,6 +103,19 @@ function LoadingFallback() {
   );
 }
 
+function CompanionDepthOfField() {
+  const activeCategory = useCompanionStore((s) => s.activeCategory);
+  const target = CAMERA_PRESETS[activeCategory].target;
+
+  return (
+    <DepthOfField
+      target={target}
+      bokehScale={COMPANION_DOF.bokehScale}
+      focusRange={COMPANION_DOF.focusRange}
+    />
+  );
+}
+
 interface CompanionSceneProps {
   children?: React.ReactNode;
 }
@@ -98,13 +123,23 @@ interface CompanionSceneProps {
 export function CompanionScene({ children }: CompanionSceneProps) {
   return (
     <Canvas
-      camera={{ position: [0, 1.0, 4.5], fov: 40, near: 0.1, far: 100 }}
+      camera={{
+        position: [0, 1.0, 4.5],
+        fov: 40,
+        near: HUB_CAMERA.near,
+        far: HUB_CAMERA.far,
+      }}
       style={{ width: '100%', height: '100%' }}
       gl={{ alpha: true }}
     >
       <CameraRig />
       <SceneLighting />
       <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+      <EffectComposer depthBuffer multisampling={4}>
+        <CompanionDepthOfField />
+        <BrightnessContrast brightness={0.055} contrast={0.11} />
+        <Vignette offset={0.42} darkness={0.22} />
+      </EffectComposer>
     </Canvas>
   );
 }
