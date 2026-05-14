@@ -79,6 +79,10 @@ export class CompanionGateway
     this.screenRegistry.delete(client.id);
   }
 
+  getActiveCompanionId(): string | null {
+    return this.session?.companionId ?? null;
+  }
+
   broadcastNewCompanion(companion: Companion): void {
     this.server.emit('companion:created', companion);
   }

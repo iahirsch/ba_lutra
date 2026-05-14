@@ -139,3 +139,87 @@
   font-size: s.$font-size-sm;
   margin-bottom: s.$space-lg;
 }
+
+// Strava Card
+.stravaSection {
+  border-radius: s.$radius-xl;
+  padding: s.$space-lg s.$space-xl;
+  margin-bottom: s.$space-2xl;
+  background: s.$color-neutral-0;
+}
+
+.stravaHeader {
+  display: flex;
+  align-items: center;
+  gap: s.$space-md;
+  flex-wrap: wrap;
+}
+
+.stravaTitle {
+  font-size: s.$font-size-base;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-900;
+  margin-right: s.$space-xs;
+}
+
+.stravaActions {
+  display: flex;
+  gap: s.$space-sm;
+  margin-left: auto;
+}
+
+.stravaButton {
+  @include s.button-base(s.$radius-pill, s.$space-sm, s.$space-lg);
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-0;
+  background: s.$color-neutral-900;
+  border: 1.5px solid s.$color-neutral-900;
+  cursor: pointer;
+
+  &:hover {
+    background: s.$color-neutral-700;
+    border-color: s.$color-neutral-700;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.stravaButtonGhost {
+  color: s.$color-neutral-600;
+  background: transparent;
+  border-color: s.$color-black-100;
+
+  &:hover {
+    background: transparent;
+    border-color: s.$color-neutral-600;
+    color: s.$color-neutral-900;
+  }
+}
+
+.stravaFeedback {
+  margin: s.$space-md 0 0;
+  font-size: s.$font-size-sm;
+  border-radius: s.$radius-md;
+  padding: s.$space-xs s.$space-sm;
+}
+
+.stravaSuccess {
+  background: s.$color-green-500-12;
+  color: s.$color-green-600;
+}
+
+.stravaError {
+  background: s.$color-red-500-12;
+  color: s.$color-red-600;
+}
+
+.stravaHint {
+  margin: s.$space-sm 0 0;
+  font-size: s.$font-size-sm;
+  color: s.$color-neutral-500;
+  line-height: 1.5;
+}

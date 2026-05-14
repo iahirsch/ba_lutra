@@ -11,7 +11,7 @@ export function App() {
       <Route path="/hub" element={<CompanionHub />} />
       <Route path="/admin" element={<CompanionAdmin />} />
       <Route path="/interaction" element={<InteractionStage />} />
-      <Route path="*" element={<Navigate to="/companion" replace />} />
+      <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
   );
 }
