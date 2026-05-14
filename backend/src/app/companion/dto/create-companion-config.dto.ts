@@ -43,7 +43,7 @@ export class CreateCompanionConfigDto {
   @IsString()
   backpack?: string;
 
-  @ApiPropertyOptional({ example: { chubby: 0.5 } })
+  @ApiPropertyOptional({ example: { body_fat: 0.5, face_fat: 0.5 } })
   @IsOptional()
   @IsObject()
   bodyMorphs?: Record<string, number>;

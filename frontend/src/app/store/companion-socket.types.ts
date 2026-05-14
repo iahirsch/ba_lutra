@@ -1,4 +1,4 @@
-import type { CompanionConfig } from './companion.store';
+import type { CompanionConfig } from '@ba-praktisch/shared-types';
 
 export interface SavedCompanion extends CompanionConfig {
   id: string;

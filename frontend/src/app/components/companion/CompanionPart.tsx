@@ -1,0 +1,98 @@
+import { useMemo, useLayoutEffect } from 'react';
+import { useGLTF } from '@react-three/drei';
+import { Mesh } from 'three';
+import type { PartCategory } from '../../store/companion.store';
+import { useCompanionStore } from '../../store/companion.store';
+import { applyCelShading } from '../../utils/celShading';
+
+const ASSET_BASE = '/assets/companion/glb';
+
+function variantUrl(category: PartCategory, variantId: string): string {
+  return `${ASSET_BASE}/${category}/${variantId}.glb`;
+}
+
+// All known part variants
+export const PART_VARIANTS: Record<PartCategory, string[]> = {
+  fur: ['fur01', 'fur02', 'fur03'],
+  eyes: ['eyes01', 'eyes02'],
+  nose: ['nose01', 'nose02', 'nose03'],
+  clothing: ['clothing01'],
+  backpack: ['backpack01'],
+  ears: [], // reserved
+  tail: [], // reserved
+};
+
+Object.entries(PART_VARIANTS).forEach(([category, variants]) => {
+  variants.forEach((id) =>
+    useGLTF.preload(variantUrl(category as PartCategory, id)),
+  );
+});
+
+// Part Offset if necessary
+interface PartOffset {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+}
+
+const PART_OFFSETS: Record<PartCategory, PartOffset> = {
+  fur: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+  eyes: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+  nose: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+  clothing: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+  ears: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+  tail: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+  backpack: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+};
+
+// Component
+interface CompanionPartProps {
+  category: PartCategory;
+  variantId: string;
+}
+
+function PartMesh({ category, variantId }: CompanionPartProps) {
+  const url = variantUrl(category, variantId);
+  const gltf = useGLTF(url);
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone(true);
+    applyCelShading(cloned);
+    return cloned;
+  }, [gltf.scene]);
+
+  const bodyMorphs = useCompanionStore((s) => s.bodyMorphs);
+
+  useLayoutEffect(() => {
+    scene.traverse((node) => {
+      if (
+        !(node instanceof Mesh) ||
+        !node.morphTargetDictionary ||
+        !node.morphTargetInfluences
+      ) {
+        return;
+      }
+      const {
+        morphTargetDictionary: dictionary,
+        morphTargetInfluences: influences,
+      } = node;
+      for (const [morphName, value] of Object.entries(bodyMorphs)) {
+        const index = dictionary[morphName];
+        if (index === undefined) continue;
+        influences[index] = value;
+      }
+    });
+  }, [scene, bodyMorphs]);
+
+  const { position, rotation, scale } = PART_OFFSETS[category];
+
+  return (
+    <group position={position} rotation={rotation} scale={scale}>
+      <primitive object={scene} />
+    </group>
+  );
+}
+
+// Keys on variantId so React remounts PartMesh on variant change (the swap mechanism)
+export function CompanionPart({ category, variantId }: CompanionPartProps) {
+  return <PartMesh key={variantId} category={category} variantId={variantId} />;
+}

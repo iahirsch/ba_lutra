@@ -1,0 +1,88 @@
+@use '../../styles/index' as s;
+
+.page {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: s.$color-slate-950;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1.25rem;
+    background: url('/assets/backgrounds/desert.png') center / cover no-repeat;
+    filter: blur(s.$blur-md);
+    z-index: 0;
+  }
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.dialogueOverlay {
+  position: absolute;
+  top: s.$space-3xl;
+  left: s.$space-3xl;
+  right: s.$space-3xl;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.bubble {
+  position: relative;
+  background: s.$color-neutral-0;
+  border-radius: s.$radius-3xl;
+  padding: s.$space-3xl;
+  max-width: 40rem;
+  width: 100%;
+  box-shadow: s.$shadow-soft;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: calc(-1 * s.$space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: s.$space-xl solid transparent;
+    border-right: s.$space-xl solid transparent;
+    border-top: s.$space-xl solid s.$color-neutral-0;
+  }
+}
+
+.companionName {
+  display: block;
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: s.$space-sm;
+  text-align: center;
+}
+
+.text {
+  margin: 0;
+  font-size: s.$font-size-2xl;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-900;
+  line-height: 1.45;
+  text-align: center;
+  animation: fadeIn s.$duration-normal s.$easing-standard both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(s.$space-sm);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

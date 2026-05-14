@@ -1,0 +1,108 @@
+@use '../../styles/index' as s;
+
+.page {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: s.$color-slate-950;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: s.$space-lg s.$space-2xl;
+  background: linear-gradient(to bottom, s.$color-black-500, transparent);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: s.$space-md;
+}
+
+.title {
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.count {
+  font-size: s.$font-size-sm;
+  color: s.$color-neutral-400;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: s.$space-xs;
+  font-size: s.$font-size-xs;
+  font-weight: s.$font-weight-semibold;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  @include s.pill(s.$space-xs, s.$space-md);
+}
+
+.badgeOnline {
+  background: s.$color-green-500-12;
+  color: s.$color-green-500;
+}
+
+.badgeOffline {
+  background: s.$color-red-500-12;
+  color: s.$color-red-500;
+}
+
+.badgeDot {
+  width: s.$space-xs;
+  height: s.$space-xs;
+  border-radius: 50%;
+
+  .badgeOnline & {
+    background: s.$color-green-500;
+    box-shadow: 0 0 s.$space-sm s.$color-green-500;
+  }
+
+  .badgeOffline & {
+    background: s.$color-red-500;
+  }
+}
+
+.errorBanner {
+  position: absolute;
+  bottom: s.$space-2xl;
+  left: 50%;
+  transform: translateX(-50%);
+  background: s.$color-red-500;
+  color: s.$color-neutral-0;
+  padding: s.$space-sm s.$space-xl;
+  border-radius: s.$radius-md;
+  font-size: s.$font-size-md;
+}
+
+.emptyState {
+  position: absolute;
+  inset: 0;
+  @include s.flex-center(column, s.$space-md);
+  pointer-events: none;
+
+  p {
+    color: s.$color-neutral-100-75;
+    font-size: s.$font-size-lg;
+  }
+}

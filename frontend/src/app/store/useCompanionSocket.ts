@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { FLOW_EVENTS } from '@ba-praktisch/shared-types';
 import { getCompanions } from '../services/companion.service';
 import type { SavedCompanion } from './companion-socket.types';
-
-const COMPANION_CREATED_EVENT = 'companion:created';
 
 export function useCompanionSocket() {
   const [companions, setCompanions] = useState<SavedCompanion[]>([]);
@@ -24,9 +23,13 @@ export function useCompanionSocket() {
 
     socket.on('connect_error', () => setError('WebSocket connection failed'));
 
-    socket.on(COMPANION_CREATED_EVENT, (newCompanion: SavedCompanion) => {
-      setCompanions((prev) => [newCompanion, ...prev]);
-    });
+    // Companions only enter the hub world after completing the interaction flow.
+    socket.on(
+      FLOW_EVENTS.COMPANION_ENTERED_HUB,
+      (newCompanion: SavedCompanion) => {
+        setCompanions((prev) => [newCompanion, ...prev]);
+      },
+    );
 
     socket.on('companion:deleted', ({ id }: { id: string }) => {
       setCompanions((prev) => prev.filter((c) => c.id !== id));

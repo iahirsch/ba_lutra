@@ -1,0 +1,140 @@
+@use '../../../styles/index' as s;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-md;
+  padding: s.$space-lg;
+  border-radius: s.$radius-2xl;
+  @include s.glass-surface(
+    s.$color-neutral-100,
+    s.$blur-sm,
+    s.$color-black-50,
+    null
+  );
+  @include s.interactive-transition(
+    transform s.$duration-fast s.$easing-standard,
+    box-shadow s.$duration-fast s.$easing-standard
+  );
+
+  &:hover {
+    transform: translateY(calc(-1 * s.$space-2xs));
+    box-shadow: s.$shadow-soft;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: s.$space-sm;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-2xs;
+  min-width: 0;
+}
+
+.name {
+  font-size: s.$font-size-base;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.date {
+  font-size: s.$font-size-xs;
+  color: s.$color-neutral-400;
+}
+
+.deleteBtn {
+  @include s.button-base(s.$radius-md, 0, 0);
+  @include s.flex-center;
+  @include s.focus-ring(s.$space-2xs, s.$radius-md);
+  @include s.interactive-transition(
+    background s.$duration-fast s.$easing-standard,
+    color s.$duration-fast s.$easing-standard,
+    width s.$duration-fast s.$easing-standard
+  );
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: s.$color-black-50;
+  color: s.$color-neutral-600;
+  &:hover {
+    background: s.$color-red-500-12;
+    color: s.$color-red-500;
+  }
+}
+
+.deleteBtnConfirm {
+  width: auto;
+  padding: 0 s.$space-md;
+  background: s.$color-red-500-12;
+  color: s.$color-red-600;
+  font-weight: s.$font-weight-semibold;
+  font-size: s.$font-size-sm;
+}
+
+.confirmText {
+  white-space: nowrap;
+}
+
+.parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: s.$space-sm;
+}
+
+.partThumb {
+  @include s.flex-center(column, s.$space-xs);
+  width: 2.75rem;
+}
+
+.thumbImg {
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  border-radius: s.$radius-md;
+  background: s.$color-black-50;
+}
+
+.thumbFallback {
+  @include s.flex-center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: s.$radius-md;
+  background: s.$color-black-50;
+  font-size: s.$font-size-xs;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-500;
+}
+
+.thumbEmpty {
+  background: s.$color-black-50;
+  color: s.$color-neutral-400;
+}
+
+.partLabel {
+  font-size: s.$font-size-2xs;
+  color: s.$color-neutral-400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.morphs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: s.$space-xs;
+}
+
+.morphTag {
+  @include s.chip-base(s.$space-xs, s.$space-md);
+  background: s.$color-black-50;
+  color: s.$color-neutral-600;
+}
