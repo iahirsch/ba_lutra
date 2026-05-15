@@ -1,20 +1,38 @@
 import { useState } from 'react';
 import {
   COMPANION_THUMBNAIL_BASE,
+  type FurColor,
   type SavedCompanion,
 } from '@ba-praktisch/shared-types';
 import styles from './SavedCompanionCard.module.scss';
 
-const ALL_PARTS: Array<
-  keyof Omit<SavedCompanion, 'id' | 'name' | 'createdAt' | 'bodyMorphs'>
-> = ['fur', 'eyes', 'nose', 'clothing', 'ears', 'tail', 'backpack'];
+const VARIANT_PART_KEYS: Array<
+  keyof Pick<
+    SavedCompanion,
+    'eyes' | 'nose' | 'clothing' | 'ears' | 'tail' | 'backpack'
+  >
+> = ['eyes', 'nose', 'clothing', 'ears', 'tail', 'backpack'];
 
 function formatVariant(category: string, variantId: string): string {
   if (!variantId) return '—';
   return variantId.replace(new RegExp(`^${category}[_]?`), '') || variantId;
 }
 
-function PartThumbnail({
+function FurColorThumb({ furColor }: { furColor: FurColor }) {
+  return (
+    <div className={styles.partThumb}>
+      <span
+        className={styles.thumbImg}
+        style={{
+          background: `linear-gradient(90deg, ${furColor.primary} 50%, ${furColor.secondary} 50%)`,
+        }}
+      />
+      <span className={styles.partLabel}>fur</span>
+    </div>
+  );
+}
+
+function PartThumb({
   category,
   variantId,
 }: {
@@ -111,8 +129,9 @@ export function SavedCompanionCard({
       </header>
 
       <div className={styles.parts}>
-        {ALL_PARTS.map((cat) => (
-          <PartThumbnail
+        <FurColorThumb furColor={companion.furColor} />
+        {VARIANT_PART_KEYS.map((cat) => (
+          <PartThumb
             key={cat}
             category={cat}
             variantId={companion[cat] ?? ''}

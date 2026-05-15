@@ -1,5 +1,24 @@
-import { IsString, IsNotEmpty, IsOptional, IsObject } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsObject,
+  ValidateNested,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+class FurColorDto {
+  @ApiProperty({ example: '#897366' })
+  @IsString()
+  @IsNotEmpty()
+  primary!: string;
+
+  @ApiProperty({ example: '#D9B6A3' })
+  @IsString()
+  @IsNotEmpty()
+  secondary!: string;
+}
 
 export class CreateCompanionConfigDto {
   @ApiPropertyOptional({ example: 'My Lutra' })
@@ -7,11 +26,10 @@ export class CreateCompanionConfigDto {
   @IsString()
   name?: string;
 
-  //TODO: Change @IsOptional back to @IsNotEmpty when all assets exist
-  @ApiProperty({ example: 'fur01' })
-  @IsString()
-  @IsOptional()
-  fur!: string;
+  @ApiProperty({ type: FurColorDto })
+  @ValidateNested()
+  @Type(() => FurColorDto)
+  furColor!: FurColorDto;
 
   @ApiProperty({ example: 'eyes01' })
   @IsString()

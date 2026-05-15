@@ -1,4 +1,3 @@
-import '../../constants/companion-part-variants';
 import { useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { COMPANION_GLB_BASE } from '@ba-praktisch/shared-types';
@@ -6,18 +5,18 @@ import type { PartCategory } from '../../store/companionStore';
 import { applyCelShading } from '../../utils/celShading';
 import { applyBodyMorphsToObject } from '../../utils/applyBodyMorphs';
 
-export interface CharacterGlbPartProps {
+export interface CompanionPartGlbProps {
   category: PartCategory;
   variantId: string;
   bodyMorphs: Record<string, number>;
 }
 
 /** Single companion body-part GLB: clone, morphs, cel shading. */
-export function CharacterGlbPart({
+export function CompanionPartGlb({
   category,
   variantId,
   bodyMorphs,
-}: CharacterGlbPartProps) {
+}: CompanionPartGlbProps) {
   const url = `${COMPANION_GLB_BASE}/${category}/${variantId}.glb`;
   const gltf = useGLTF(url);
 

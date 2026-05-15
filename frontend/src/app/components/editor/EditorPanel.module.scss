@@ -144,6 +144,17 @@
   background: s.$color-white-900;
 }
 
+.colorSwatch {
+  padding: s.$space-sm;
+}
+
+.colorSwatchPreview {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  border-radius: s.$radius-md;
+}
+
 .thumbnail {
   width: 3rem;
   height: 3rem;

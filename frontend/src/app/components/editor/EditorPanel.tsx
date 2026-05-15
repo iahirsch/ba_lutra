@@ -4,9 +4,10 @@ import type { PartCategory } from '../../store/companionStore';
 import { COMPANION_THUMBNAIL_BASE } from '@ba-praktisch/shared-types';
 import { saveCompanion } from '../../services/companion.service';
 import { PART_VARIANTS } from '../../constants/companion-part-variants';
+import { FUR_COLOR_PRESETS } from '../../constants/fur-color-presets';
 import styles from './EditorPanel.module.scss';
 
-type AnyCategory = PartCategory | 'body';
+type AnyCategory = PartCategory | 'body' | 'fur';
 
 const CATEGORIES: { key: AnyCategory; label: string }[] = [
   { key: 'body', label: 'Body' },
@@ -91,6 +92,38 @@ function BodySliders() {
   );
 }
 
+function FurColorPicker() {
+  const furColor = useCompanionStore((s) => s.furColor);
+  const setFurColor = useCompanionStore((s) => s.setFurColor);
+
+  return (
+    <div className={styles.grid}>
+      {FUR_COLOR_PRESETS.map((preset) => {
+        const selected =
+          furColor.primary === preset.primary &&
+          furColor.secondary === preset.secondary;
+        return (
+          <button
+            type="button"
+            key={`${preset.primary}-${preset.secondary}`}
+            className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
+            onClick={() => setFurColor(preset)}
+            aria-pressed={selected}
+            aria-label={`Fur colors ${preset.primary} and ${preset.secondary}`}
+          >
+            <span
+              className={styles.colorSwatchPreview}
+              style={{
+                background: `linear-gradient(90deg, ${preset.primary} 50%, ${preset.secondary} 50%)`,
+              }}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function PartGrid({ category }: { category: PartCategory }) {
   const selected = useCompanionStore((s) => s[category]);
   const setPartVariant = useCompanionStore((s) => s.setPartVariant);
@@ -154,17 +187,16 @@ export function EditorPanel() {
     setSaving(true);
     setSaved(false);
     try {
-      const { fur, clothing, eyes, nose, ears, tail, backpack, bodyMorphs } =
-        useCompanionStore.getState();
+      const state = useCompanionStore.getState();
       await saveCompanion({
-        fur,
-        clothing,
-        eyes,
-        nose,
-        ears,
-        tail,
-        backpack,
-        bodyMorphs,
+        furColor: state.furColor,
+        clothing: state.clothing,
+        eyes: state.eyes,
+        nose: state.nose,
+        ears: state.ears,
+        tail: state.tail,
+        backpack: state.backpack,
+        bodyMorphs: state.bodyMorphs,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -182,6 +214,8 @@ export function EditorPanel() {
       <div className={styles.content}>
         {activeCategory === 'body' ? (
           <BodySliders />
+        ) : activeCategory === 'fur' ? (
+          <FurColorPicker />
         ) : (
           <PartGrid category={activeCategory} />
         )}

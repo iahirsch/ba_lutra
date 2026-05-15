@@ -11,7 +11,8 @@ import {
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
 import { HubLights } from '../components/hub/HubLights';
-import { CharacterGlbPart } from '../components/common/CharacterGlbPart';
+import { CompanionBody } from '../components/common/CompanionBodyGlb';
+import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
 import styles from './Interaction.module.scss';
 
 // TODO: Replace with a real animation callback once 3D exit animations exist
@@ -40,11 +41,15 @@ function InteractionScene({ companionConfig }: InteractionSceneProps) {
         <HubBackground />
         {companionConfig && (
           <group position={[0, 0.4, 8.5]}>
+            <CompanionBody
+              bodyMorphs={companionConfig.bodyMorphs ?? {}}
+              furColor={companionConfig.furColor}
+            />
             {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
               const variantId = companionConfig[part];
               if (!variantId) return null;
               return (
-                <CharacterGlbPart
+                <CompanionPartGlb
                   key={part}
                   category={part}
                   variantId={variantId}

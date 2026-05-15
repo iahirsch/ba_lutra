@@ -81,8 +81,7 @@ function toToonMaterial(
     depthTest: source.depthTest,
     vertexColors: source.vertexColors,
   });
-
-  source.dispose();
+  toon.name = source.name;
   return toon;
 }
 

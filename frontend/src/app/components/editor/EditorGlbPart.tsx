@@ -1,6 +1,6 @@
 import type { PartCategory } from '../../store/companionStore';
 import { useCompanionStore } from '../../store/companionStore';
-import { CharacterGlbPart } from '../common/CharacterGlbPart';
+import { CompanionPartGlb } from '../common/CompanionPartGlb';
 
 /** Editor-only: part morphs follow live Zustand state. */
 export function EditorGlbPart({
@@ -12,7 +12,7 @@ export function EditorGlbPart({
 }) {
   const bodyMorphs = useCompanionStore((s) => s.bodyMorphs);
   return (
-    <CharacterGlbPart
+    <CompanionPartGlb
       category={category}
       variantId={variantId}
       bodyMorphs={bodyMorphs}

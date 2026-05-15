@@ -8,9 +8,11 @@ import {
   type Material,
 } from 'three';
 import { EditorCanvas } from '../components/editor/EditorCanvas';
+import { EditorBody } from '../components/editor/EditorBody';
 import { EditorGlbPart } from '../components/editor/EditorGlbPart';
 import { EditorPanel } from '../components/editor/EditorPanel';
 import { EditorFlowPanel } from '../components/editor/EditorFlowPanel';
+import '../constants/companion-part-variants';
 import { useCompanionStore, DEFAULT_CONFIG } from '../store/companionStore';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HUB_GLTF_URL, type FlowStateUpdate } from '@ba-praktisch/shared-types';
@@ -51,10 +53,10 @@ function EditorBackgroundMesh() {
 }
 
 function EditorSceneParts() {
-  const { fur, eyes, nose, clothing, backpack } = useCompanionStore();
+  const { eyes, nose, clothing, backpack } = useCompanionStore();
   return (
     <>
-      {fur && <EditorGlbPart category="fur" variantId={fur} />}
+      <EditorBody />
       {eyes && <EditorGlbPart category="eyes" variantId={eyes} />}
       {nose && <EditorGlbPart category="nose" variantId={nose} />}
       {clothing && <EditorGlbPart category="clothing" variantId={clothing} />}

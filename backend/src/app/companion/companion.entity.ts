@@ -15,8 +15,11 @@ export class Companion {
   @Column({ type: 'varchar', length: 80, default: 'My Lutra' })
   name!: string;
 
-  @Column({ type: 'varchar', length: 50, default: 'fur01' })
-  fur!: string;
+  @Column({
+    type: 'jsonb',
+    default: () => `'{"primary":"#897366","secondary":"#D9B6A3"}'`,
+  })
+  furColor!: { primary: string; secondary: string };
 
   @Column({ type: 'varchar', length: 50 })
   eyes!: string;

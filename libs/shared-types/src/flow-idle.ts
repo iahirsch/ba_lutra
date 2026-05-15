@@ -2,7 +2,7 @@ import type { CompanionConfig } from './companion.types';
 import type { FlowStateUpdate } from './flow-events';
 
 export const IDLE_COMPANION_CONFIG: CompanionConfig = {
-  fur: '',
+  furColor: { primary: '', secondary: '' },
   eyes: '',
   nose: '',
   clothing: '',

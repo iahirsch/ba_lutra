@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import type { CompanionConfig } from '@ba-praktisch/shared-types';
-export type { CompanionConfig } from '@ba-praktisch/shared-types';
+import { DEFAULT_FUR_COLOR } from '../constants/fur-color-presets';
+import type { CompanionConfig, FurColor } from '@ba-praktisch/shared-types';
+export type { CompanionConfig, FurColor } from '@ba-praktisch/shared-types';
 
 export type PartCategory =
-  | 'fur'
   | 'eyes'
   | 'nose'
   | 'clothing'
@@ -11,15 +11,18 @@ export type PartCategory =
   | 'ears' // reserved
   | 'tail'; // reserved
 
+export type EditorTab = PartCategory | 'body' | 'fur';
+
 interface CompanionStore extends CompanionConfig {
-  activeCategory: PartCategory | 'body';
-  setActiveCategory: (category: PartCategory | 'body') => void;
+  activeCategory: EditorTab;
+  setActiveCategory: (category: EditorTab) => void;
   setPartVariant: (part: PartCategory, variantId: string) => void;
+  setFurColor: (furColor: FurColor) => void;
   setBodyMorph: (morphName: string, influence: number) => void;
 }
 
 export const DEFAULT_CONFIG: CompanionConfig = {
-  fur: 'fur01',
+  furColor: { ...DEFAULT_FUR_COLOR },
   eyes: 'eyes01',
   nose: 'nose01',
   clothing: '', // no clothing by default
@@ -36,6 +39,8 @@ export const useCompanionStore = create<CompanionStore>((set) => ({
   setActiveCategory: (category) => set({ activeCategory: category }),
 
   setPartVariant: (part, variantId) => set({ [part]: variantId }),
+
+  setFurColor: (furColor) => set({ furColor }),
 
   setBodyMorph: (morphName, influence) =>
     set((state) => ({

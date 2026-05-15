@@ -5,30 +5,34 @@ import {
   type RenderedCompanionPart,
   type SavedCompanion,
 } from '@ba-praktisch/shared-types';
-import { CharacterGlbPart } from '../common/CharacterGlbPart';
+import { CompanionBody } from '../common/CompanionBodyGlb';
+import { CompanionPartGlb } from '../common/CompanionPartGlb';
 
 interface HubCharacterGroupProps {
   companion: SavedCompanion;
   position: [number, number, number];
 }
 
-/** One saved companion in the hub row: parts + 3D name label. */
+/** One saved companion in the hub row */
 export function HubCharacterGroup({
   companion,
   position,
 }: HubCharacterGroupProps) {
+  const bodyMorphs = companion.bodyMorphs ?? {};
+
   return (
     <group position={position}>
       <Suspense fallback={null}>
+        <CompanionBody bodyMorphs={bodyMorphs} furColor={companion.furColor} />
         {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
           const variantId = companion[category];
           if (!variantId) return null;
           return (
-            <CharacterGlbPart
+            <CompanionPartGlb
               key={`${companion.id}-${category}`}
               category={category}
               variantId={variantId}
-              bodyMorphs={companion.bodyMorphs ?? {}}
+              bodyMorphs={bodyMorphs}
             />
           );
         })}
