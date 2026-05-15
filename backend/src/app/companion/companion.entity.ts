@@ -2,8 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Activity } from '../activity/activity.entity';
 
 @Entity({ name: 'companions' })
 export class Companion {
@@ -36,6 +38,9 @@ export class Companion {
 
   @Column({ type: 'jsonb', default: () => "'{}'" })
   bodyMorphs!: Record<string, number>;
+
+  @OneToMany(() => Activity, (activity) => activity.companion)
+  activities!: Activity[];
 
   @CreateDateColumn()
   createdAt!: Date;

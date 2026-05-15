@@ -1,23 +1,18 @@
 import { Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import type { CompanionConfig } from '@ba-praktisch/shared-types';
-import type { PartCategory } from '../store/companion.store';
-import { useFlowSocket, SCREENS } from '../store/useFlowSocket';
+import type {
+  CompanionConfig,
+  RenderedCompanionPart,
+} from '@ba-praktisch/shared-types';
 import {
-  HubEnvironment,
-  HubSharedLights,
   HUB_CAMERA,
-} from '../components/hub/HubEnvironment';
-import { WorldCompanionPart } from '../components/hub/WorldCompanionPart';
-import styles from './InteractionStage.module.scss';
-
-const RENDERED_PARTS: PartCategory[] = [
-  'fur',
-  'eyes',
-  'nose',
-  'clothing',
-  'backpack',
-];
+  RENDERED_COMPANION_PARTS,
+} from '@ba-praktisch/shared-types';
+import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
+import { HubBackground } from '../components/hub/HubBackground';
+import { HubLights } from '../components/hub/HubLights';
+import { CharacterGlbPart } from '../components/common/CharacterGlbPart';
+import styles from './Interaction.module.scss';
 
 // TODO: Replace with a real animation callback once 3D exit animations exist
 const EXIT_HOLD_MS = 3_500;
@@ -40,20 +35,20 @@ function InteractionScene({ companionConfig }: InteractionSceneProps) {
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
-      <HubSharedLights />
+      <HubLights />
       <Suspense fallback={null}>
-        <HubEnvironment />
+        <HubBackground />
         {companionConfig && (
           <group position={[0, 0.4, 8.5]}>
-            {RENDERED_PARTS.map((part) => {
+            {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
               const variantId = companionConfig[part];
               if (!variantId) return null;
               return (
-                <WorldCompanionPart
+                <CharacterGlbPart
                   key={part}
                   category={part}
                   variantId={variantId}
-                  bodyMorphs={companionConfig.bodyMorphs}
+                  bodyMorphs={companionConfig.bodyMorphs ?? {}}
                 />
               );
             })}
@@ -83,7 +78,7 @@ function DialogueBubble({ companionName, text, stepId }: DialogueBubbleProps) {
   );
 }
 
-export function InteractionStage() {
+export function Interaction() {
   const { flowState, notifyExitComplete } = useFlowSocket(SCREENS.INTERACTION);
 
   useEffect(() => {

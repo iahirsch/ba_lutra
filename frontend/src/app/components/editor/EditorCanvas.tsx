@@ -1,4 +1,4 @@
-import { Suspense, useRef, useLayoutEffect, useState } from 'react';
+import { useRef, useLayoutEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import {
@@ -8,19 +8,19 @@ import {
   Vignette,
 } from '@react-three/postprocessing';
 import { Vector3, MathUtils, Spherical } from 'three';
-import { useCompanionStore } from '../../store/companion.store';
+import { useCompanionStore } from '../../store/companionStore';
 import {
   CAMERA_PRESETS,
   isHorizontalOrbitCategory,
 } from '../../constants/camera-presets';
-import { HUB_CAMERA } from '../hub/HubEnvironment';
+import { HUB_CAMERA } from '@ba-praktisch/shared-types';
 
-const COMPANION_DOF = {
+const EDITOR_DOF = {
   bokehScale: 20,
   focusRange: 40,
 } as const;
 
-function CameraRig() {
+function EditorCameraRig() {
   const { camera } = useThree();
 
   const targetPosition = useRef(new Vector3(0, 1.0, 4.5));
@@ -84,43 +84,33 @@ function CameraRig() {
   );
 }
 
-function SceneLighting() {
+function EditorSceneLights() {
   return (
     <>
-      {/* Uniform fill + one key sun — minimal setup so toon materials get one clear N·L term */}
       <ambientLight intensity={0.75} />
       <directionalLight position={[5, 8, 7]} intensity={1.7} />
     </>
   );
 }
 
-function LoadingFallback() {
-  return (
-    <mesh>
-      <sphereGeometry args={[0.15, 16, 16]} />
-      <meshBasicMaterial color="#aaaaaa" wireframe />
-    </mesh>
-  );
-}
-
-function CompanionDepthOfField() {
+function EditorDepthOfField() {
   const activeCategory = useCompanionStore((s) => s.activeCategory);
   const target = CAMERA_PRESETS[activeCategory].target;
 
   return (
     <DepthOfField
       target={target}
-      bokehScale={COMPANION_DOF.bokehScale}
-      focusRange={COMPANION_DOF.focusRange}
+      bokehScale={EDITOR_DOF.bokehScale}
+      focusRange={EDITOR_DOF.focusRange}
     />
   );
 }
 
-interface CompanionSceneProps {
+interface EditorCanvasProps {
   children?: React.ReactNode;
 }
 
-export function CompanionScene({ children }: CompanionSceneProps) {
+export function EditorCanvas({ children }: EditorCanvasProps) {
   return (
     <Canvas
       camera={{
@@ -132,11 +122,11 @@ export function CompanionScene({ children }: CompanionSceneProps) {
       style={{ width: '100%', height: '100%' }}
       gl={{ alpha: true }}
     >
-      <CameraRig />
-      <SceneLighting />
-      <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+      <EditorCameraRig />
+      <EditorSceneLights />
+      {children}
       <EffectComposer depthBuffer multisampling={4}>
-        <CompanionDepthOfField />
+        <EditorDepthOfField />
         <BrightnessContrast brightness={0.055} contrast={0.11} />
         <Vignette offset={0.42} darkness={0.22} />
       </EffectComposer>

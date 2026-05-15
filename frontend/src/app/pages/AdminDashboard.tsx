@@ -1,26 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useCompanionSocket } from '../store/useCompanionSocket';
+import { useCompanionSocket } from '../hooks/useCompanionSocket';
 import { deleteCompanion } from '../services/companion.service';
+import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import {
   disconnectStrava,
   getStravaStatus,
   redirectToStravaAuth,
   type StravaStatus,
 } from '../services/strava.service';
-import { CompanionCard } from '../components/admin/CompanionCard';
-import styles from './CompanionAdmin.module.scss';
-
-function ConnectionBadge({ connected }: { connected: boolean }) {
-  return (
-    <span
-      className={`${styles.badge} ${connected ? styles.badgeOnline : styles.badgeOffline}`}
-    >
-      <span className={styles.badgeDot} />
-      {connected ? 'Live' : 'Connecting…'}
-    </span>
-  );
-}
+import { SavedCompanionCard } from '../components/admin/SavedCompanionCard';
+import styles from './AdminDashboard.module.scss';
 
 function StravaSection() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -132,7 +122,7 @@ function StravaSection() {
   );
 }
 
-export function CompanionAdmin() {
+export function AdminDashboard() {
   const { companions, connected, error } = useCompanionSocket();
 
   async function handleDelete(id: string) {
@@ -148,17 +138,21 @@ export function CompanionAdmin() {
       <header className={styles.header}>
         <div className={styles.titleRow}>
           <h1 className={styles.title}>Admin</h1>
-          <ConnectionBadge connected={connected} />
+          <ConnectionBadge
+            connected={connected}
+            className={`${styles.badge} ${connected ? styles.badgeOnline : styles.badgeOffline}`}
+            dotClassName={styles.badgeDot}
+          />
         </div>
         <nav className={styles.nav}>
-          <Link to="/companion" className={styles.navLink}>
-            Builder
-          </Link>
-          <Link to="/hub" className={styles.navLink}>
-            Hub
+          <Link to="/editor" className={styles.navLink}>
+            Editor
           </Link>
           <Link to="/interaction" className={styles.navLink}>
             Interaction
+          </Link>
+          <Link to="/hub" className={styles.navLink}>
+            Hub
           </Link>
         </nav>
       </header>
@@ -174,14 +168,14 @@ export function CompanionAdmin() {
           <div className={styles.emptyState}>
             <p>No companions saved yet.</p>
             <p>
-              <Link to="/companion">Create the first one</Link>.
+              <Link to="/editor">Create the first one</Link>.
             </p>
           </div>
         )}
 
         <div className={styles.grid}>
           {companions.map((companion) => (
-            <CompanionCard
+            <SavedCompanionCard
               key={companion.id}
               companion={companion}
               onDelete={handleDelete}

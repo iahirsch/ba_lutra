@@ -1,35 +1,30 @@
-// Renders a companion at a specific position in the hub world.
 import { Suspense } from 'react';
 import { Text } from '@react-three/drei';
-import type { SavedCompanion } from '../../store/companion-socket.types';
-import type { PartCategory } from '../../store/companion.store';
-import { WorldCompanionPart } from './WorldCompanionPart';
+import {
+  RENDERED_COMPANION_PARTS,
+  type RenderedCompanionPart,
+  type SavedCompanion,
+} from '@ba-praktisch/shared-types';
+import { CharacterGlbPart } from '../common/CharacterGlbPart';
 
-const RENDERED_PARTS: PartCategory[] = [
-  'fur',
-  'eyes',
-  'nose',
-  'clothing',
-  'backpack',
-];
-
-interface CompanionInWorldProps {
+interface HubCharacterGroupProps {
   companion: SavedCompanion;
   position: [number, number, number];
 }
 
-export function CompanionInWorld({
+/** One saved companion in the hub row: parts + 3D name label. */
+export function HubCharacterGroup({
   companion,
   position,
-}: CompanionInWorldProps) {
+}: HubCharacterGroupProps) {
   return (
     <group position={position}>
       <Suspense fallback={null}>
-        {RENDERED_PARTS.map((category) => {
+        {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
           const variantId = companion[category];
           if (!variantId) return null;
           return (
-            <WorldCompanionPart
+            <CharacterGlbPart
               key={`${companion.id}-${category}`}
               category={category}
               variantId={variantId}
@@ -39,15 +34,12 @@ export function CompanionInWorld({
         })}
       </Suspense>
 
-      {/* Name Tag */}
       <Text
         position={[0, 2.4, 0]}
         fontSize={0.18}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
-        // outlineWidth={0.02}
-        // outlineColor="#000000"
       >
         {companion.name}
       </Text>

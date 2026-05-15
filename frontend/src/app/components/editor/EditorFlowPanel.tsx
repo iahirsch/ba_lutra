@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type SubmitEvent } from 'react';
 import type { FlowStateUpdate } from '@ba-praktisch/shared-types';
-import styles from './FlowPanel.module.scss';
+import styles from './EditorFlowPanel.module.scss';
 
 function NameInputView({
   prompt,
@@ -110,19 +110,19 @@ function TransitionView({ prompt }: { prompt?: string }) {
   );
 }
 
-interface FlowPanelProps {
+interface EditorFlowPanelProps {
   flowState: FlowStateUpdate;
   onSubmitName: (name: string) => void;
   onSelectChoice: (choiceId: string) => void;
   onConfirmAction: () => void;
 }
 
-export function FlowPanel({
+export function EditorFlowPanel({
   flowState,
   onSubmitName,
   onSelectChoice,
   onConfirmAction,
-}: FlowPanelProps) {
+}: EditorFlowPanelProps) {
   const { type, prompt, choices, confirmLabel } = flowState.creatorView;
 
   return (

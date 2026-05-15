@@ -7,9 +7,9 @@ export type PartCategory =
   | 'eyes'
   | 'nose'
   | 'clothing'
+  | 'backpack'
   | 'ears' // reserved
-  | 'tail' // reserved
-  | 'backpack'; // reserved
+  | 'tail'; // reserved
 
 interface CompanionStore extends CompanionConfig {
   activeCategory: PartCategory | 'body';

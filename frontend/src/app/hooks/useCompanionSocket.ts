@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { FLOW_EVENTS } from '@ba-praktisch/shared-types';
+import { type Socket } from 'socket.io-client';
+import { createMainSocket } from '../utils/createMainSocket';
+import {
+  FLOW_EVENTS,
+  COMPANION_EVENTS,
+  type CompanionDeletedPayload,
+  type SavedCompanion,
+} from '@ba-praktisch/shared-types';
 import { getCompanions } from '../services/companion.service';
-import type { SavedCompanion } from './companion-socket.types';
 
 export function useCompanionSocket() {
   const [companions, setCompanions] = useState<SavedCompanion[]>([]);
@@ -10,13 +15,14 @@ export function useCompanionSocket() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const socket: Socket = io({ path: '/socket.io' });
+    const socket: Socket = createMainSocket();
+
+    getCompanions()
+      .then((data) => setCompanions(data))
+      .catch(() => setError('Failed to load companions'));
 
     socket.on('connect', () => {
       setConnected(true);
-      getCompanions()
-        .then((data) => setCompanions(data))
-        .catch(() => setError('Failed to load companions'));
     });
 
     socket.on('disconnect', () => setConnected(false));
@@ -31,7 +37,7 @@ export function useCompanionSocket() {
       },
     );
 
-    socket.on('companion:deleted', ({ id }: { id: string }) => {
+    socket.on(COMPANION_EVENTS.DELETED, ({ id }: CompanionDeletedPayload) => {
       setCompanions((prev) => prev.filter((c) => c.id !== id));
     });
 

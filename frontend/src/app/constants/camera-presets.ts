@@ -1,4 +1,4 @@
-import type { PartCategory } from '../store/companion.store';
+import type { PartCategory } from '../store/companionStore';
 
 export const HORIZONTAL_ORBIT_CATEGORIES = ['body', 'fur', 'clothing'] as const;
 export type HorizontalOrbitCategory =

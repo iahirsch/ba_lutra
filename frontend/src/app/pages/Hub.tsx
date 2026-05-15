@@ -1,31 +1,25 @@
-import { useCompanionSocket } from '../store/useCompanionSocket';
-import { HubScene } from '../components/hub/HubScene';
-import styles from './CompanionHub.module.scss';
+import { useCompanionSocket } from '../hooks/useCompanionSocket';
+import { HubCanvas } from '../components/hub/HubCanvas';
+import { ConnectionBadge } from '../components/common/ConnectionBadge';
+import styles from './Hub.module.scss';
 
-function ConnectionBadge({ connected }: { connected: boolean }) {
-  return (
-    <span
-      className={`${styles.badge} ${connected ? styles.badgeOnline : styles.badgeOffline}`}
-    >
-      <span className={styles.badgeDot} />
-      {connected ? 'Live' : 'Connecting…'}
-    </span>
-  );
-}
-
-export function CompanionHub() {
+export function Hub() {
   const { companions, connected, error } = useCompanionSocket();
 
   return (
     <div className={styles.page}>
       <div className={styles.canvas}>
-        <HubScene companions={companions} />
+        <HubCanvas companions={companions} />
       </div>
 
       <header className={styles.overlay}>
         <div className={styles.left}>
           <span className={styles.title}>Companion Hub</span>
-          <ConnectionBadge connected={connected} />
+          <ConnectionBadge
+            connected={connected}
+            className={`${styles.badge} ${connected ? styles.badgeOnline : styles.badgeOffline}`}
+            dotClassName={styles.badgeDot}
+          />
           {companions.length > 0 && (
             <span className={styles.count}>
               {companions.length} companion{companions.length !== 1 ? 's' : ''}

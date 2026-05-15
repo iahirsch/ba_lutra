@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import type { SavedCompanion } from '../../store/companion-socket.types';
-import styles from './CompanionCard.module.scss';
-
-const THUMBNAIL_BASE = '/assets/companion/thumbnails';
+import {
+  COMPANION_THUMBNAIL_BASE,
+  type SavedCompanion,
+} from '@ba-praktisch/shared-types';
+import styles from './SavedCompanionCard.module.scss';
 
 const ALL_PARTS: Array<
   keyof Omit<SavedCompanion, 'id' | 'name' | 'createdAt' | 'bodyMorphs'>
@@ -26,7 +27,7 @@ function PartThumbnail({
     <div className={styles.partThumb}>
       {!imgFailed && variantId ? (
         <img
-          src={`${THUMBNAIL_BASE}/${category}/${variantId}.png`}
+          src={`${COMPANION_THUMBNAIL_BASE}/${category}/${variantId}.png`}
           alt={variantId}
           className={styles.thumbImg}
           onError={() => setImgFailed(true)}
@@ -43,12 +44,15 @@ function PartThumbnail({
   );
 }
 
-interface CompanionCardProps {
+interface SavedCompanionCardProps {
   companion: SavedCompanion;
   onDelete: (id: string) => void;
 }
 
-export function CompanionCard({ companion, onDelete }: CompanionCardProps) {
+export function SavedCompanionCard({
+  companion,
+  onDelete,
+}: SavedCompanionCardProps) {
   const [confirming, setConfirming] = useState(false);
 
   const date = new Date(companion.createdAt).toLocaleDateString(undefined, {
@@ -65,7 +69,6 @@ export function CompanionCard({ companion, onDelete }: CompanionCardProps) {
       onDelete(companion.id);
     } else {
       setConfirming(true);
-      // Auto-cancel confirmation after 3 seconds
       setTimeout(() => setConfirming(false), 3000);
     }
   }

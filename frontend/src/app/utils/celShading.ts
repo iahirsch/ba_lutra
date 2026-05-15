@@ -103,7 +103,7 @@ function upgradeMaterial(material: Material): Material {
   return material;
 }
 
-/** Replaces lit PBR/Lambert/Phong materials with stepped toon shading (shared gradient). */
+/** Replaces lit materials with stepped toon shading */
 export function applyCelShading(root: Object3D): void {
   root.traverse((node) => {
     if (!(node instanceof Mesh) || !node.material) return;

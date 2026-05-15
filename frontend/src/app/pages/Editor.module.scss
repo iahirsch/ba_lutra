@@ -23,20 +23,3 @@
   flex: 0 0 40%;
   overflow: hidden;
 }
-
-.errorState {
-  @include s.flex-center(column, s.$space-sm);
-  height: 100%;
-  color: s.$color-neutral-600;
-
-  p {
-    font-size: s.$font-size-base;
-    font-weight: s.$font-weight-medium;
-    margin: 0;
-  }
-
-  small {
-    font-size: s.$font-size-sm;
-    color: s.$color-neutral-400;
-  }
-}

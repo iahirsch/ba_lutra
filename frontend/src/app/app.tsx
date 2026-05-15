@@ -1,16 +1,17 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { CompanionBuilder } from './pages/CompanionBuilder';
-import { CompanionHub } from './pages/CompanionHub';
-import { CompanionAdmin } from './pages/CompanionAdmin';
-import { InteractionStage } from './pages/InteractionStage';
+import { Editor } from './pages/Editor';
+import { Hub } from './pages/Hub';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { Interaction } from './pages/Interaction';
 
 export function App() {
   return (
     <Routes>
-      <Route path="/companion" element={<CompanionBuilder />} />
-      <Route path="/hub" element={<CompanionHub />} />
-      <Route path="/admin" element={<CompanionAdmin />} />
-      <Route path="/interaction" element={<InteractionStage />} />
+      <Route path="/editor" element={<Editor />} />
+      <Route path="/companion" element={<Navigate to="/editor" replace />} />
+      <Route path="/hub" element={<Hub />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/interaction" element={<Interaction />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
   );

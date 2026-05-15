@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { type Socket } from 'socket.io-client';
+import { createMainSocket } from '../utils/createMainSocket';
 import {
   FLOW_EVENTS,
   SCREENS,
@@ -26,7 +27,7 @@ export interface UseFlowSocketReturn {
  * which display it's talking to.
  *
  * @example
- *   const { flowState, submitName } = useFlowSocket(SCREENS.CREATOR);
+ *   const { flowState, submitName } = useFlowSocket(SCREENS.EDITOR);
  */
 export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
   const [flowState, setFlowState] = useState<FlowStateUpdate | null>(null);
@@ -35,7 +36,7 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket: Socket = io({ path: '/socket.io' });
+    const socket = createMainSocket();
     socketRef.current = socket;
 
     socket.on('connect', () => {
@@ -55,8 +56,7 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
       socket.disconnect();
       socketRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [screenId]);
 
   const submitName = useCallback((name: string) => {
     const payload: NameSubmittedPayload = { name };

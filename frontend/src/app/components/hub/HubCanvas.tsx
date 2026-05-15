@@ -1,8 +1,10 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import type { SavedCompanion } from '../../store/companion-socket.types';
-import { HubEnvironment, HubSharedLights, HUB_CAMERA } from './HubEnvironment';
-import { CompanionInWorld } from './CompanionInWorld';
+import type { SavedCompanion } from '@ba-praktisch/shared-types';
+import { HUB_CAMERA } from '@ba-praktisch/shared-types';
+import { HubLights } from './HubLights';
+import { HubBackground } from './HubBackground';
+import { HubCharacterGroup } from './HubCharacterGroup';
 
 const COMPANION_ROW_GAP = 1.5;
 
@@ -16,21 +18,17 @@ function getCompanionRowPosition(
   return [startX + index * COMPANION_ROW_GAP, 0, 0];
 }
 
-interface HubSceneContentsProps {
-  companions: SavedCompanion[];
-}
-
-function HubSceneContents({ companions }: HubSceneContentsProps) {
+function HubCanvasContents({ companions }: { companions: SavedCompanion[] }) {
   return (
     <>
-      <HubSharedLights />
+      <HubLights />
 
       <Suspense fallback={null}>
-        <HubEnvironment />
+        <HubBackground />
       </Suspense>
 
       {companions.map((companion, index) => (
-        <CompanionInWorld
+        <HubCharacterGroup
           key={companion.id}
           companion={companion}
           position={getCompanionRowPosition(index, companions.length)}
@@ -40,11 +38,11 @@ function HubSceneContents({ companions }: HubSceneContentsProps) {
   );
 }
 
-interface HubSceneProps {
+interface HubCanvasProps {
   companions: SavedCompanion[];
 }
 
-export function HubScene({ companions }: HubSceneProps) {
+export function HubCanvas({ companions }: HubCanvasProps) {
   return (
     <Canvas
       camera={{
@@ -56,7 +54,7 @@ export function HubScene({ companions }: HubSceneProps) {
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
-      <HubSceneContents companions={companions} />
+      <HubCanvasContents companions={companions} />
     </Canvas>
   );
 }

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useCompanionStore } from '../../../store/companion.store';
-import type { PartCategory } from '../../../store/companion.store';
-import { saveCompanion } from '../../../services/companion.service';
-import { PART_VARIANTS } from '../CompanionPart';
-import styles from './CustomizationPanel.module.scss';
+import { useCompanionStore } from '../../store/companionStore';
+import type { PartCategory } from '../../store/companionStore';
+import { COMPANION_THUMBNAIL_BASE } from '@ba-praktisch/shared-types';
+import { saveCompanion } from '../../services/companion.service';
+import { PART_VARIANTS } from '../../constants/companion-part-variants';
+import styles from './EditorPanel.module.scss';
 
 type AnyCategory = PartCategory | 'body';
 
@@ -13,12 +14,8 @@ const CATEGORIES: { key: AnyCategory; label: string }[] = [
   { key: 'eyes', label: 'Eyes' },
   { key: 'nose', label: 'Nose' },
   { key: 'clothing', label: 'Clothing' },
-  // { key: 'backpack', label: 'Backpack' }, // reserved
-  // { key: 'ears',    label: 'Ears'    },  // reserved
-  // { key: 'tail',   label: 'Tail'    },  // reserved
 ];
 
-/** Categories where an empty string means “no part” (matches DEFAULT_CONFIG). */
 const OPTIONAL_PART_CATEGORIES: PartCategory[] = ['clothing'];
 
 function CategoryTabs() {
@@ -49,7 +46,6 @@ function CategoryTabs() {
   );
 }
 
-// Body Morph Sliders
 interface MorphSliderDef {
   morphName: string;
   label: string;
@@ -95,7 +91,6 @@ function BodySliders() {
   );
 }
 
-// Part Variant Grid
 function PartGrid({ category }: { category: PartCategory }) {
   const selected = useCompanionStore((s) => s[category]);
   const setPartVariant = useCompanionStore((s) => s.setPartVariant);
@@ -135,7 +130,7 @@ function PartGrid({ category }: { category: PartCategory }) {
           aria-pressed={selected === variantId}
         >
           <img
-            src={`/assets/companion/thumbnails/${category}/${variantId}.png`}
+            src={`${COMPANION_THUMBNAIL_BASE}/${category}/${variantId}.png`}
             alt={variantId}
             className={styles.thumbnail}
             onError={(e) => {
@@ -149,8 +144,7 @@ function PartGrid({ category }: { category: PartCategory }) {
   );
 }
 
-// Panel
-export function CustomizationPanel() {
+export function EditorPanel() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -200,8 +194,7 @@ export function CustomizationPanel() {
           disabled={saving}
           aria-busy={saving}
         >
-          {/* TODO: better wording or confirmation popup */}
-          {saving ? 'Saving…' : saved ? 'Saved!' : 'Save'}
+          {saving ? 'Saving…' : saved ? 'Saved!' : 'Create'}
         </button>
       </div>
     </div>
