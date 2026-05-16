@@ -4,11 +4,17 @@ import type { PartCategory } from '../../store/companionStore';
 import { COMPANION_THUMBNAIL_BASE } from '@ba-praktisch/shared-types';
 import { saveCompanion } from '../../services/companion.service';
 import { PART_VARIANTS } from '../../constants/companion-part-variants';
+import {
+  EYE_SCLERA_PRESETS,
+  IRIS_COLOR_PRESETS,
+} from '../../constants/eye-color-presets';
 import { FUR_COLOR_PRESETS } from '../../constants/fur-color-presets';
 import { NOSE_COLOR_PRESETS } from '../../constants/nose-color-presets';
 import styles from './EditorPanel.module.scss';
 
-type AnyCategory = PartCategory | 'body' | 'fur' | 'nose';
+type AnyCategory = PartCategory | 'body' | 'fur' | 'nose' | 'eyes';
+
+type EyeColorSubcategory = 'eye' | 'iris';
 
 const CATEGORIES: { key: AnyCategory; label: string }[] = [
   { key: 'body', label: 'Body' },
@@ -89,6 +95,65 @@ function BodySliders() {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function EyesColorPicker() {
+  const [subcategory, setSubcategory] = useState<EyeColorSubcategory>('eye');
+  const eyeColor = useCompanionStore((s) => s.eyeColor);
+  const setEyeColorPart = useCompanionStore((s) => s.setEyeColorPart);
+
+  const presets =
+    subcategory === 'eye' ? EYE_SCLERA_PRESETS : IRIS_COLOR_PRESETS;
+  const activeKey = subcategory === 'eye' ? 'primary' : 'secondary';
+
+  return (
+    <div className={styles.eyesSection}>
+      <div
+        className={styles.subTabBar}
+        role="tablist"
+        aria-label="Eye color parts"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={subcategory === 'eye'}
+          className={`${styles.subTab} ${subcategory === 'eye' ? styles.subTabActive : ''}`}
+          onClick={() => setSubcategory('eye')}
+        >
+          Eye
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={subcategory === 'iris'}
+          className={`${styles.subTab} ${subcategory === 'iris' ? styles.subTabActive : ''}`}
+          onClick={() => setSubcategory('iris')}
+        >
+          Iris
+        </button>
+      </div>
+      <div className={styles.grid}>
+        {presets.map((preset) => {
+          const selected = eyeColor[activeKey] === preset;
+          return (
+            <button
+              type="button"
+              key={preset}
+              className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
+              onClick={() => setEyeColorPart(activeKey, preset)}
+              aria-pressed={selected}
+              aria-label={`${subcategory === 'eye' ? 'Eye' : 'Iris'} color ${preset}`}
+            >
+              <span
+                className={styles.colorSwatchPreview}
+                style={{ background: preset }}
+              />
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -219,9 +284,9 @@ export function EditorPanel() {
       const state = useCompanionStore.getState();
       await saveCompanion({
         furColor: state.furColor,
+        eyeColor: state.eyeColor,
         noseColor: state.noseColor,
         clothing: state.clothing,
-        eyes: state.eyes,
         ears: state.ears,
         tail: state.tail,
         backpack: state.backpack,
@@ -247,6 +312,8 @@ export function EditorPanel() {
           <FurColorPicker />
         ) : activeCategory === 'nose' ? (
           <NoseColorPicker />
+        ) : activeCategory === 'eyes' ? (
+          <EyesColorPicker />
         ) : (
           <PartGrid category={activeCategory} />
         )}

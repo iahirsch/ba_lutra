@@ -218,7 +218,7 @@ export class CompanionGateway
   private extractConfig(companion: Companion): CompanionConfig {
     return {
       furColor: companion.furColor,
-      eyes: companion.eyes,
+      eyeColor: companion.eyeColor,
       noseColor: companion.noseColor,
       clothing: companion.clothing,
       ears: companion.ears,

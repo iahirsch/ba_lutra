@@ -1,5 +1,8 @@
 import { useGLTF } from '@react-three/drei';
-import { COMPANION_BODY_GLB_URL, COMPANION_GLB_BASE } from '@ba-praktisch/shared-types';
+import {
+  COMPANION_BODY_GLB_URL,
+  COMPANION_GLB_BASE,
+} from '@ba-praktisch/shared-types';
 import type { PartCategory } from '../store/companionStore';
 
 function variantUrl(category: PartCategory, variantId: string): string {
@@ -7,7 +10,6 @@ function variantUrl(category: PartCategory, variantId: string): string {
 }
 
 export const PART_VARIANTS: Record<PartCategory, string[]> = {
-  eyes: ['eyes01', 'eyes02'],
   clothing: ['clothing01'],
   backpack: ['backpack01'],
   ears: [],

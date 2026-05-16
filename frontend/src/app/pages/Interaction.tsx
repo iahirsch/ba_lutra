@@ -44,6 +44,7 @@ function InteractionScene({ companionConfig }: InteractionSceneProps) {
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}
+              eyeColor={companionConfig.eyeColor}
               noseColor={companionConfig.noseColor}
             />
             {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {

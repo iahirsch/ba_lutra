@@ -21,8 +21,11 @@ export class Companion {
   })
   furColor!: { primary: string; secondary: string };
 
-  @Column({ type: 'varchar', length: 50 })
-  eyes!: string;
+  @Column({
+    type: 'jsonb',
+    default: () => `'{"primary":"#FFFFFF","secondary":"#3D2914"}'`,
+  })
+  eyeColor!: { primary: string; secondary: string };
 
   @Column({ type: 'varchar', length: 20, default: '#212121' })
   noseColor!: string;

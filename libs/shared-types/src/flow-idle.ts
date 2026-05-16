@@ -3,8 +3,8 @@ import type { FlowStateUpdate } from './flow-events';
 
 export const IDLE_COMPANION_CONFIG: CompanionConfig = {
   furColor: { primary: '', secondary: '' },
+  eyeColor: { primary: '', secondary: '' },
   noseColor: '',
-  eyes: '',
   clothing: '',
   ears: '',
   tail: '',

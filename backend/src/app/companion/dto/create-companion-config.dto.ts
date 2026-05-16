@@ -8,7 +8,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-class FurColorDto {
+class ColorDto {
   @ApiProperty({ example: '#897366' })
   @IsString()
   @IsNotEmpty()
@@ -26,15 +26,15 @@ export class CreateCompanionConfigDto {
   @IsString()
   name?: string;
 
-  @ApiProperty({ type: FurColorDto })
+  @ApiProperty({ type: ColorDto })
   @ValidateNested()
-  @Type(() => FurColorDto)
-  furColor!: FurColorDto;
+  @Type(() => ColorDto)
+  furColor!: ColorDto;
 
-  @ApiProperty({ example: 'eyes01' })
-  @IsString()
-  @IsNotEmpty()
-  eyes!: string;
+  @ApiProperty({ type: ColorDto })
+  @ValidateNested()
+  @Type(() => ColorDto)
+  eyeColor!: ColorDto;
 
   @ApiProperty({ example: '#212121' })
   @IsString()

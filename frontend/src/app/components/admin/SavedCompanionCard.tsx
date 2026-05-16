@@ -1,42 +1,44 @@
 import { useState } from 'react';
 import {
   COMPANION_THUMBNAIL_BASE,
-  type FurColor,
   type SavedCompanion,
 } from '@ba-praktisch/shared-types';
 import styles from './SavedCompanionCard.module.scss';
 
 const VARIANT_PART_KEYS: Array<
-  keyof Pick<
-    SavedCompanion,
-    'eyes' | 'clothing' | 'ears' | 'tail' | 'backpack'
-  >
-> = ['eyes', 'clothing', 'ears', 'tail', 'backpack'];
+  keyof Pick<SavedCompanion, 'clothing' | 'ears' | 'tail' | 'backpack'>
+> = ['clothing', 'ears', 'tail', 'backpack'];
 
 function formatVariant(category: string, variantId: string): string {
   if (!variantId) return '—';
   return variantId.replace(new RegExp(`^${category}[_]?`), '') || variantId;
 }
 
-function NoseColorThumb({ noseColor }: { noseColor: string }) {
+function ColorThumb({ label, color }: { label: string; color: string }) {
   return (
     <div className={styles.partThumb}>
-      <span className={styles.thumbImg} style={{ background: noseColor }} />
-      <span className={styles.partLabel}>nose</span>
+      <span className={styles.thumbImg} style={{ background: color }} />
+      <span className={styles.partLabel}>{label}</span>
     </div>
   );
 }
 
-function FurColorThumb({ furColor }: { furColor: FurColor }) {
+function DualColorThumb({
+  label,
+  colors,
+}: {
+  label: string;
+  colors: { primary: string; secondary: string };
+}) {
   return (
     <div className={styles.partThumb}>
       <span
         className={styles.thumbImg}
         style={{
-          background: `linear-gradient(90deg, ${furColor.primary} 50%, ${furColor.secondary} 50%)`,
+          background: `linear-gradient(90deg, ${colors.primary} 50%, ${colors.secondary} 50%)`,
         }}
       />
-      <span className={styles.partLabel}>fur</span>
+      <span className={styles.partLabel}>{label}</span>
     </div>
   );
 }
@@ -138,8 +140,9 @@ export function SavedCompanionCard({
       </header>
 
       <div className={styles.parts}>
-        <FurColorThumb furColor={companion.furColor} />
-        <NoseColorThumb noseColor={companion.noseColor} />
+        <DualColorThumb label="fur" colors={companion.furColor} />
+        <DualColorThumb label="eyes" colors={companion.eyeColor} />
+        <ColorThumb label="nose" color={companion.noseColor} />
         {VARIANT_PART_KEYS.map((cat) => (
           <PartThumb
             key={cat}

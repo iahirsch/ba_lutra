@@ -112,6 +112,41 @@
   }
 }
 
+.eyesSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.subTabBar {
+  display: flex;
+  flex-direction: row;
+  gap: s.$space-sm;
+  padding: s.$space-md s.$space-lg 0;
+}
+
+.subTab {
+  @include s.button-reset;
+  @include s.focus-ring(s.$space-2xs, s.$radius-sm);
+  @include s.interactive-transition(
+    color s.$duration-normal s.$easing-standard,
+    background s.$duration-fast s.$easing-standard
+  );
+
+  flex: 1;
+  min-height: 2.25rem;
+  padding: s.$space-sm s.$space-md;
+  border-radius: s.$radius-lg;
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-600;
+  background: s.$color-white-400;
+}
+
+.subTabActive {
+  color: s.$color-neutral-900;
+  background: s.$color-white-900;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

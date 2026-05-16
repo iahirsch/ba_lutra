@@ -26,6 +26,7 @@ export function HubCharacterGroup({
         <CompanionBody
           bodyMorphs={bodyMorphs}
           furColor={companion.furColor}
+          eyeColor={companion.eyeColor}
           noseColor={companion.noseColor}
         />
         {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {

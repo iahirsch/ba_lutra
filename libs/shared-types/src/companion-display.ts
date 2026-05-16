@@ -1,9 +1,5 @@
 /** Part categories rendered as separate GLB meshes */
-export const RENDERED_COMPANION_PARTS = [
-  'eyes',
-  'clothing',
-  'backpack',
-] as const;
+export const RENDERED_COMPANION_PARTS = ['clothing', 'backpack'] as const;
 
 export type RenderedCompanionPart = (typeof RENDERED_COMPANION_PARTS)[number];
 

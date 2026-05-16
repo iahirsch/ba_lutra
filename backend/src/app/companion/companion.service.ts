@@ -17,7 +17,7 @@ export class CompanionService {
     const companion = this.companionRepository.create({
       name: dto.name ?? 'My Lutra',
       furColor: dto.furColor,
-      eyes: dto.eyes,
+      eyeColor: dto.eyeColor,
       noseColor: dto.noseColor,
       clothing: dto.clothing ?? '',
       ears: dto.ears ?? '',

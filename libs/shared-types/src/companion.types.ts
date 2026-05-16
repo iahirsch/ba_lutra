@@ -3,10 +3,15 @@ export interface FurColor {
   secondary: string;
 }
 
+export interface EyeColor {
+  primary: string;
+  secondary: string;
+}
+
 export interface CompanionConfig {
   furColor: FurColor;
+  eyeColor: EyeColor;
   noseColor: string;
-  eyes: string;
   clothing: string;
   ears: string;
   tail: string;
