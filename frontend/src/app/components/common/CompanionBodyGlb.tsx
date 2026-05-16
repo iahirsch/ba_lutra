@@ -6,9 +6,14 @@ import {
   type EyeColor,
   type FurColor,
 } from '@ba-praktisch/shared-types';
+import {
+  DEFAULT_COMPANION_BODY_CLIP,
+  type CompanionBodyClip,
+} from '../../constants/companion-body-clips';
 import { resolveEyeColor } from '../../constants/eye-color-presets';
 import { resolveFurColor } from '../../constants/fur-color-presets';
 import { resolveNoseColor } from '../../constants/nose-color-presets';
+import { useCompanionBodyAnimation } from '../../hooks/useCompanionBodyAnimation';
 import { applyCelShading } from '../../utils/celShading';
 import { applyBodyMorphsToObject } from '../../utils/applyBodyMorphs';
 import { applyEyeColorsToObject } from '../../utils/applyEyeColors';
@@ -23,16 +28,17 @@ export interface CompanionBodyProps {
   furColor: FurColor;
   eyeColor: EyeColor;
   noseColor: string;
+  activeClip?: CompanionBodyClip;
 }
 
-/** Body mesh: morph targets + runtime material colors (fur, eyes, nose). */
 export function CompanionBody({
   bodyMorphs,
   furColor,
   eyeColor,
   noseColor,
+  activeClip = DEFAULT_COMPANION_BODY_CLIP,
 }: CompanionBodyProps) {
-  const { scene: source } = useGLTF(COMPANION_BODY_GLB_URL);
+  const { scene: source, animations } = useGLTF(COMPANION_BODY_GLB_URL);
   const resolvedFurColor = resolveFurColor(furColor);
   const resolvedEyeColor = resolveEyeColor(eyeColor);
   const resolvedNoseColor = resolveNoseColor(noseColor);
@@ -52,6 +58,8 @@ export function CompanionBody({
     applyCelShading(cloned);
     return cloned;
   }, [source, morphKey, resolvedFurColor, resolvedEyeColor, resolvedNoseColor]);
+
+  useCompanionBodyAnimation(scene, animations, activeClip);
 
   return <primitive object={scene} />;
 }
