@@ -9,10 +9,10 @@ import {
 import type { CompanionBodyClip } from '../constants/companion-body-clips';
 import { isCompanionBodyClip } from '../constants/companion-body-clips';
 
-export const DEFAULT_CROSSFADE_DURATION = 0.3;
+export const DEFAULT_CROSSFADE_DURATION = 0.4;
 
 export type CrossFadeOptions = {
-  /** Crossfade length in seconds. Default: 0.3 */
+  /** Crossfade length in seconds. Default: 0.4 */
   duration?: number;
   /** Play once, then crossfade back to idle. Default: false */
   once?: boolean;
