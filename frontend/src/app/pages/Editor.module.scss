@@ -1,0 +1,25 @@
+@use '../../styles/index' as s;
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.canvasZone {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 60%;
+  overflow: hidden;
+}
+
+.panelZone {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 40%;
+  overflow: hidden;
+}

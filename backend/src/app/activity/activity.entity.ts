@@ -14,7 +14,16 @@ export class Activity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index({ unique: true })
+  @Column({ type: 'bigint' })
+  stravaActivityId!: string;
+
+  @ManyToOne(() => Companion, (companion) => companion.activities, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'companion_id' })
+  companion?: Companion | null;
+
   @Column({ type: 'varchar', length: 50 })
   type!: string;
 
@@ -27,16 +36,12 @@ export class Activity {
   @Column({ type: 'double precision' })
   intensityScore!: number;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name!: string | null;
+
   @Column({ type: 'timestamptz' })
   startedAt!: Date;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt!: Date;
-
-  // @ManyToOne(() => Companion, (companion) => companion.activities, {
-  //   nullable: false,
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'companion_id' })
-  // companion!: Companion;
 }

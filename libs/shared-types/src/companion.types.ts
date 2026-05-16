@@ -1,7 +1,17 @@
+export interface FurColor {
+  primary: string;
+  secondary: string;
+}
+
+export interface EyeColor {
+  primary: string;
+  secondary: string;
+}
+
 export interface CompanionConfig {
-  fur: string;
-  eyes: string;
-  nose: string;
+  furColor: FurColor;
+  eyeColor: EyeColor;
+  noseColor: string;
   clothing: string;
   ears: string;
   tail: string;

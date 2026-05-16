@@ -2,7 +2,7 @@ import type { CompanionConfig } from './companion.types';
 
 // Screen Identifiers
 export const SCREENS = {
-  CREATOR: 'SCREEN_CREATOR',
+  EDITOR: 'SCREEN_EDITOR',
   INTERACTION: 'SCREEN_INTERACTION',
   HUB: 'SCREEN_HUB',
 } as const;
@@ -24,23 +24,15 @@ export const FLOW_EVENTS = {
   EXIT_COMPLETE: 'flow:exit-complete',
 } as const;
 
-/**
- * Creator view config
- * @param idle        → no active session; SCREEN_CREATOR shows the companion builder
- * @param name-input  → user types the companion's name
- * @param choices     → user taps one of several option buttons
- * @param confirm     → user taps a single action button (Done / Continue)
- * @param transition  → no interaction; shows a status message while animation plays
- */
-export type CreatorViewType =
+export type EditorViewType =
   | 'idle'
   | 'name-input'
   | 'choices'
   | 'confirm'
   | 'transition';
 
-export interface CreatorViewConfig {
-  type: CreatorViewType;
+export interface EditorViewConfig {
+  type: EditorViewType;
   prompt?: string;
   choices?: { id: string; label: string }[];
   confirmLabel?: string;
@@ -52,7 +44,7 @@ export interface FlowStateUpdate {
   companionConfig: CompanionConfig;
   companionName: string | null;
   companionDialogue: string;
-  creatorView: CreatorViewConfig;
+  creatorView: EditorViewConfig;
 }
 
 export interface RegisterScreenPayload {
