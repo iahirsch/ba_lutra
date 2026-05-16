@@ -5,9 +5,10 @@ import { COMPANION_THUMBNAIL_BASE } from '@ba-praktisch/shared-types';
 import { saveCompanion } from '../../services/companion.service';
 import { PART_VARIANTS } from '../../constants/companion-part-variants';
 import { FUR_COLOR_PRESETS } from '../../constants/fur-color-presets';
+import { NOSE_COLOR_PRESETS } from '../../constants/nose-color-presets';
 import styles from './EditorPanel.module.scss';
 
-type AnyCategory = PartCategory | 'body' | 'fur';
+type AnyCategory = PartCategory | 'body' | 'fur' | 'nose';
 
 const CATEGORIES: { key: AnyCategory; label: string }[] = [
   { key: 'body', label: 'Body' },
@@ -86,6 +87,34 @@ function BodySliders() {
               }
             />
           </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function NoseColorPicker() {
+  const noseColor = useCompanionStore((s) => s.noseColor);
+  const setNoseColor = useCompanionStore((s) => s.setNoseColor);
+
+  return (
+    <div className={styles.grid}>
+      {NOSE_COLOR_PRESETS.map((preset) => {
+        const selected = noseColor === preset;
+        return (
+          <button
+            type="button"
+            key={preset}
+            className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
+            onClick={() => setNoseColor(preset)}
+            aria-pressed={selected}
+            aria-label={`Nose color ${preset}`}
+          >
+            <span
+              className={styles.colorSwatchPreview}
+              style={{ background: preset }}
+            />
+          </button>
         );
       })}
     </div>
@@ -190,9 +219,9 @@ export function EditorPanel() {
       const state = useCompanionStore.getState();
       await saveCompanion({
         furColor: state.furColor,
+        noseColor: state.noseColor,
         clothing: state.clothing,
         eyes: state.eyes,
-        nose: state.nose,
         ears: state.ears,
         tail: state.tail,
         backpack: state.backpack,
@@ -216,6 +245,8 @@ export function EditorPanel() {
           <BodySliders />
         ) : activeCategory === 'fur' ? (
           <FurColorPicker />
+        ) : activeCategory === 'nose' ? (
+          <NoseColorPicker />
         ) : (
           <PartGrid category={activeCategory} />
         )}

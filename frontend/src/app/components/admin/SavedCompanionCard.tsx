@@ -9,13 +9,22 @@ import styles from './SavedCompanionCard.module.scss';
 const VARIANT_PART_KEYS: Array<
   keyof Pick<
     SavedCompanion,
-    'eyes' | 'nose' | 'clothing' | 'ears' | 'tail' | 'backpack'
+    'eyes' | 'clothing' | 'ears' | 'tail' | 'backpack'
   >
-> = ['eyes', 'nose', 'clothing', 'ears', 'tail', 'backpack'];
+> = ['eyes', 'clothing', 'ears', 'tail', 'backpack'];
 
 function formatVariant(category: string, variantId: string): string {
   if (!variantId) return '—';
   return variantId.replace(new RegExp(`^${category}[_]?`), '') || variantId;
+}
+
+function NoseColorThumb({ noseColor }: { noseColor: string }) {
+  return (
+    <div className={styles.partThumb}>
+      <span className={styles.thumbImg} style={{ background: noseColor }} />
+      <span className={styles.partLabel}>nose</span>
+    </div>
+  );
 }
 
 function FurColorThumb({ furColor }: { furColor: FurColor }) {
@@ -130,6 +139,7 @@ export function SavedCompanionCard({
 
       <div className={styles.parts}>
         <FurColorThumb furColor={companion.furColor} />
+        <NoseColorThumb noseColor={companion.noseColor} />
         {VARIANT_PART_KEYS.map((cat) => (
           <PartThumb
             key={cat}

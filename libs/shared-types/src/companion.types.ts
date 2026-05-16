@@ -5,8 +5,8 @@ export interface FurColor {
 
 export interface CompanionConfig {
   furColor: FurColor;
+  noseColor: string;
   eyes: string;
-  nose: string;
   clothing: string;
   ears: string;
   tail: string;

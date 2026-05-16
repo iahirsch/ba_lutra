@@ -53,12 +53,11 @@ function EditorBackgroundMesh() {
 }
 
 function EditorSceneParts() {
-  const { eyes, nose, clothing, backpack } = useCompanionStore();
+  const { eyes, clothing, backpack } = useCompanionStore();
   return (
     <>
       <EditorBody />
       {eyes && <EditorGlbPart category="eyes" variantId={eyes} />}
-      {nose && <EditorGlbPart category="nose" variantId={nose} />}
       {clothing && <EditorGlbPart category="clothing" variantId={clothing} />}
       {backpack && <EditorGlbPart category="backpack" variantId={backpack} />}
     </>

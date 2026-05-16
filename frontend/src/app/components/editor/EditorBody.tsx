@@ -5,5 +5,12 @@ import { CompanionBody } from '../common/CompanionBodyGlb';
 export function EditorBody() {
   const bodyMorphs = useCompanionStore((s) => s.bodyMorphs);
   const furColor = useCompanionStore((s) => s.furColor);
-  return <CompanionBody bodyMorphs={bodyMorphs} furColor={furColor} />;
+  const noseColor = useCompanionStore((s) => s.noseColor);
+  return (
+    <CompanionBody
+      bodyMorphs={bodyMorphs}
+      furColor={furColor}
+      noseColor={noseColor}
+    />
+  );
 }

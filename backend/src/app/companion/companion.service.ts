@@ -18,7 +18,7 @@ export class CompanionService {
       name: dto.name ?? 'My Lutra',
       furColor: dto.furColor,
       eyes: dto.eyes,
-      nose: dto.nose,
+      noseColor: dto.noseColor,
       clothing: dto.clothing ?? '',
       ears: dto.ears ?? '',
       tail: dto.tail ?? '',

@@ -36,10 +36,10 @@ export class CreateCompanionConfigDto {
   @IsNotEmpty()
   eyes!: string;
 
-  @ApiProperty({ example: 'nose01' })
+  @ApiProperty({ example: '#212121' })
   @IsString()
   @IsNotEmpty()
-  nose!: string;
+  noseColor!: string;
 
   @ApiPropertyOptional({ example: '' })
   @IsOptional()

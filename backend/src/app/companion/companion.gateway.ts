@@ -219,7 +219,7 @@ export class CompanionGateway
     return {
       furColor: companion.furColor,
       eyes: companion.eyes,
-      nose: companion.nose,
+      noseColor: companion.noseColor,
       clothing: companion.clothing,
       ears: companion.ears,
       tail: companion.tail,

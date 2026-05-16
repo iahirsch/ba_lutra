@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Text } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import {
   RENDERED_COMPANION_PARTS,
   type RenderedCompanionPart,
@@ -23,7 +23,11 @@ export function HubCharacterGroup({
   return (
     <group position={position}>
       <Suspense fallback={null}>
-        <CompanionBody bodyMorphs={bodyMorphs} furColor={companion.furColor} />
+        <CompanionBody
+          bodyMorphs={bodyMorphs}
+          furColor={companion.furColor}
+          noseColor={companion.noseColor}
+        />
         {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
           const variantId = companion[category];
           if (!variantId) return null;
@@ -38,15 +42,21 @@ export function HubCharacterGroup({
         })}
       </Suspense>
 
-      <Text
-        position={[0, 2.4, 0]}
-        fontSize={0.18}
-        color="#ffffff"
-        anchorX="center"
-        anchorY="middle"
+      <Html
+        position={[0, 2.2, 0]}
+        center
+        distanceFactor={10}
+        pointerEvents="none"
+        style={{
+          color: '#ffffff',
+          fontSize: '16px',
+          fontWeight: 600,
+          whiteSpace: 'nowrap',
+          userSelect: 'none',
+        }}
       >
         {companion.name}
-      </Text>
+      </Html>
     </group>
   );
 }

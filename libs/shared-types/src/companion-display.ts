@@ -1,7 +1,6 @@
 /** Part categories rendered as separate GLB meshes */
 export const RENDERED_COMPANION_PARTS = [
   'eyes',
-  'nose',
   'clothing',
   'backpack',
 ] as const;

@@ -44,6 +44,7 @@ function InteractionScene({ companionConfig }: InteractionSceneProps) {
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}
+              noseColor={companionConfig.noseColor}
             />
             {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
               const variantId = companionConfig[part];
