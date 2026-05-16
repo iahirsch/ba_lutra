@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import {
@@ -29,6 +29,8 @@ export interface CompanionBodyProps {
   eyeColor: EyeColor;
   noseColor: string;
   activeClip?: CompanionBodyClip;
+  activeClipKey?: string;
+  onRestoredToIdle?: () => void;
 }
 
 export function CompanionBody({
@@ -37,29 +39,41 @@ export function CompanionBody({
   eyeColor,
   noseColor,
   activeClip = DEFAULT_COMPANION_BODY_CLIP,
+  activeClipKey,
+  onRestoredToIdle,
 }: CompanionBodyProps) {
   const { scene: source, animations } = useGLTF(COMPANION_BODY_GLB_URL);
   const resolvedFurColor = resolveFurColor(furColor);
   const resolvedEyeColor = resolveEyeColor(eyeColor);
   const resolvedNoseColor = resolveNoseColor(noseColor);
 
-  const morphKey = JSON.stringify(bodyMorphs);
-
   const scene = useMemo(() => {
     const cloned = cloneSkinned(source);
     cloneMaterialsOnObject(cloned);
-    applyBodyMorphsToObject(
-      cloned,
-      JSON.parse(morphKey) as Record<string, number>,
-    );
-    applyFurColorsToObject(cloned, resolvedFurColor);
-    applyEyeColorsToObject(cloned, resolvedEyeColor);
-    applyNoseColorToObject(cloned, resolvedNoseColor);
     applyCelShading(cloned);
     return cloned;
-  }, [source, morphKey, resolvedFurColor, resolvedEyeColor, resolvedNoseColor]);
+  }, [source]);
 
-  useCompanionBodyAnimation(scene, animations, activeClip);
+  useLayoutEffect(() => {
+    applyBodyMorphsToObject(scene, bodyMorphs);
+    applyFurColorsToObject(scene, resolvedFurColor);
+    applyEyeColorsToObject(scene, resolvedEyeColor);
+    applyNoseColorToObject(scene, resolvedNoseColor);
+  }, [
+    scene,
+    bodyMorphs,
+    resolvedFurColor,
+    resolvedEyeColor,
+    resolvedNoseColor,
+  ]);
+
+  useCompanionBodyAnimation(
+    scene,
+    animations,
+    activeClip,
+    activeClipKey,
+    onRestoredToIdle,
+  );
 
   return <primitive object={scene} />;
 }

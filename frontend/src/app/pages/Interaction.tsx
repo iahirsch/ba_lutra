@@ -13,13 +13,19 @@ import { HubBackground } from '../components/hub/HubBackground';
 import { HubLights } from '../components/hub/HubLights';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
+import {
+  isInteractionExitStep,
+  resolveInteractionBodyClip,
+} from '../constants/companion-flow-body-clips';
 import styles from './Interaction.module.scss';
 
-// TODO: Replace with a real animation callback once 3D exit animations exist
-const EXIT_HOLD_MS = 3_500;
+/** Safety net if the wave clip is missing or fails to finish. */
+const EXIT_ANIMATION_FALLBACK_MS = 8_000;
 
 interface InteractionSceneProps {
   companionConfig: CompanionConfig | null;
+  stepId: string;
+  onExitAnimationComplete?: () => void;
 }
 
 const INTERACTION_CANVAS_CAMERA = {
@@ -29,7 +35,11 @@ const INTERACTION_CANVAS_CAMERA = {
   far: HUB_CAMERA.far,
 };
 
-function InteractionScene({ companionConfig }: InteractionSceneProps) {
+function InteractionScene({
+  companionConfig,
+  stepId,
+  onExitAnimationComplete,
+}: InteractionSceneProps) {
   return (
     <Canvas
       camera={INTERACTION_CANVAS_CAMERA}
@@ -46,6 +56,13 @@ function InteractionScene({ companionConfig }: InteractionSceneProps) {
               furColor={companionConfig.furColor}
               eyeColor={companionConfig.eyeColor}
               noseColor={companionConfig.noseColor}
+              activeClip={resolveInteractionBodyClip(stepId)}
+              activeClipKey={stepId}
+              onRestoredToIdle={
+                isInteractionExitStep(stepId)
+                  ? onExitAnimationComplete
+                  : undefined
+              }
             />
             {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
               const variantId = companionConfig[part];
@@ -89,16 +106,19 @@ export function Interaction() {
   const { flowState, notifyExitComplete } = useFlowSocket(SCREENS.INTERACTION);
 
   useEffect(() => {
-    if (flowState?.creatorView.type !== 'transition') return;
-    const timer = setTimeout(notifyExitComplete, EXIT_HOLD_MS);
+    if (!flowState || flowState.creatorView.type !== 'transition') return;
+    if (!isInteractionExitStep(flowState.stepId)) return;
+    const timer = setTimeout(notifyExitComplete, EXIT_ANIMATION_FALLBACK_MS);
     return () => clearTimeout(timer);
-  }, [flowState?.stepId, flowState?.creatorView.type, notifyExitComplete]);
+  }, [flowState, notifyExitComplete]);
 
   return (
     <div className={styles.page}>
       <div className={styles.canvas}>
         <InteractionScene
           companionConfig={flowState?.companionConfig ?? null}
+          stepId={flowState?.stepId ?? ''}
+          onExitAnimationComplete={notifyExitComplete}
         />
       </div>
 

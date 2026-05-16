@@ -18,6 +18,11 @@ export type CrossFadeOptions = {
   once?: boolean;
 };
 
+export type CompanionAnimationControllerOptions = {
+  /** Fired after a one-shot clip ends and a return-to-idle crossfade has started. */
+  onRestoredToIdle?: () => void;
+};
+
 export type CompanionAnimationController = {
   crossFadeTo: (clip: CompanionBodyClip, options?: CrossFadeOptions) => void;
   update: (delta: number) => void;
@@ -43,6 +48,7 @@ function executeCrossFade(
 export function createCompanionAnimationController(
   root: Object3D,
   clips: AnimationClip[],
+  { onRestoredToIdle }: CompanionAnimationControllerOptions = {},
 ): CompanionAnimationController {
   const mixer = new AnimationMixer(root);
   const actions = new Map<CompanionBodyClip, AnimationAction>();
@@ -69,6 +75,37 @@ export function createCompanionAnimationController(
     onFinished = null;
   }
 
+  function scheduleReturnToIdle(
+    endAction: AnimationAction,
+    duration: number,
+  ): void {
+    onFinished = (event) => {
+      if (event.action !== endAction) return;
+      clearFinishedListener();
+      crossFadeTo('idle', { duration });
+      onRestoredToIdle?.();
+    };
+    mixer.addEventListener('finished', onFinished);
+  }
+
+  function playOneShot(
+    endAction: AnimationAction,
+    duration: number,
+    startAction: AnimationAction | undefined,
+  ): void {
+    endAction.setLoop(LoopOnce, 1);
+    endAction.clampWhenFinished = true;
+    endAction.reset();
+    setWeight(endAction, 1);
+    endAction.play();
+
+    if (startAction && startAction !== endAction) {
+      executeCrossFade(startAction, endAction, duration);
+    }
+
+    scheduleReturnToIdle(endAction, duration);
+  }
+
   function crossFadeTo(
     clipName: CompanionBodyClip,
     options: CrossFadeOptions = {},
@@ -83,30 +120,24 @@ export function createCompanionAnimationController(
       );
       return;
     }
+
+    if (options.once && clipName !== 'idle') {
+      if (!startAction) return;
+      clearFinishedListener();
+      currentClip = clipName;
+      playOneShot(endAction, duration, startAction);
+      return;
+    }
+
     if (!startAction || startAction === endAction) return;
 
     clearFinishedListener();
 
-    if (options.once) {
-      endAction.setLoop(LoopOnce, 1);
-      endAction.clampWhenFinished = true;
-    } else {
-      endAction.setLoop(LoopRepeat, Infinity);
-      endAction.clampWhenFinished = false;
-    }
-
+    endAction.setLoop(LoopRepeat, Infinity);
+    endAction.clampWhenFinished = false;
     endAction.play();
     executeCrossFade(startAction, endAction, duration);
     currentClip = clipName;
-
-    if (options.once && clipName !== 'idle') {
-      onFinished = (event) => {
-        if (event.action !== endAction) return;
-        clearFinishedListener();
-        crossFadeTo('idle', { duration });
-      };
-      mixer.addEventListener('finished', onFinished);
-    }
   }
 
   return {
