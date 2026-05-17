@@ -1,0 +1,95 @@
+@use '../../../styles/index' as s;
+
+.activity {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-sm;
+  padding: s.$space-md;
+  border-radius: s.$radius-lg;
+  background: s.$color-white-400;
+  border: 1px solid s.$color-black-50;
+}
+
+.activityHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: s.$space-xs s.$space-sm;
+}
+
+.activityTitle {
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-900;
+}
+
+.activityType {
+  font-size: s.$font-size-xs;
+  color: s.$color-neutral-500;
+  text-transform: capitalize;
+}
+
+.activityWhen {
+  font-size: s.$font-size-xs;
+  color: s.$color-neutral-400;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: s.$space-sm;
+  margin: 0;
+
+  dt {
+    font-size: s.$font-size-2xs;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: s.$color-neutral-400;
+    margin: 0 0 s.$space-2xs;
+  }
+
+  dd {
+    margin: 0;
+    font-size: s.$font-size-sm;
+    font-weight: s.$font-weight-medium;
+    color: s.$color-neutral-900;
+  }
+}
+
+.effort {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-xs;
+}
+
+.effortLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.effortLabel {
+  font-size: s.$font-size-xs;
+  font-weight: s.$font-weight-medium;
+  color: s.$color-neutral-600;
+}
+
+.effortValue {
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-semibold;
+  color: s.$color-neutral-900;
+}
+
+.effortTrack {
+  height: 0.375rem;
+  border-radius: s.$radius-pill;
+  background: s.$color-black-100;
+  overflow: hidden;
+}
+
+.effortFill {
+  height: 100%;
+  border-radius: s.$radius-pill;
+  background: s.$color-neutral-900;
+  transition: width s.$duration-normal s.$easing-standard;
+}

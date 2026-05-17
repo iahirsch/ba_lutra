@@ -10,6 +10,7 @@ import {
   type StravaStatus,
 } from '../services/strava.service';
 import { SavedCompanionCard } from '../components/admin/SavedCompanionCard';
+import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import styles from './AdminDashboard.module.scss';
 
 function StravaSection() {
@@ -124,6 +125,9 @@ function StravaSection() {
 
 export function AdminDashboard() {
   const { companions, connected, error } = useCompanionSocket();
+  const activitiesByCompanion = useLatestActivitiesByCompanion(
+    companions.map((c) => c.id),
+  );
 
   async function handleDelete(id: string) {
     try {
@@ -178,6 +182,7 @@ export function AdminDashboard() {
             <SavedCompanionCard
               key={companion.id}
               companion={companion}
+              activity={activitiesByCompanion.get(companion.id) ?? null}
               onDelete={handleDelete}
             />
           ))}

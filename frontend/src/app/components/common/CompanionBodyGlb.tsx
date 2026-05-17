@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, type ReactNode } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import {
@@ -6,9 +6,15 @@ import {
   type EyeColor,
   type FurColor,
 } from '@ba-praktisch/shared-types';
+import {
+  DEFAULT_COMPANION_BODY_CLIP,
+  type CompanionBodyClip,
+} from '../../constants/companion-body-clips';
 import { resolveEyeColor } from '../../constants/eye-color-presets';
 import { resolveFurColor } from '../../constants/fur-color-presets';
 import { resolveNoseColor } from '../../constants/nose-color-presets';
+import { CompanionBodySceneProvider } from './companionBodySceneContext';
+import { useCompanionBodyAnimation } from '../../hooks/useCompanionBodyAnimation';
 import { applyCelShading } from '../../utils/celShading';
 import { applyBodyMorphsToObject } from '../../utils/applyBodyMorphs';
 import { applyEyeColorsToObject } from '../../utils/applyEyeColors';
@@ -23,35 +29,59 @@ export interface CompanionBodyProps {
   furColor: FurColor;
   eyeColor: EyeColor;
   noseColor: string;
+  activeClip?: CompanionBodyClip;
+  activeClipKey?: string;
+  onRestoredToIdle?: () => void;
+  children?: ReactNode;
 }
 
-/** Body mesh: morph targets + runtime material colors (fur, eyes, nose). */
 export function CompanionBody({
   bodyMorphs,
   furColor,
   eyeColor,
   noseColor,
+  activeClip = DEFAULT_COMPANION_BODY_CLIP,
+  activeClipKey,
+  onRestoredToIdle,
+  children,
 }: CompanionBodyProps) {
-  const { scene: source } = useGLTF(COMPANION_BODY_GLB_URL);
+  const { scene: source, animations } = useGLTF(COMPANION_BODY_GLB_URL);
   const resolvedFurColor = resolveFurColor(furColor);
   const resolvedEyeColor = resolveEyeColor(eyeColor);
   const resolvedNoseColor = resolveNoseColor(noseColor);
 
-  const morphKey = JSON.stringify(bodyMorphs);
-
   const scene = useMemo(() => {
     const cloned = cloneSkinned(source);
     cloneMaterialsOnObject(cloned);
-    applyBodyMorphsToObject(
-      cloned,
-      JSON.parse(morphKey) as Record<string, number>,
-    );
-    applyFurColorsToObject(cloned, resolvedFurColor);
-    applyEyeColorsToObject(cloned, resolvedEyeColor);
-    applyNoseColorToObject(cloned, resolvedNoseColor);
     applyCelShading(cloned);
     return cloned;
-  }, [source, morphKey, resolvedFurColor, resolvedEyeColor, resolvedNoseColor]);
+  }, [source]);
 
-  return <primitive object={scene} />;
+  useLayoutEffect(() => {
+    applyBodyMorphsToObject(scene, bodyMorphs);
+    applyFurColorsToObject(scene, resolvedFurColor);
+    applyEyeColorsToObject(scene, resolvedEyeColor);
+    applyNoseColorToObject(scene, resolvedNoseColor);
+  }, [
+    scene,
+    bodyMorphs,
+    resolvedFurColor,
+    resolvedEyeColor,
+    resolvedNoseColor,
+  ]);
+
+  useCompanionBodyAnimation(
+    scene,
+    animations,
+    activeClip,
+    activeClipKey,
+    onRestoredToIdle,
+  );
+
+  return (
+    <CompanionBodySceneProvider bodyScene={scene}>
+      <primitive object={scene} />
+      {children}
+    </CompanionBodySceneProvider>
+  );
 }

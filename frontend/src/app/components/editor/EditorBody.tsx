@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import { useCompanionStore } from '../../store/companionStore';
 import { CompanionBody } from '../common/CompanionBodyGlb';
 
 /** Editor body: morphs and fur colors from Zustand. */
-export function EditorBody() {
+export function EditorBody({ children }: { children?: ReactNode }) {
   const bodyMorphs = useCompanionStore((s) => s.bodyMorphs);
   const furColor = useCompanionStore((s) => s.furColor);
   const eyeColor = useCompanionStore((s) => s.eyeColor);
@@ -13,6 +14,8 @@ export function EditorBody() {
       furColor={furColor}
       eyeColor={eyeColor}
       noseColor={noseColor}
-    />
+    >
+      {children}
+    </CompanionBody>
   );
 }

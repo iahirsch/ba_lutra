@@ -6,7 +6,9 @@ export interface Activity {
   type: string;
   durationSeconds: number;
   distanceMeters: number;
-  intensityScore: number;
+  sufferScore: number;
+  /** Normalized effort 0–1. */
+  effortScore: number;
   startedAt: string;
   createdAt: string;
 }

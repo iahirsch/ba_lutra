@@ -1,15 +1,22 @@
 import { useCompanionSocket } from '../hooks/useCompanionSocket';
+import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import { HubCanvas } from '../components/hub/HubCanvas';
 import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import styles from './Hub.module.scss';
 
 export function Hub() {
   const { companions, connected, error } = useCompanionSocket();
+  const latestActivitiesByCompanion = useLatestActivitiesByCompanion(
+    companions.map((c) => c.id),
+  );
 
   return (
     <div className={styles.page}>
       <div className={styles.canvas}>
-        <HubCanvas companions={companions} />
+        <HubCanvas
+          companions={companions}
+          latestActivitiesByCompanion={latestActivitiesByCompanion}
+        />
       </div>
 
       <header className={styles.overlay}>

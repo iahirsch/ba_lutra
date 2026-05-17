@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import type { SavedCompanion } from '@ba-praktisch/shared-types';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
 import { HUB_CAMERA } from '@ba-praktisch/shared-types';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
@@ -18,7 +19,15 @@ function getCompanionRowPosition(
   return [startX + index * COMPANION_ROW_GAP, 0, 0];
 }
 
-function HubCanvasContents({ companions }: { companions: SavedCompanion[] }) {
+interface HubCanvasContentsProps {
+  companions: SavedCompanion[];
+  latestActivitiesByCompanion: Map<string, Activity>;
+}
+
+function HubCanvasContents({
+  companions,
+  latestActivitiesByCompanion,
+}: HubCanvasContentsProps) {
   return (
     <>
       <HubLights />
@@ -32,17 +41,33 @@ function HubCanvasContents({ companions }: { companions: SavedCompanion[] }) {
           key={companion.id}
           companion={companion}
           position={getCompanionRowPosition(index, companions.length)}
+          effortScore={
+            latestActivitiesByCompanion.get(companion.id)?.effortScore
+          }
         />
       ))}
+
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0.35}
+          luminanceSmoothing={0.85}
+          intensity={1.15}
+          mipmapBlur
+        />
+      </EffectComposer>
     </>
   );
 }
 
 interface HubCanvasProps {
   companions: SavedCompanion[];
+  latestActivitiesByCompanion: Map<string, Activity>;
 }
 
-export function HubCanvas({ companions }: HubCanvasProps) {
+export function HubCanvas({
+  companions,
+  latestActivitiesByCompanion,
+}: HubCanvasProps) {
   return (
     <Canvas
       camera={{
@@ -54,7 +79,10 @@ export function HubCanvas({ companions }: HubCanvasProps) {
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
-      <HubCanvasContents companions={companions} />
+      <HubCanvasContents
+        companions={companions}
+        latestActivitiesByCompanion={latestActivitiesByCompanion}
+      />
     </Canvas>
   );
 }
