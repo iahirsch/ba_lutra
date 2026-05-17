@@ -1,6 +1,5 @@
 import axios from 'axios';
-import type { CompanionConfig } from '@ba-praktisch/shared-types';
-import type { SavedCompanion } from '../store/companion-socket.types';
+import type { CompanionConfig, SavedCompanion } from '@ba-praktisch/shared-types';
 
 export async function saveCompanion(
   config: CompanionConfig,

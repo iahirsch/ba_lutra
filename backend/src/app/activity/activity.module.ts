@@ -6,9 +6,10 @@ import { StravaService } from './strava.service';
 import { ActivityService } from './activity.service';
 import { ActivityController } from './activity.controller';
 import { StravaController } from './strava.controller';
+import { CompanionModule } from '../companion/companion.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Activity, StravaToken])],
+  imports: [TypeOrmModule.forFeature([Activity, StravaToken]), CompanionModule],
   providers: [StravaService, ActivityService],
   controllers: [ActivityController, StravaController],
   exports: [ActivityService],

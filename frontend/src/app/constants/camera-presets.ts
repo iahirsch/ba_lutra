@@ -1,11 +1,11 @@
-import type { PartCategory } from '../store/companion.store';
+import type { EditorTab } from '../store/companionStore';
 
 export const HORIZONTAL_ORBIT_CATEGORIES = ['body', 'fur', 'clothing'] as const;
 export type HorizontalOrbitCategory =
   (typeof HORIZONTAL_ORBIT_CATEGORIES)[number];
 
 export function isHorizontalOrbitCategory(
-  category: PartCategory | 'body',
+  category: EditorTab,
 ): category is HorizontalOrbitCategory {
   return (HORIZONTAL_ORBIT_CATEGORIES as readonly string[]).includes(category);
 }
@@ -16,10 +16,7 @@ export interface CategoryCameraPreset {
   duration: number;
 }
 
-export type CameraPresetMap = Record<
-  PartCategory | 'body',
-  CategoryCameraPreset
->;
+export type CameraPresetMap = Record<EditorTab, CategoryCameraPreset>;
 
 export const CAMERA_PRESETS: CameraPresetMap = {
   eyes: {
@@ -43,7 +40,7 @@ export const CAMERA_PRESETS: CameraPresetMap = {
     duration: 0.3,
   },
   fur: {
-    position: [-1, 1.0, 3],
+    position: [0, 1.0, 3],
     target: [0, 0.8, 0],
     duration: 0.3,
   },
@@ -58,7 +55,7 @@ export const CAMERA_PRESETS: CameraPresetMap = {
     duration: 0.4,
   },
   clothing: {
-    position: [-1, 1.0, 3],
+    position: [1, 1.0, 3],
     target: [0, 0.8, 0],
     duration: 0.3,
   },

@@ -2,8 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Activity } from '../activity/activity.entity';
 
 @Entity({ name: 'companions' })
 export class Companion {
@@ -13,14 +15,20 @@ export class Companion {
   @Column({ type: 'varchar', length: 80, default: 'My Lutra' })
   name!: string;
 
-  @Column({ type: 'varchar', length: 50, default: 'fur01' })
-  fur!: string;
+  @Column({
+    type: 'jsonb',
+    default: () => `'{"primary":"#897366","secondary":"#D9B6A3"}'`,
+  })
+  furColor!: { primary: string; secondary: string };
 
-  @Column({ type: 'varchar', length: 50 })
-  eyes!: string;
+  @Column({
+    type: 'jsonb',
+    default: () => `'{"primary":"#FFFFFF","secondary":"#3D2914"}'`,
+  })
+  eyeColor!: { primary: string; secondary: string };
 
-  @Column({ type: 'varchar', length: 50 })
-  nose!: string;
+  @Column({ type: 'varchar', length: 20, default: '#212121' })
+  noseColor!: string;
 
   @Column({ type: 'varchar', length: 50, default: '' })
   clothing!: string;
@@ -36,6 +44,9 @@ export class Companion {
 
   @Column({ type: 'jsonb', default: () => "'{}'" })
   bodyMorphs!: Record<string, number>;
+
+  @OneToMany(() => Activity, (activity) => activity.companion)
+  activities!: Activity[];
 
   @CreateDateColumn()
   createdAt!: Date;

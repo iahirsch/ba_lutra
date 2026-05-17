@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 import { Companion } from '../companion/companion.entity';
 
@@ -19,19 +18,12 @@ export class Activity {
   @Column({ type: 'bigint' })
   stravaActivityId!: string;
 
-  @ManyToOne(() => Companion, {
-    nullable: true,
+  @ManyToOne(() => Companion, (companion) => companion.activities, {
     onDelete: 'SET NULL',
-    eager: false,
   })
   @JoinColumn({ name: 'companion_id' })
   companion?: Companion | null;
 
-  @Index()
-  @RelationId((activity: Activity) => activity.companion)
-  companionId!: string | null;
-
-  @Index()
   @Column({ type: 'varchar', length: 50 })
   type!: string;
 

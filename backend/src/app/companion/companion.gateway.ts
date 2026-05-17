@@ -15,12 +15,14 @@ import { Companion } from './companion.entity';
 import { FLOW_STEP_MAP, FIRST_STEP_ID } from './flow.config';
 import {
   FLOW_EVENTS,
+  COMPANION_EVENTS,
   ScreenId,
   FlowStateUpdate,
   CompanionConfig,
   RegisterScreenPayload,
   NameSubmittedPayload,
   ChoiceSelectedPayload,
+  createIdleFlowStateUpdate,
 } from '@ba-praktisch/shared-types';
 
 // Active flow session
@@ -31,24 +33,6 @@ interface FlowSession {
   companionCreatedAt: string;
   currentStepId: string;
 }
-
-const IDLE_UPDATE: FlowStateUpdate = {
-  stepId: 'idle',
-  companionId: '',
-  companionConfig: {
-    fur: '',
-    eyes: '',
-    nose: '',
-    clothing: '',
-    ears: '',
-    tail: '',
-    backpack: '',
-    bodyMorphs: {},
-  },
-  companionName: null,
-  companionDialogue: '',
-  creatorView: { type: 'idle' },
-};
 
 // Gateway
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -84,11 +68,11 @@ export class CompanionGateway
   }
 
   broadcastNewCompanion(companion: Companion): void {
-    this.server.emit('companion:created', companion);
+    this.server.emit(COMPANION_EVENTS.CREATED, companion);
   }
 
   broadcastDeletedCompanion(id: string): void {
-    this.server.emit('companion:deleted', { id });
+    this.server.emit(COMPANION_EVENTS.DELETED, { id });
   }
 
   startFlowSession(companion: Companion): void {
@@ -120,7 +104,7 @@ export class CompanionGateway
 
     client.emit(
       FLOW_EVENTS.STATE_UPDATE,
-      this.session ? this.buildStateUpdate() : IDLE_UPDATE,
+      this.session ? this.buildStateUpdate() : createIdleFlowStateUpdate(),
     );
   }
 
@@ -187,7 +171,7 @@ export class CompanionGateway
     this.session = null;
 
     // Reset all screens to idle
-    this.server.emit(FLOW_EVENTS.STATE_UPDATE, IDLE_UPDATE);
+    this.server.emit(FLOW_EVENTS.STATE_UPDATE, createIdleFlowStateUpdate());
   }
 
   private broadcastFlowState(): void {
@@ -195,9 +179,9 @@ export class CompanionGateway
   }
 
   private buildStateUpdate(): FlowStateUpdate {
-    if (!this.session) return IDLE_UPDATE;
+    if (!this.session) return createIdleFlowStateUpdate();
     const step = FLOW_STEP_MAP.get(this.session.currentStepId);
-    if (!step) return IDLE_UPDATE;
+    if (!step) return createIdleFlowStateUpdate();
 
     const dialogue = this.session.companionName
       ? step.companionDialogue.replace(/\[name\]/g, this.session.companionName)
@@ -233,9 +217,9 @@ export class CompanionGateway
 
   private extractConfig(companion: Companion): CompanionConfig {
     return {
-      fur: companion.fur,
-      eyes: companion.eyes,
-      nose: companion.nose,
+      furColor: companion.furColor,
+      eyeColor: companion.eyeColor,
+      noseColor: companion.noseColor,
       clothing: companion.clothing,
       ears: companion.ears,
       tail: companion.tail,
