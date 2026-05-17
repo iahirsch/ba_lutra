@@ -8,7 +8,7 @@ export const HUB_ENVIRONMENT_TRANSFORM = {
 
 export const HUB_CAMERA = {
   position: [0, 2, 12] as [number, number, number],
-  fov: 50,
+  fov: 40,
   near: 0.1,
   far: 1500,
 } as const;

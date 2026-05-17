@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect, useMemo, type ReactNode } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import {
@@ -13,6 +13,7 @@ import {
 import { resolveEyeColor } from '../../constants/eye-color-presets';
 import { resolveFurColor } from '../../constants/fur-color-presets';
 import { resolveNoseColor } from '../../constants/nose-color-presets';
+import { CompanionBodySceneProvider } from './companionBodySceneContext';
 import { useCompanionBodyAnimation } from '../../hooks/useCompanionBodyAnimation';
 import { applyCelShading } from '../../utils/celShading';
 import { applyBodyMorphsToObject } from '../../utils/applyBodyMorphs';
@@ -31,6 +32,7 @@ export interface CompanionBodyProps {
   activeClip?: CompanionBodyClip;
   activeClipKey?: string;
   onRestoredToIdle?: () => void;
+  children?: ReactNode;
 }
 
 export function CompanionBody({
@@ -41,6 +43,7 @@ export function CompanionBody({
   activeClip = DEFAULT_COMPANION_BODY_CLIP,
   activeClipKey,
   onRestoredToIdle,
+  children,
 }: CompanionBodyProps) {
   const { scene: source, animations } = useGLTF(COMPANION_BODY_GLB_URL);
   const resolvedFurColor = resolveFurColor(furColor);
@@ -75,5 +78,10 @@ export function CompanionBody({
     onRestoredToIdle,
   );
 
-  return <primitive object={scene} />;
+  return (
+    <CompanionBodySceneProvider bodyScene={scene}>
+      <primitive object={scene} />
+      {children}
+    </CompanionBodySceneProvider>
+  );
 }

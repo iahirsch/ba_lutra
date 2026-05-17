@@ -63,19 +63,20 @@ function InteractionScene({
                   ? onExitAnimationComplete
                   : undefined
               }
-            />
-            {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
-              const variantId = companionConfig[part];
-              if (!variantId) return null;
-              return (
-                <CompanionPartGlb
-                  key={part}
-                  category={part}
-                  variantId={variantId}
-                  bodyMorphs={companionConfig.bodyMorphs ?? {}}
-                />
-              );
-            })}
+            >
+              {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
+                const variantId = companionConfig[part];
+                if (!variantId) return null;
+                return (
+                  <CompanionPartGlb
+                    key={part}
+                    category={part}
+                    variantId={variantId}
+                    bodyMorphs={companionConfig.bodyMorphs ?? {}}
+                  />
+                );
+              })}
+            </CompanionBody>
           </group>
         )}
       </Suspense>

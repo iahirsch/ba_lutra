@@ -28,19 +28,20 @@ export function HubCharacterGroup({
           furColor={companion.furColor}
           eyeColor={companion.eyeColor}
           noseColor={companion.noseColor}
-        />
-        {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
-          const variantId = companion[category];
-          if (!variantId) return null;
-          return (
-            <CompanionPartGlb
-              key={`${companion.id}-${category}`}
-              category={category}
-              variantId={variantId}
-              bodyMorphs={bodyMorphs}
-            />
-          );
-        })}
+        >
+          {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
+            const variantId = companion[category];
+            if (!variantId) return null;
+            return (
+              <CompanionPartGlb
+                key={`${companion.id}-${category}`}
+                category={category}
+                variantId={variantId}
+                bodyMorphs={bodyMorphs}
+              />
+            );
+          })}
+        </CompanionBody>
       </Suspense>
 
       <Html
