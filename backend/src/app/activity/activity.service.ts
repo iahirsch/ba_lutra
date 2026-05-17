@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Companion } from '../companion/companion.entity';
 import { Activity } from './activity.entity';
+import { computeEffortScore } from './compute-effort-score';
 import { StravaService } from './strava.service';
 
 @Injectable()
@@ -26,6 +27,14 @@ export class ActivityService {
     });
   }
 
+  /** Latest activity linked to a companion, or null. */
+  async findLatestByCompanion(companionId: string): Promise<Activity | null> {
+    return this.activityRepo.findOne({
+      where: { companion: { id: companionId } },
+      order: { startedAt: 'DESC' },
+    });
+  }
+
   async saveStravaActivity(
     stravaActivityId: number,
     companionId: string | null,
@@ -38,6 +47,13 @@ export class ActivityService {
 
     const raw = await this.stravaService.fetchActivityById(stravaActivityId);
 
+    const effortScore = computeEffortScore({
+      distanceMeters: raw.distance,
+      durationSeconds: raw.elapsed_time,
+      sufferScore: raw.suffer_score,
+      averageSpeedMps: raw.average_speed,
+    });
+
     const activity = this.activityRepo.create({
       stravaActivityId: stravaId,
       companion: companionId
@@ -47,7 +63,8 @@ export class ActivityService {
       type: raw.sport_type || raw.type,
       durationSeconds: raw.elapsed_time,
       distanceMeters: raw.distance,
-      intensityScore: raw.suffer_score ?? 0,
+      sufferScore: raw.suffer_score ?? 0,
+      effortScore,
       startedAt: new Date(raw.start_date),
     });
 

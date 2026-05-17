@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { Companion } from '../companion/companion.entity';
 
@@ -24,6 +25,9 @@ export class Activity {
   @JoinColumn({ name: 'companion_id' })
   companion?: Companion | null;
 
+  @RelationId((activity: Activity) => activity.companion)
+  companionId!: string | null;
+
   @Column({ type: 'varchar', length: 50 })
   type!: string;
 
@@ -34,7 +38,10 @@ export class Activity {
   distanceMeters!: number;
 
   @Column({ type: 'double precision' })
-  intensityScore!: number;
+  sufferScore!: number;
+
+  @Column({ type: 'double precision' })
+  effortScore!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   name!: string | null;

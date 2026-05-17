@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import {
   COMPANION_THUMBNAIL_BASE,
+  type Activity,
   type SavedCompanion,
 } from '@ba-praktisch/shared-types';
+import { CompanionActivitySummary } from './CompanionActivitySummary';
 import styles from './SavedCompanionCard.module.scss';
 
 const VARIANT_PART_KEYS: Array<
@@ -75,11 +77,13 @@ function PartThumb({
 
 interface SavedCompanionCardProps {
   companion: SavedCompanion;
+  activity?: Activity | null;
   onDelete: (id: string) => void;
 }
 
 export function SavedCompanionCard({
   companion,
+  activity,
   onDelete,
 }: SavedCompanionCardProps) {
   const [confirming, setConfirming] = useState(false);
@@ -161,6 +165,8 @@ export function SavedCompanionCard({
           ))}
         </footer>
       )}
+
+      {activity && <CompanionActivitySummary activity={activity} />}
     </article>
   );
 }
