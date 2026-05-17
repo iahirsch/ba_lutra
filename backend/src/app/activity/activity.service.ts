@@ -51,7 +51,6 @@ export class ActivityService {
       distanceMeters: raw.distance,
       durationSeconds: raw.elapsed_time,
       sufferScore: raw.suffer_score,
-      averageSpeedMps: raw.average_speed,
     });
 
     const activity = this.activityRepo.create({
