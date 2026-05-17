@@ -9,28 +9,9 @@ import {
   redirectToStravaAuth,
   type StravaStatus,
 } from '../services/strava.service';
-import { getActivities } from '../services/activity.service';
 import { SavedCompanionCard } from '../components/admin/SavedCompanionCard';
-import type { Activity } from '@ba-praktisch/shared-types';
+import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import styles from './AdminDashboard.module.scss';
-
-function latestActivityByCompanion(
-  activities: Activity[],
-): Map<string, Activity> {
-  const map = new Map<string, Activity>();
-  for (const activity of activities) {
-    if (!activity.companionId) continue;
-    const existing = map.get(activity.companionId);
-    if (
-      !existing ||
-      new Date(activity.startedAt).getTime() >
-        new Date(existing.startedAt).getTime()
-    ) {
-      map.set(activity.companionId, activity);
-    }
-  }
-  return map;
-}
 
 function StravaSection() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -144,15 +125,9 @@ function StravaSection() {
 
 export function AdminDashboard() {
   const { companions, connected, error } = useCompanionSocket();
-  const [activitiesByCompanion, setActivitiesByCompanion] = useState(
-    () => new Map<string, Activity>(),
+  const activitiesByCompanion = useLatestActivitiesByCompanion(
+    companions.map((c) => c.id),
   );
-
-  useEffect(() => {
-    getActivities()
-      .then((list) => setActivitiesByCompanion(latestActivityByCompanion(list)))
-      .catch((err) => console.error('Failed to load activities:', err));
-  }, [companions]);
 
   async function handleDelete(id: string) {
     try {

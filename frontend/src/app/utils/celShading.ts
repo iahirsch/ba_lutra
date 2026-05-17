@@ -1,5 +1,6 @@
 import {
   ClampToEdgeWrapping,
+  Color,
   DataTexture,
   Mesh,
   MeshLambertMaterial,
@@ -111,6 +112,35 @@ export function applyCelShading(root: Object3D): void {
       node.material = material.map((m) => upgradeMaterial(m));
     } else {
       node.material = upgradeMaterial(material);
+    }
+  });
+}
+
+export const BACKPACK_CONDUIT_MESH_NAME = 'conduit';
+
+const CONDUIT_GLOW_COLOR = new Color(0x7cfdfd);
+
+/** Maps normalized effortScore to emissive intensity on the conduit orb. */
+export function effortToConduitGlow(effort: number): number {
+  const e = Math.min(1, Math.max(0, effort));
+  if (e <= 0) return 0;
+  return 0.35 + e * 2.65;
+}
+
+/** Sets emissive glow on the conduit mesh after cel shading. */
+export function setConduitGlow(root: Object3D, intensity: number): void {
+  root.traverse((node) => {
+    if (!(node instanceof Mesh) || node.name !== BACKPACK_CONDUIT_MESH_NAME) {
+      return;
+    }
+    const materials = Array.isArray(node.material)
+      ? node.material
+      : [node.material];
+    for (const mat of materials) {
+      if (!(mat instanceof MeshToonMaterial)) continue;
+      mat.emissive.copy(CONDUIT_GLOW_COLOR);
+      mat.emissiveIntensity = intensity;
+      mat.needsUpdate = true;
     }
   });
 }

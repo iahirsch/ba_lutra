@@ -4,7 +4,7 @@ import { COMPANION_GLB_BASE } from '@ba-praktisch/shared-types';
 import { COMPANION_ATTACH_BONES } from '../../constants/companion-attach-bones';
 import { useCompanionBodyScene } from './companionBodySceneContext';
 import type { PartCategory } from '../../store/companionStore';
-import { applyCelShading } from '../../utils/celShading';
+import { applyCelShading, setConduitGlow } from '../../utils/celShading';
 import { applyBodyMorphsToObject } from '../../utils/applyBodyMorphs';
 import { attachPartToBone, detachPart } from '../../utils/attachPartToBone';
 
@@ -12,6 +12,8 @@ export interface CompanionPartGlbProps {
   category: PartCategory;
   variantId: string;
   bodyMorphs: Record<string, number>;
+  /** Emissive intensity for the backpack `conduit` mesh (hub effort glow). */
+  conduitGlow?: number;
 }
 
 /** Single companion body-part GLB: clone, morphs, cel shading. */
@@ -19,6 +21,7 @@ export function CompanionPartGlb({
   category,
   variantId,
   bodyMorphs,
+  conduitGlow,
 }: CompanionPartGlbProps) {
   const url = `${COMPANION_GLB_BASE}/${category}/${variantId}.glb`;
   const gltf = useGLTF(url);
@@ -47,6 +50,11 @@ export function CompanionPartGlb({
       detachPart(scene);
     };
   }, [attachBoneName, bodyScene, scene]);
+
+  useLayoutEffect(() => {
+    if (category !== 'backpack') return;
+    setConduitGlow(scene, conduitGlow ?? 0);
+  }, [category, scene, conduitGlow]);
 
   if (attachBoneName) return null;
 
