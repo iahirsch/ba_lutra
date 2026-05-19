@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
-import { HUB_CAMERA } from '@ba-praktisch/shared-types';
+import { HUB_VIEW_CAMERA } from '@ba-praktisch/shared-types';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
 import { HubCharacterGroup } from './HubCharacterGroup';
@@ -70,12 +70,7 @@ export function HubCanvas({
 }: HubCanvasProps) {
   return (
     <Canvas
-      camera={{
-        position: [...HUB_CAMERA.position],
-        fov: HUB_CAMERA.fov,
-        near: HUB_CAMERA.near,
-        far: HUB_CAMERA.far,
-      }}
+      camera={HUB_VIEW_CAMERA}
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >

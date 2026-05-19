@@ -5,7 +5,7 @@ import type {
   RenderedCompanionPart,
 } from '@ba-praktisch/shared-types';
 import {
-  HUB_CAMERA,
+  INTERACTION_CAMERA,
   RENDERED_COMPANION_PARTS,
 } from '@ba-praktisch/shared-types';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
@@ -28,13 +28,6 @@ interface InteractionSceneProps {
   onExitAnimationComplete?: () => void;
 }
 
-const INTERACTION_CANVAS_CAMERA = {
-  position: [...HUB_CAMERA.position] as [number, number, number],
-  fov: HUB_CAMERA.fov,
-  near: HUB_CAMERA.near,
-  far: HUB_CAMERA.far,
-};
-
 function InteractionScene({
   companionConfig,
   stepId,
@@ -42,7 +35,7 @@ function InteractionScene({
 }: InteractionSceneProps) {
   return (
     <Canvas
-      camera={INTERACTION_CANVAS_CAMERA}
+      camera={INTERACTION_CAMERA}
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
