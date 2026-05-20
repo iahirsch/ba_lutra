@@ -31,7 +31,10 @@ export class Companion {
   noseColor!: string;
 
   @Column({ type: 'varchar', length: 50, default: '' })
-  clothing!: string;
+  clothingTop!: string;
+
+  @Column({ type: 'varchar', length: 50, default: '' })
+  clothingBottom!: string;
 
   @Column({ type: 'varchar', length: 50, default: 'ears01' })
   ears!: string;

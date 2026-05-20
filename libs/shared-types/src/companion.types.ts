@@ -12,7 +12,8 @@ export interface CompanionConfig {
   furColor: FurColor;
   eyeColor: EyeColor;
   noseColor: string;
-  clothing: string;
+  clothingTop: string;
+  clothingBottom: string;
   ears: string;
   tail: string;
   backpack: string;

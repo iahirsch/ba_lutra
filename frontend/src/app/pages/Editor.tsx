@@ -53,10 +53,15 @@ function EditorBackgroundMesh() {
 }
 
 function EditorSceneParts() {
-  const { clothing, backpack } = useCompanionStore();
+  const { clothingTop, clothingBottom, backpack } = useCompanionStore();
   return (
     <EditorBody>
-      {clothing && <EditorGlbPart category="clothing" variantId={clothing} />}
+      {clothingTop && (
+        <EditorGlbPart category="clothingTop" variantId={clothingTop} />
+      )}
+      {clothingBottom && (
+        <EditorGlbPart category="clothingBottom" variantId={clothingBottom} />
+      )}
       {backpack && <EditorGlbPart category="backpack" variantId={backpack} />}
     </EditorBody>
   );
@@ -74,7 +79,11 @@ export function Editor() {
     const flowJustEnded = wasInFlow && flowState === null;
 
     if (flowJustEnded) {
-      useCompanionStore.setState({ ...DEFAULT_CONFIG, activeCategory: 'body' });
+      useCompanionStore.setState({
+        ...DEFAULT_CONFIG,
+        activeSection: 'lutra',
+        activeCategory: 'body',
+      });
     }
 
     prevFlowRef.current = flowState;

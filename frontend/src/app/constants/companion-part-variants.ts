@@ -10,7 +10,8 @@ function variantUrl(category: PartCategory, variantId: string): string {
 }
 
 export const PART_VARIANTS: Record<PartCategory, string[]> = {
-  clothing: ['clothing01'],
+  clothingTop: ['t_cloth01'],
+  clothingBottom: ['b_cloth01'],
   backpack: ['backpack01'],
   ears: [],
   tail: [],

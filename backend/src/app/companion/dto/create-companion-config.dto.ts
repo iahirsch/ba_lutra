@@ -44,7 +44,12 @@ export class CreateCompanionConfigDto {
   @ApiPropertyOptional({ example: '' })
   @IsOptional()
   @IsString()
-  clothing?: string;
+  clothingTop?: string;
+
+  @ApiPropertyOptional({ example: '' })
+  @IsOptional()
+  @IsString()
+  clothingBottom?: string;
 
   @ApiPropertyOptional({ example: '' })
   @IsOptional()

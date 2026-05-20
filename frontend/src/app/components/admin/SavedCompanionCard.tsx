@@ -8,8 +8,11 @@ import { CompanionActivitySummary } from './CompanionActivitySummary';
 import styles from './SavedCompanionCard.module.scss';
 
 const VARIANT_PART_KEYS: Array<
-  keyof Pick<SavedCompanion, 'clothing' | 'ears' | 'tail' | 'backpack'>
-> = ['clothing', 'ears', 'tail', 'backpack'];
+  keyof Pick<
+    SavedCompanion,
+    'clothingTop' | 'clothingBottom' | 'ears' | 'tail' | 'backpack'
+  >
+> = ['clothingTop', 'clothingBottom', 'ears', 'tail', 'backpack'];
 
 function formatVariant(category: string, variantId: string): string {
   if (!variantId) return '—';

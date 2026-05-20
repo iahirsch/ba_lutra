@@ -14,16 +14,28 @@ export type {
 } from '@ba-praktisch/shared-types';
 
 export type PartCategory =
-  | 'clothing'
+  | 'clothingTop'
+  | 'clothingBottom'
   | 'backpack'
   | 'ears' // reserved
   | 'tail'; // reserved
 
-export type EditorTab = PartCategory | 'body' | 'fur' | 'nose' | 'eyes';
+export type EditorTab =
+  | 'body'
+  | 'fur'
+  | 'eyes'
+  | 'iris'
+  | 'nose'
+  | 'clothingTop'
+  | 'clothingBottom';
+
+export type EditorSection = 'lutra' | 'clothing';
 
 interface CompanionStore extends CompanionConfig {
+  activeSection: EditorSection;
   activeCategory: EditorTab;
   setActiveCategory: (category: EditorTab) => void;
+  setActiveSection: (section: EditorSection) => void;
   setPartVariant: (part: PartCategory, variantId: string) => void;
   setFurColor: (furColor: FurColor) => void;
   setEyeColorPart: (part: keyof EyeColor, color: string) => void;
@@ -35,7 +47,8 @@ export const DEFAULT_CONFIG: CompanionConfig = {
   furColor: { ...DEFAULT_FUR_COLOR },
   eyeColor: { ...DEFAULT_EYE_COLOR },
   noseColor: DEFAULT_NOSE_COLOR,
-  clothing: '', // no clothing by default
+  clothingTop: '',
+  clothingBottom: '',
   ears: '',
   tail: '',
   backpack: 'backpack01',
@@ -44,9 +57,16 @@ export const DEFAULT_CONFIG: CompanionConfig = {
 
 export const useCompanionStore = create<CompanionStore>((set) => ({
   ...DEFAULT_CONFIG,
+  activeSection: 'lutra',
   activeCategory: 'body',
 
   setActiveCategory: (category) => set({ activeCategory: category }),
+
+  setActiveSection: (section) =>
+    set({
+      activeSection: section,
+      activeCategory: section === 'lutra' ? 'body' : 'clothingTop',
+    }),
 
   setPartVariant: (part, variantId) => set({ [part]: variantId }),
 

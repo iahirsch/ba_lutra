@@ -114,7 +114,7 @@ export function EditorCanvas({ children }: EditorCanvasProps) {
   return (
     <Canvas
       camera={{
-        position: [0, 1.0, 4.5],
+        position: [0, 2.0, 4.5],
         fov: 40,
         near: HUB_CAMERA.near,
         far: HUB_CAMERA.far,

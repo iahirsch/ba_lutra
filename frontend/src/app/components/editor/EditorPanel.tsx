@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import { useCompanionStore } from '../../store/companionStore';
-import type { PartCategory } from '../../store/companionStore';
-import { COMPANION_THUMBNAIL_BASE } from '@ba-praktisch/shared-types';
+import {
+  useCompanionStore,
+  type EditorSection,
+  type EditorTab,
+  type PartCategory,
+} from '../../store/companionStore';
 import { saveCompanion } from '../../services/companion.service';
+import { COMPANION_THUMBNAIL_BASE } from '@ba-praktisch/shared-types';
 import { PART_VARIANTS } from '../../constants/companion-part-variants';
 import {
   EYE_SCLERA_PRESETS,
@@ -12,45 +16,85 @@ import { FUR_COLOR_PRESETS } from '../../constants/fur-color-presets';
 import { NOSE_COLOR_PRESETS } from '../../constants/nose-color-presets';
 import styles from './EditorPanel.module.scss';
 
-type AnyCategory = PartCategory | 'body' | 'fur' | 'nose' | 'eyes';
-
-type EyeColorSubcategory = 'eye' | 'iris';
-
-const CATEGORIES: { key: AnyCategory; label: string }[] = [
-  { key: 'body', label: 'Body' },
-  { key: 'fur', label: 'Fur' },
-  { key: 'eyes', label: 'Eyes' },
-  { key: 'nose', label: 'Nose' },
+const SECTIONS: { key: EditorSection; label: string }[] = [
+  { key: 'lutra', label: 'Lutra' },
   { key: 'clothing', label: 'Clothing' },
 ];
 
-const OPTIONAL_PART_CATEGORIES: PartCategory[] = ['clothing'];
+const LUTRA_TABS: { key: EditorTab; label: string }[] = [
+  { key: 'body', label: 'Body' },
+  { key: 'fur', label: 'Fur' },
+  { key: 'eyes', label: 'Sclera' },
+  { key: 'iris', label: 'Iris' },
+  { key: 'nose', label: 'Nose' },
+];
 
-function CategoryTabs() {
-  const activeCategory = useCompanionStore((s) => s.activeCategory);
-  const setActiveCategory = useCompanionStore((s) => s.setActiveCategory);
+const CLOTHING_TABS: { key: EditorTab; label: string }[] = [
+  { key: 'clothingTop', label: 'Shirt' },
+  { key: 'clothingBottom', label: 'Pants' },
+];
+
+const OPTIONAL_PART_CATEGORIES: PartCategory[] = [
+  'clothingTop',
+  'clothingBottom',
+];
+
+function SectionTabs() {
+  const activeSection = useCompanionStore((s) => s.activeSection);
+  const setActiveSection = useCompanionStore((s) => s.setActiveSection);
 
   return (
     <nav
       className={styles.tabBar}
       role="tablist"
-      aria-label="Customization categories"
+      aria-label="Customization sections"
     >
-      {CATEGORIES.map(({ key, label }) => (
+      {SECTIONS.map(({ key, label }) => (
         <button
           key={key}
+          type="button"
           role="tab"
-          aria-selected={activeCategory === key}
-          className={`${styles.tab} ${activeCategory === key ? styles.tabActive : ''}`}
-          onClick={() => setActiveCategory(key)}
+          aria-selected={activeSection === key}
+          className={`${styles.tab} ${activeSection === key ? styles.tabActive : ''}`}
+          onClick={() => setActiveSection(key)}
         >
           {label}
-          {activeCategory === key && (
+          {activeSection === key && (
             <span className={styles.tabIndicator} aria-hidden="true" />
           )}
         </button>
       ))}
     </nav>
+  );
+}
+
+function CategorySubTabs({
+  tabs,
+}: {
+  tabs: { key: EditorTab; label: string }[];
+}) {
+  const activeCategory = useCompanionStore((s) => s.activeCategory);
+  const setActiveCategory = useCompanionStore((s) => s.setActiveCategory);
+
+  return (
+    <div
+      className={styles.subTabBar}
+      role="tablist"
+      aria-label="Customization options"
+    >
+      {tabs.map(({ key, label }) => (
+        <button
+          key={key}
+          type="button"
+          role="tab"
+          aria-selected={activeCategory === key}
+          className={`${styles.subTab} ${activeCategory === key ? styles.subTabActive : ''}`}
+          onClick={() => setActiveCategory(key)}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -99,61 +143,58 @@ function BodySliders() {
   );
 }
 
-function EyesColorPicker() {
-  const [subcategory, setSubcategory] = useState<EyeColorSubcategory>('eye');
+function EyeScleraPicker() {
   const eyeColor = useCompanionStore((s) => s.eyeColor);
   const setEyeColorPart = useCompanionStore((s) => s.setEyeColorPart);
 
-  const presets =
-    subcategory === 'eye' ? EYE_SCLERA_PRESETS : IRIS_COLOR_PRESETS;
-  const activeKey = subcategory === 'eye' ? 'primary' : 'secondary';
+  return (
+    <div className={styles.grid}>
+      {EYE_SCLERA_PRESETS.map((preset) => {
+        const selected = eyeColor.primary === preset;
+        return (
+          <button
+            type="button"
+            key={preset}
+            className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
+            onClick={() => setEyeColorPart('primary', preset)}
+            aria-pressed={selected}
+            aria-label={`Eye color ${preset}`}
+          >
+            <span
+              className={styles.colorSwatchPreview}
+              style={{ background: preset }}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function IrisColorPicker() {
+  const eyeColor = useCompanionStore((s) => s.eyeColor);
+  const setEyeColorPart = useCompanionStore((s) => s.setEyeColorPart);
 
   return (
-    <div className={styles.eyesSection}>
-      <div
-        className={styles.subTabBar}
-        role="tablist"
-        aria-label="Eye color parts"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={subcategory === 'eye'}
-          className={`${styles.subTab} ${subcategory === 'eye' ? styles.subTabActive : ''}`}
-          onClick={() => setSubcategory('eye')}
-        >
-          Eye
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={subcategory === 'iris'}
-          className={`${styles.subTab} ${subcategory === 'iris' ? styles.subTabActive : ''}`}
-          onClick={() => setSubcategory('iris')}
-        >
-          Iris
-        </button>
-      </div>
-      <div className={styles.grid}>
-        {presets.map((preset) => {
-          const selected = eyeColor[activeKey] === preset;
-          return (
-            <button
-              type="button"
-              key={preset}
-              className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
-              onClick={() => setEyeColorPart(activeKey, preset)}
-              aria-pressed={selected}
-              aria-label={`${subcategory === 'eye' ? 'Eye' : 'Iris'} color ${preset}`}
-            >
-              <span
-                className={styles.colorSwatchPreview}
-                style={{ background: preset }}
-              />
-            </button>
-          );
-        })}
-      </div>
+    <div className={styles.grid}>
+      {IRIS_COLOR_PRESETS.map((preset) => {
+        const selected = eyeColor.secondary === preset;
+        return (
+          <button
+            type="button"
+            key={preset}
+            className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
+            onClick={() => setEyeColorPart('secondary', preset)}
+            aria-pressed={selected}
+            aria-label={`Iris color ${preset}`}
+          >
+            <span
+              className={styles.colorSwatchPreview}
+              style={{ background: preset }}
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -271,11 +312,33 @@ function PartGrid({ category }: { category: PartCategory }) {
   );
 }
 
+function CategoryContent() {
+  const activeCategory = useCompanionStore((s) => s.activeCategory);
+
+  switch (activeCategory) {
+    case 'body':
+      return <BodySliders />;
+    case 'fur':
+      return <FurColorPicker />;
+    case 'eyes':
+      return <EyeScleraPicker />;
+    case 'iris':
+      return <IrisColorPicker />;
+    case 'nose':
+      return <NoseColorPicker />;
+    case 'clothingTop':
+    case 'clothingBottom':
+      return <PartGrid category={activeCategory} />;
+    default:
+      return null;
+  }
+}
+
 export function EditorPanel() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const activeCategory = useCompanionStore((s) => s.activeCategory);
+  const activeSection = useCompanionStore((s) => s.activeSection);
 
   async function handleSave() {
     setSaving(true);
@@ -286,7 +349,8 @@ export function EditorPanel() {
         furColor: state.furColor,
         eyeColor: state.eyeColor,
         noseColor: state.noseColor,
-        clothing: state.clothing,
+        clothingTop: state.clothingTop,
+        clothingBottom: state.clothingBottom,
         ears: state.ears,
         tail: state.tail,
         backpack: state.backpack,
@@ -303,20 +367,13 @@ export function EditorPanel() {
 
   return (
     <div className={styles.panel}>
-      <CategoryTabs />
+      <SectionTabs />
+      <CategorySubTabs
+        tabs={activeSection === 'clothing' ? CLOTHING_TABS : LUTRA_TABS}
+      />
 
       <div className={styles.content}>
-        {activeCategory === 'body' ? (
-          <BodySliders />
-        ) : activeCategory === 'fur' ? (
-          <FurColorPicker />
-        ) : activeCategory === 'nose' ? (
-          <NoseColorPicker />
-        ) : activeCategory === 'eyes' ? (
-          <EyesColorPicker />
-        ) : (
-          <PartGrid category={activeCategory} />
-        )}
+        <CategoryContent />
       </div>
 
       <div className={styles.footer}>

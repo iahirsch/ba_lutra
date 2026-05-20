@@ -121,7 +121,13 @@
   display: flex;
   flex-direction: row;
   gap: s.$space-sm;
-  padding: s.$space-md s.$space-lg 0;
+  padding: s.$space-sm s.$space-lg s.$space-xs;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .subTab {
