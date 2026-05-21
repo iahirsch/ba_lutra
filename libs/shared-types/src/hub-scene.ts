@@ -1,12 +1,19 @@
 import { PerspectiveCamera } from 'three';
 
 /** Shared hub GLB and camera tuning used by hub, interaction, and builder scenes. */
-export const HUB_GLTF_URL = '/assets/backgrounds/hub.glb';
+export const HUB_GLTF_URL = '/assets/backgrounds/environment.glb';
 
 export const HUB_ENVIRONMENT_TRANSFORM = {
   position: [0, 0, 0] as [number, number, number],
   scale: 0.8 as number,
 };
+
+/** Empty-object markers inside HUB_GLTF for companion placement. */
+export const ENVIRONMENT_SPAWN = {
+  editor: 'EMPTY_EditorSpawn',
+  hub: 'EMPTY_HubSpawn',
+  interact: 'EMPTY_InteractSpawn',
+} as const;
 
 export const HUB_CAMERA = {
   position: [0, 2, 8] as [number, number, number],

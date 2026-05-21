@@ -5,9 +5,11 @@ import type {
   RenderedCompanionPart,
 } from '@ba-praktisch/shared-types';
 import {
+  ENVIRONMENT_SPAWN,
   INTERACTION_CAMERA,
   RENDERED_COMPANION_PARTS,
 } from '@ba-praktisch/shared-types';
+import { useEnvironmentSpawn } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
 import { HubLights } from '../components/hub/HubLights';
@@ -33,6 +35,8 @@ function InteractionScene({
   stepId,
   onExitAnimationComplete,
 }: InteractionSceneProps) {
+  const interactSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+
   return (
     <Canvas
       camera={INTERACTION_CAMERA}
@@ -43,7 +47,7 @@ function InteractionScene({
       <Suspense fallback={null}>
         <HubBackground />
         {companionConfig && (
-          <group position={[0, 0.4, 8.5]}>
+          <group position={interactSpawn}>
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}

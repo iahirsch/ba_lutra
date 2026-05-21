@@ -2,7 +2,8 @@ import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
-import { HUB_VIEW_CAMERA } from '@ba-praktisch/shared-types';
+import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '@ba-praktisch/shared-types';
+import { useEnvironmentSpawn } from '../../utils/environmentSpawn';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
 import { HubCharacterGroup } from './HubCharacterGroup';
@@ -10,13 +11,13 @@ import { HubCharacterGroup } from './HubCharacterGroup';
 const COMPANION_ROW_GAP = 1.5;
 
 function getCompanionRowPosition(
+  base: [number, number, number],
   index: number,
   total: number,
 ): [number, number, number] {
-  if (total <= 0) return [0, 0, 0];
-  if (total === 1) return [0, 0, 0];
+  if (total <= 1) return base;
   const startX = (-(total - 1) * COMPANION_ROW_GAP) / 2;
-  return [startX + index * COMPANION_ROW_GAP, 0, 0];
+  return [base[0] + startX + index * COMPANION_ROW_GAP, base[1], base[2]];
 }
 
 interface HubCanvasContentsProps {
@@ -28,6 +29,8 @@ function HubCanvasContents({
   companions,
   latestActivitiesByCompanion,
 }: HubCanvasContentsProps) {
+  const hubSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.hub);
+
   return (
     <>
       <HubLights />
@@ -40,7 +43,11 @@ function HubCanvasContents({
         <HubCharacterGroup
           key={companion.id}
           companion={companion}
-          position={getCompanionRowPosition(index, companions.length)}
+          position={getCompanionRowPosition(
+            hubSpawn,
+            index,
+            companions.length,
+          )}
           effortScore={
             latestActivitiesByCompanion.get(companion.id)?.effortScore
           }

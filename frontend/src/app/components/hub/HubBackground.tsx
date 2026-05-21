@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { HUB_GLTF_URL, HUB_ENVIRONMENT_TRANSFORM } from '@ba-praktisch/shared-types';
+import {
+  HUB_GLTF_URL,
+  HUB_ENVIRONMENT_TRANSFORM,
+} from '@ba-praktisch/shared-types';
 import { applyCelShading } from '../../utils/celShading';
 
 useGLTF.preload(HUB_GLTF_URL);

@@ -15,7 +15,12 @@ import { EditorFlowPanel } from '../components/editor/EditorFlowPanel';
 import '../constants/companion-part-variants';
 import { useCompanionStore, DEFAULT_CONFIG } from '../store/companionStore';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
-import { HUB_GLTF_URL, type FlowStateUpdate } from '@ba-praktisch/shared-types';
+import {
+  ENVIRONMENT_SPAWN,
+  HUB_GLTF_URL,
+  type FlowStateUpdate,
+} from '@ba-praktisch/shared-types';
+import { useEnvironmentSpawn } from '../utils/environmentSpawn';
 import styles from './Editor.module.scss';
 
 useGLTF.preload(HUB_GLTF_URL);
@@ -54,16 +59,20 @@ function EditorBackgroundMesh() {
 
 function EditorSceneParts() {
   const { clothingTop, clothingBottom, backpack } = useCompanionStore();
+  const editorSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.editor, false);
+
   return (
-    <EditorBody>
-      {clothingTop && (
-        <EditorGlbPart category="clothingTop" variantId={clothingTop} />
-      )}
-      {clothingBottom && (
-        <EditorGlbPart category="clothingBottom" variantId={clothingBottom} />
-      )}
-      {backpack && <EditorGlbPart category="backpack" variantId={backpack} />}
-    </EditorBody>
+    <group position={editorSpawn}>
+      <EditorBody>
+        {clothingTop && (
+          <EditorGlbPart category="clothingTop" variantId={clothingTop} />
+        )}
+        {clothingBottom && (
+          <EditorGlbPart category="clothingBottom" variantId={clothingBottom} />
+        )}
+        {backpack && <EditorGlbPart category="backpack" variantId={backpack} />}
+      </EditorBody>
+    </group>
   );
 }
 
