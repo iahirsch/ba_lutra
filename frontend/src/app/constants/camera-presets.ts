@@ -24,8 +24,8 @@ export interface CategoryCameraPreset {
 export type CameraPresetMap = Record<EditorTab, CategoryCameraPreset>;
 
 const BODY_VIEW: CategoryCameraPreset = {
-  position: [-1, 1.0, 3],
-  target: [0, 0.8, 0],
+  position: [-1, 1.3, 4],
+  target: [0, 0.2, 0],
   duration: 0.3,
 };
 

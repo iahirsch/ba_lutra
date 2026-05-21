@@ -1,7 +1,7 @@
 @use '../../../styles/index' as s;
 
 .panel {
-  position: relative;
+  position: relatie;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -71,8 +71,8 @@
 }
 
 .actionButton {
-  @include s.button-base(s.$radius-xl, 0, 0);
-  @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-neutral-0);
+  @include s.button-base(0, 0);
+  @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-cyan-500);
   @include s.interactive-transition(
     opacity s.$duration-fast s.$easing-standard,
     transform 0.1s s.$easing-standard
@@ -107,7 +107,7 @@
 }
 
 .choiceButton {
-  @include s.button-base(s.$radius-xl, 0, 0);
+  @include s.button-base(0, 0);
   @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-neutral-0);
   @include s.interactive-transition(
     background s.$duration-fast s.$easing-standard,

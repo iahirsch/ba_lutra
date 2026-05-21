@@ -55,13 +55,10 @@ function SectionTabs() {
           type="button"
           role="tab"
           aria-selected={activeSection === key}
-          className={`${styles.tab} ${activeSection === key ? styles.tabActive : ''}`}
+          className={`${styles.subTab} ${activeSection === key ? styles.subTabActive : ''}`}
           onClick={() => setActiveSection(key)}
         >
           {label}
-          {activeSection === key && (
-            <span className={styles.tabIndicator} aria-hidden="true" />
-          )}
         </button>
       ))}
     </nav>
@@ -383,7 +380,7 @@ export function EditorPanel() {
           disabled={saving}
           aria-busy={saving}
         >
-          {saving ? 'Saving…' : saved ? 'Saved!' : 'Create'}
+          {saving ? 'Saving…' : saved ? 'Saved!' : 'CREATE'}
         </button>
       </div>
     </div>

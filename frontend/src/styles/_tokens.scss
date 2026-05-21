@@ -30,6 +30,9 @@ $color-green-500: oklch(0.723 0.192 149.58);
 $color-green-600: oklch(0.527 0.136 144.17);
 $color-green-500-12: oklch(0.723 0.192 149.58 / 12%);
 
+$color-cyan-500: oklch(0.9212 0.1146 195.35);
+$color-cyan-500-60: oklch(0.9212 0.1146 195.35 / 60%);
+
 // Spacing scale
 $space-2xs: 0.125rem;
 $space-xs: 0.25rem;
@@ -41,9 +44,9 @@ $space-2xl: 1.5rem;
 $space-3xl: 2rem;
 
 // Radius scale
-$radius-sm: 0.25rem;
-$radius-md: 0.5rem;
-$radius-lg: 0.75rem;
+$radius-sm: 0.625rem;
+$radius-md: 1.25rem;
+$radius-lg: 6.25rem;
 $radius-xl: 1rem;
 $radius-2xl: 1.25rem;
 $radius-3xl: 1.5rem;
@@ -57,12 +60,13 @@ $font-size-md: 0.875rem;
 $font-size-base: 0.9375rem;
 $font-size-lg: 1rem;
 $font-size-xl: 1.25rem;
-$font-size-2xl: 2rem;
+$font-size-2xl: 1.5rem;
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
+$font-weight-extrabold: 800;
 
 // Motion
 $duration-fast: 0.15s;
@@ -75,3 +79,36 @@ $blur-md: 1.125rem;
 $blur-lg: 1.25rem;
 $shadow-soft: 0 0.5rem 1.5rem oklch(0 0 0 / 8%);
 $shadow-thumb: 0 0.0625rem 0.25rem oklch(0 0 0 / 2%);
+
+$drop-shadow-b25: 0 0.25rem 0.25rem 0 oklch(0 0 0 / 25%);
+$drop-shadow-b50: 0 0.25rem 0.25rem 0 oklch(0 0 0 / 50%);
+$drop-shadow-b60: 0 0.25rem 0.25rem 0 oklch(0 0 0 / 60%);
+$inner-shadow-b25: inset 0 0.3rem 0.25rem 0 oklch(0 0 0 / 25%);
+$inner-shadow-b50: inset 0 0.025rem 0.25rem 0 oklch(0 0 0 / 60%);
+$inner-shadow-w25: inset 0 0.25rem 0.25rem 0 oklch(1 0 0 / 25%);
+$inner-shadow-w50: inset 0 0.25rem 0.25rem 0 oklch(1 0 0 / 50%);
+$inner-shadow-w100: inset 0 0.25rem 0.25rem 0 oklch(1 0 0 / 100%);
+
+$glass-frost--4: (
+  blur: 4px,
+  saturation: 110%,
+  frost-color: rgba(255, 255, 255, 0.04),
+);
+
+$glass-frost--50: (
+  blur: 10px,
+  saturation: 130%,
+  frost-color: oklch(1 0 0 / 8%),
+) !default;
+
+$glass-frost--100: (
+  blur: 20px,
+  saturation: 180%,
+  frost-color: oklch(1 0 0 / 15%),
+) !default;
+
+// Font families
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+SC:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400;1,500;1,700;1,800;1,900&family=Alegreya:ital,wght@0,400..900;1,400..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+$font-primary-bold: 'Alegreya SC', serif;
+$font-primary-regular: 'Alegreya', serif;
+$font-secondary: 'Nunito', sans-serif;

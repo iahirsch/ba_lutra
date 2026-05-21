@@ -3,17 +3,24 @@
 .tabBar {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
-  padding: 0 s.$space-lg;
+  padding: s.$space-sm;
   scrollbar-width: none;
   flex-shrink: 0;
 
   &::-webkit-scrollbar {
     display: none;
   }
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-b25,
+    $radius: s.$radius-lg,
+    $radius-position: all
+  );
 }
 
 .tab {
@@ -57,16 +64,18 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  gap: s.$space-sm;
+  z-index: 3;
   overflow: hidden;
   border-top-left-radius: s.$radius-3xl;
   border-top-right-radius: s.$radius-3xl;
   border-top: 1px solid s.$color-white-50;
-  padding-top: s.$space-sm;
-  @include s.glass-surface(
-    s.$color-neutral-100-75,
-    s.$blur-lg,
-    s.$color-white-50,
-    1.4
+  padding: s.$space-sm;
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: null,
+    $radius: s.$radius-md,
+    $radius-position: top
   );
 }
 
@@ -78,27 +87,23 @@
 
 .footer {
   flex-shrink: 0;
-  padding: s.$space-md s.$space-2xl;
+
   padding-bottom: max(s.$space-xl, env(safe-area-inset-bottom));
-  border-top: 1px solid s.$color-black-50;
-  background: s.$color-neutral-100-50;
 }
 
 .saveButton {
-  @include s.button-base(s.$radius-lg, 0, 0);
-  @include s.focus-ring(s.$space-xs);
+  @include s.button-base(0, 0);
+  @include s.focus-ring(s.$space-xs, s.$radius-xl, s.$color-cyan-500);
   @include s.interactive-transition(
     opacity s.$duration-fast s.$easing-standard,
     transform 0.1s s.$easing-standard
   );
-
   display: block;
   width: 100%;
   min-height: 3.125rem;
-  background: s.$color-neutral-900;
-  color: s.$color-neutral-0;
+  color: s.$color-neutral-900;
   font-size: s.$font-size-lg;
-  font-weight: s.$font-weight-semibold;
+  font-weight: s.$font-weight-extrabold;
   letter-spacing: 0.02em;
   &:active {
     opacity: 0.8;
@@ -120,37 +125,43 @@
 .subTabBar {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   gap: s.$space-sm;
-  padding: s.$space-sm s.$space-lg s.$space-xs;
+  padding: s.$space-sm;
   overflow-x: auto;
   scrollbar-width: none;
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-b25,
+    $radius: s.$radius-lg,
+    $radius-position: all
+  );
 
   &::-webkit-scrollbar {
     display: none;
   }
 }
 
-.subTab {
-  @include s.button-reset;
+.subTabActive {
+  @include s.button-active();
   @include s.focus-ring(s.$space-2xs, s.$radius-sm);
   @include s.interactive-transition(
     color s.$duration-normal s.$easing-standard,
     background s.$duration-fast s.$easing-standard
   );
-
   flex: 1;
   min-height: 2.25rem;
-  padding: s.$space-sm s.$space-md;
+  padding: s.$space-xs s.$space-md;
   border-radius: s.$radius-lg;
   font-size: s.$font-size-sm;
   font-weight: s.$font-weight-medium;
   color: s.$color-neutral-600;
-  background: s.$color-white-400;
 }
 
-.subTabActive {
+.subTab {
+  flex: 1;
   color: s.$color-neutral-900;
-  background: s.$color-white-900;
+  background: none;
 }
 
 .grid {
@@ -161,7 +172,7 @@
 }
 
 .cell {
-  @include s.button-base(s.$radius-xl, s.$space-md, s.$space-sm);
+  @include s.button-base(s.$space-md, s.$space-sm);
   @include s.focus-ring(s.$space-2xs);
   @include s.interactive-transition(
     border-color s.$duration-fast s.$easing-standard,
@@ -233,8 +244,14 @@
 .sliderList {
   display: flex;
   flex-direction: column;
-  gap: s.$space-2xl;
-  padding: s.$space-xl s.$space-2xl;
+  gap: s.$space-sm;
+  padding: s.$space-3xl s.$space-lg;
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-w100,
+    $radius: s.$radius-md,
+    $radius-position: all
+  );
 }
 
 .sliderRow {
