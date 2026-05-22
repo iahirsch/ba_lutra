@@ -22,26 +22,33 @@ export const HUB_CAMERA = {
   far: 1500,
 } as const;
 
-// TODO: adjust to exhibition setup
-const w = 1720;
-const h = 1440;
-const fullWidth = w * 2;
-const fullHeight = h;
+/** Exhibition layout: left 1920×1080, right 1607×1080. */
+const LEFT_SCREEN_WIDTH = 1920;
+const RIGHT_SCREEN_WIDTH = 1607;
+const SCREEN_HEIGHT = 1080;
+const fullWidth = LEFT_SCREEN_WIDTH + RIGHT_SCREEN_WIDTH;
+const fullHeight = SCREEN_HEIGHT;
 
-function createDualScreenCamera(x: number): PerspectiveCamera {
+function createDualScreenCamera(
+  x: number,
+  viewportWidth: number,
+): PerspectiveCamera {
   const camera = new PerspectiveCamera(
     HUB_CAMERA.fov,
-    fullWidth / fullHeight,
+    viewportWidth / fullHeight,
     HUB_CAMERA.near,
     HUB_CAMERA.far,
   );
   camera.position.set(...HUB_CAMERA.position);
-  camera.setViewOffset(fullWidth, fullHeight, x, 0, w, h);
+  camera.setViewOffset(fullWidth, fullHeight, x, 0, viewportWidth, fullHeight);
   (camera as PerspectiveCamera & { manual: true }).manual = true;
   return camera;
 }
 
 // Left camera
-export const INTERACTION_CAMERA = createDualScreenCamera(0);
+export const INTERACTION_CAMERA = createDualScreenCamera(0, LEFT_SCREEN_WIDTH);
 // Right camera
-export const HUB_VIEW_CAMERA = createDualScreenCamera(w);
+export const HUB_VIEW_CAMERA = createDualScreenCamera(
+  LEFT_SCREEN_WIDTH,
+  RIGHT_SCREEN_WIDTH,
+);
