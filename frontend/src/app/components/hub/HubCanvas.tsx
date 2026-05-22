@@ -3,7 +3,10 @@ import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
 import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '@ba-praktisch/shared-types';
-import { useEnvironmentSpawn } from '../../utils/environmentSpawn';
+import {
+  addSpawnOffset,
+  useEnvironmentSpawn,
+} from '../../utils/environmentSpawn';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
 import { HubCharacterGroup } from './HubCharacterGroup';
@@ -17,7 +20,7 @@ function getCompanionRowPosition(
 ): [number, number, number] {
   if (total <= 1) return base;
   const startX = (-(total - 1) * COMPANION_ROW_GAP) / 2;
-  return [base[0] + startX + index * COMPANION_ROW_GAP, base[1], base[2]];
+  return addSpawnOffset(base, [startX + index * COMPANION_ROW_GAP, 0, 0]);
 }
 
 interface HubCanvasContentsProps {
@@ -43,11 +46,7 @@ function HubCanvasContents({
         <HubCharacterGroup
           key={companion.id}
           companion={companion}
-          position={getCompanionRowPosition(
-            hubSpawn,
-            index,
-            companions.length,
-          )}
+          position={getCompanionRowPosition(hubSpawn, index, companions.length)}
           effortScore={
             latestActivitiesByCompanion.get(companion.id)?.effortScore
           }

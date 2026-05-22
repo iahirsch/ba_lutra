@@ -28,6 +28,13 @@ export function resolveEnvironmentSpawn(
   return [position.x, position.y, position.z];
 }
 
+export function addSpawnOffset(
+  point: [number, number, number],
+  offset: [number, number, number],
+): [number, number, number] {
+  return [point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]];
+}
+
 export function useEnvironmentSpawn(
   spawnName: SpawnName,
   applyHubTransform = true,
