@@ -1,6 +1,7 @@
 @use '../../../styles/index' as s;
 
 .tabBar {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -92,7 +93,7 @@
 }
 
 .saveButton {
-  @include s.button-base(0, 0);
+  @include s.button-primary();
   @include s.focus-ring(s.$space-xs, s.$radius-xl, s.$color-cyan-500);
   @include s.interactive-transition(
     opacity s.$duration-fast s.$easing-standard,
@@ -100,10 +101,6 @@
   );
   display: block;
   width: 100%;
-  min-height: 3.125rem;
-  color: s.$color-neutral-900;
-  font-size: s.$font-size-lg;
-  font-weight: s.$font-weight-extrabold;
   letter-spacing: 0.02em;
   &:active {
     opacity: 0.8;
@@ -143,12 +140,11 @@
 }
 
 .subTabActive {
+  position: relative;
+  pointer-events: none;
+  z-index: 0;
   @include s.button-active();
   @include s.focus-ring(s.$space-2xs, s.$radius-sm);
-  @include s.interactive-transition(
-    color s.$duration-normal s.$easing-standard,
-    background s.$duration-fast s.$easing-standard
-  );
   flex: 1;
   min-height: 2.25rem;
   padding: s.$space-xs s.$space-md;
@@ -159,68 +155,137 @@
 }
 
 .subTab {
+  position: relative;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: s.$space-2xs;
   color: s.$color-neutral-900;
   background: none;
+  min-height: 2.25rem;
+  padding: s.$space-xs s.$space-md;
+  border-radius: s.$radius-lg;
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-medium;
+}
+
+.gridTab {
+  display: flex;
+  flex-direction: column;
+  padding: s.$space-lg;
+  height: 12.5rem;
+
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-w100,
+    $radius: s.$radius-md,
+    $radius-position: all
+  );
+}
+
+.gridTitle {
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-900;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: s.$space-md;
-  padding: s.$space-lg;
-}
-
-.cell {
-  @include s.button-base(s.$space-md, s.$space-sm);
-  @include s.focus-ring(s.$space-2xs);
-  @include s.interactive-transition(
-    border-color s.$duration-fast s.$easing-standard,
-    background s.$duration-fast s.$easing-standard
-  );
-
-  @include s.flex-center(column, s.$space-xs);
-
-  min-height: 5.625rem;
-  min-width: 2.75rem;
-  background: s.$color-white-400;
-  border: 2px solid transparent;
-  border-radius: s.$radius-xl;
-  &:active {
-    background: s.$color-white-900;
+  gap: s.$space-sm;
+  padding: s.$space-sm s.$space-lg;
+  width: 100%;
+  justify-content: center;
+  overflow: -moz-scrollbars-vertical;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 0.75rem;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    @include s.glass(
+      $frost: s.$glass-frost--500,
+      $shadow: (
+        s.$drop-shadow-b25,
+        s.$inner-shadow-w25,
+      ),
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    min-height: 2rem;
+  }
+  &::-webkit-scrollbar-track {
+    @include s.glass(
+      $frost: s.$glass-frost--100,
+      $shadow: (
+        s.$inner-shadow-b25,
+      ),
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    border-radius: 1rem;
   }
 }
 
-.cellActive {
-  border-color: s.$color-neutral-900;
-  background: s.$color-white-900;
+.cell {
+  @include s.flex-center(column, s.$space-xl);
 }
 
-.colorSwatch {
-  padding: s.$space-sm;
+.cellActive {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3.125rem;
+    height: 3.125rem;
+    background: s.$color-black-500;
+    border-radius: s.$radius-sm;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+  }
+  // cyan Haken exakt zentriert
+  &::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2rem;
+    height: 2rem;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    background: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%232be7f4" stroke-width="1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 12l4 4 10-10"/></svg>')
+      center/contain no-repeat;
+    pointer-events: none;
+  }
 }
 
 .colorSwatchPreview {
+  @include s.button-checkroom();
   display: block;
-  width: 3rem;
-  height: 3rem;
-  border-radius: s.$radius-md;
+  height: 3.125rem;
+  width: 3.125rem;
 }
 
 .thumbnail {
-  width: 3rem;
-  height: 3rem;
+  width: 3.125rem;
+  height: 3.125rem;
   object-fit: contain;
 }
 
 .nonePlaceholder {
+  @include s.button-checkroom();
   @include s.flex-center;
-
-  width: 3rem;
-  height: 3rem;
-  font-size: s.$font-size-2xl;
-  font-weight: s.$font-weight-regular;
-  color: s.$color-neutral-400;
+  flex-direction: column;
+  width: 3.125rem;
+  height: 3.125rem;
+  font-size: s.$font-size-md;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-900;
   user-select: none;
 }
 
@@ -244,7 +309,9 @@
 .sliderList {
   display: flex;
   flex-direction: column;
-  gap: s.$space-sm;
+  justify-content: center;
+  height: 12.5rem;
+  gap: s.$space-lg;
   padding: s.$space-3xl s.$space-lg;
   @include s.glass(
     $frost: s.$glass-frost--100,
@@ -257,7 +324,7 @@
 .sliderRow {
   display: flex;
   flex-direction: column;
-  gap: s.$space-sm;
+  gap: s.$space-lg;
 }
 
 .sliderHeader {
@@ -267,47 +334,57 @@
 }
 
 .sliderLabel {
-  font-size: s.$font-size-md;
-  font-weight: s.$font-weight-medium;
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-bold;
   color: s.$color-neutral-900;
 }
 
 .sliderValue {
   font-size: s.$font-size-sm;
-  color: s.$color-neutral-500;
+  font-weight: s.$font-weight-regular;
+  color: s.$color-neutral-900;
   font-variant-numeric: tabular-nums;
 }
 
 .slider {
   @include s.focus-ring(s.$space-xs, s.$radius-sm);
-
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  height: s.$space-xs;
-  border-radius: s.$radius-sm;
-  background: s.$color-black-200;
   outline: none;
   cursor: pointer;
+  width: 100%;
+  border-radius: s.$radius-sm;
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: s.$space-sm;
+    @include s.glass(
+      $frost: s.$glass-frost--100,
+      $shadow: s.$inner-shadow-b25,
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    z-index: 1;
+  }
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: s.$space-2xl;
-    height: s.$space-2xl;
+    width: s.$space-lg;
+    height: s.$space-lg;
+    margin-top: -4px; // Thumb mittig auf Track
     border-radius: 50%;
-    background: s.$color-neutral-900;
     cursor: pointer;
-    box-shadow: s.$shadow-thumb;
-  }
-
-  &::-moz-range-thumb {
-    width: s.$space-2xl;
-    height: s.$space-2xl;
-    border-radius: 50%;
-    background: s.$color-neutral-900;
-    cursor: pointer;
-    border: none;
-    box-shadow: s.$shadow-thumb;
+    @include s.glass(
+      $frost: s.$glass-frost--500,
+      $shadow: (
+        s.$drop-shadow-b25,
+        s.$inner-shadow-w25,
+      ),
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    position: relative;
+    z-index: 2;
   }
 }

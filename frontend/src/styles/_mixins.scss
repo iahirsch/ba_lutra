@@ -1,5 +1,24 @@
 @use './tokens' as t;
 
+@mixin text-body() {
+  font-size: t.$font-size-lg;
+  font-weight: t.$font-weight-regular;
+  font-style: normal;
+  font-family: t.$font-secondary;
+  line-height: normal;
+  color: t.$color-neutral-900;
+}
+
+@mixin text-button() {
+  font-family: t.$font-secondary;
+  font-size: t.$font-size-md;
+  font-style: normal;
+  font-weight: t.$font-weight-extrabold;
+  line-height: normal;
+  text-transform: uppercase;
+  color: t.$color-neutral-900;
+}
+
 @mixin button-reset {
   border: 0;
   margin: 0;
@@ -10,34 +29,34 @@
   appearance: none;
 }
 
-@mixin button-base($padding-y: t.$space-sm, $padding-x: t.$space-lg) {
+@mixin button-primary() {
   @include glass(
     $frost: t.$glass-frost--100,
     $shadow: (
       t.$inner-shadow-w100,
       t.$drop-shadow-b60,
     ),
-    $radius: t.$radius-md,
+    $radius: t.$radius-2xl,
     $radius-position: all
   );
-  padding: $padding-y $padding-x;
+  padding: t.$space-sm t.$space-lg;
+  min-height: t.$space-4xl;
   background: t.$color-cyan-500;
   font-family: t.$font-secondary;
+  font-weight: t.$font-weight-extrabold;
+  font-size: t.$font-size-md;
   cursor: pointer;
 }
 
-@mixin button-base-ghost(
-  $radius: t.$radius-md,
-  $padding-y: t.$space-sm,
-  $padding-x: t.$space-lg,
-  $color: t.$color-cyan-500
-) {
-  border-radius: $radius;
-  padding: $padding-y $padding-x;
-  background: transparent;
-  border: 2px solid $color;
-  color: $color;
-  font-family: t.$font-secondary;
+@mixin button-disabled() {
+  box-shadow: t.$drop-shadow-b50;
+  border: 1px solid t.$color-gray-50;
+  border-radius: t.$radius-2xl;
+  padding: t.$space-sm t.$space-lg;
+  min-height: t.$space-4xl;
+  background: t.$color-gray-30;
+  opacity: 0.4;
+  @include text-button();
   cursor: pointer;
 }
 
@@ -45,12 +64,27 @@
   @include glass(
     $frost: t.$glass-frost--100,
     $shadow: t.$inner-shadow-w100,
-    $radius: t.$radius-lg,
+    $radius: t.$radius-2xl,
     $radius-position: all
   );
 }
 
-@mixin button-inactive() {
+@mixin button-checkroom() {
+  @include glass(
+    $frost: t.$glass-frost--100,
+    $shadow: t.$inner-shadow-b25,
+    $radius: t.$radius-sm,
+    $radius-position: all
+  );
+}
+
+@mixin textfield() {
+  @include glass(
+    $frost: t.$glass-frost--100,
+    $shadow: t.$inner-shadow-b25,
+    $radius: t.$radius-2xl,
+    $radius-position: all
+  );
 }
 
 @mixin focus-ring(
@@ -110,6 +144,7 @@
   flex-direction: $direction;
   align-items: center;
   justify-content: center;
+  align-content: center;
 
   @if $gap != null {
     gap: $gap;

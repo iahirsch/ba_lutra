@@ -6,19 +6,22 @@ $color-neutral-400: oklch(0.685 0 0);
 $color-neutral-500: oklch(0.626 0 0);
 $color-neutral-600: oklch(0.446 0 0);
 $color-neutral-700: oklch(0.322 0 0);
-$color-neutral-900: oklch(0.182 0 0);
+$color-neutral-900: oklch(0.2221 0 0);
 
 $color-neutral-100-75: oklch(0.964 0.006 85.9 / 75%);
 $color-neutral-100-50: oklch(0.964 0.006 85.9 / 50%);
 
-$color-black-50: oklch(0 0 0 / 6%);
-$color-black-100: oklch(0 0 0 / 8%);
-$color-black-200: oklch(0 0 0 / 14%);
-$color-black-500: oklch(0 0 0 / 55%);
+$color-black-50: oklch(0 0 0 / 0.05);
+$color-black-100: oklch(0 0 0 / 0.08);
+$color-black-200: oklch(0 0 0 / 0.14);
+$color-black-500: oklch(0 0 0 / 0.55);
 
-$color-white-50: oklch(1 0 0 / 6%);
-$color-white-400: oklch(1 0 0 / 60%);
-$color-white-900: oklch(1 0 0 / 90%);
+$color-gray-30: oklch(0.7498 0.0037 247.87 / 30%);
+$color-gray-50: oklch(0.6748 0.0131 259.82);
+
+$color-white-50: oklch(1 0 0 / 0.06);
+$color-white-400: oklch(1 0 0 / 0.6);
+$color-white-900: oklch(1 0 0 / 0.9);
 
 $color-slate-950: oklch(0.183 0.037 262.7);
 
@@ -42,6 +45,7 @@ $space-lg: 1rem;
 $space-xl: 1.25rem;
 $space-2xl: 1.5rem;
 $space-3xl: 2rem;
+$space-4xl: 2.875rem;
 
 // Radius scale
 $radius-sm: 0.625rem;
@@ -105,6 +109,12 @@ $glass-frost--100: (
   blur: 20px,
   saturation: 180%,
   frost-color: oklch(1 0 0 / 15%),
+) !default;
+
+$glass-frost--500: (
+  blur: 0px,
+  saturation: 0%,
+  frost-color: oklch(0.9212 0.1146 195.35 / 100%),
 ) !default;
 
 // Font families

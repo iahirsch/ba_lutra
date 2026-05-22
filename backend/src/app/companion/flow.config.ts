@@ -15,8 +15,10 @@ export const FLOW_STEPS: FlowStep[] = [
       'Huhu! Da bin ich.✨ Ich brenne darauf, mit dir das Ödland wieder zum Blühen zu bringen! Aber sag mal... wie soll ich eigentlich heissen?',
     creatorView: {
       type: 'name-input',
-      prompt: 'Gib deinem Buddy einen Namen',
+      title: ['Name des Lutra`s', 'Dein Name'],
+      prompt: ['Wie soll dein Lutra heissen?', 'Wie soll dich dein Lutra nennen ? Was ist dein Spitzname ?'],
     },
+
     transitions: {
       [FLOW_EVENTS.NAME_SUBMITTED]: 'activity_question',
     },
@@ -28,7 +30,7 @@ export const FLOW_STEPS: FlowStep[] = [
       '[name]!? Oh, das klingt fantastisch! Wollen wir direkt loslegen und die erste Stelle auf der Karte durch physische Aktivität vom Ödland befreien und wieder zum Blühen bringen?',
     creatorView: {
       type: 'choices',
-      prompt: '',
+      prompt: [],
       choices: [
         { id: 'active', label: 'Jaaa, packen wir es an! 🌿' },
         { id: 'passive', label: 'Vielleicht später...' },
@@ -49,7 +51,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'confirm',
       prompt:
-        "Mach 10 Hampelmänner und tippe auf 'Fertig', wenn du dein Training beendet hast.",
+        ["Mach 10 Hampelmänner und tippe auf 'Fertig', wenn du dein Training beendet hast."],
       confirmLabel: 'Fertig!',
     },
     transitions: {
@@ -62,7 +64,7 @@ export const FLOW_STEPS: FlowStep[] = [
       'Wow, was für eine Power! 😍 Das wird dem Ödland guttun. Ich flitze schon mal vor ins Zeltlager. Bis gleich!',
     creatorView: {
       type: 'transition',
-      prompt: 'Dein Buddy flitzt zum Hub…',
+      prompt: ['Dein Buddy flitzt zum Hub…'],
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,
@@ -75,7 +77,7 @@ export const FLOW_STEPS: FlowStep[] = [
       'Alles klar, kein Stress! 🔋 Auch ein Otter braucht mal eine Pause. Melde dich einfach, wenn du bereit bist.',
     creatorView: {
       type: 'confirm',
-      prompt: '',
+      prompt: [],
       confirmLabel: 'Okay, ich komme wieder auf dich zu!',
     },
     transitions: {
@@ -88,7 +90,7 @@ export const FLOW_STEPS: FlowStep[] = [
       'Ich mach es mir im Zeltlager gemütlich. Wir sehen uns später! Adeeee! ✨',
     creatorView: {
       type: 'transition',
-      prompt: 'Dein Buddy zieht sich ins Zeltlager zurück…',
+      prompt: ['Dein Buddy zieht sich ins Zeltlager zurück…'],
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,

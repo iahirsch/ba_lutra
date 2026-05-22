@@ -32,7 +32,7 @@ function NameInputView({
         className={styles.nameInput}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Type a name…"
+        placeholder="Trage einen Namen ein"
         maxLength={30}
         autoComplete="off"
         autoCapitalize="words"
@@ -45,7 +45,7 @@ function NameInputView({
         className={styles.actionButton}
         disabled={!value.trim()}
       >
-        Done
+        WEITER
       </button>
     </form>
   );
