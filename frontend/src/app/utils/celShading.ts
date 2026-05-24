@@ -15,6 +15,10 @@ import {
   type Material,
   type Object3D,
 } from 'three';
+import {
+  HUB_TERRAIN_COLOR,
+  HUB_TERRAIN_MESH_NAME,
+} from '@ba-praktisch/shared-types';
 
 let sharedGradient: DataTexture | null = null;
 
@@ -101,6 +105,12 @@ function upgradeMaterial(material: Material): Material {
     return toToonMaterial(material);
   }
   return material;
+}
+
+export function applyHubTerrainMaterial(root: Object3D): void {
+  const ground = root.getObjectByName(HUB_TERRAIN_MESH_NAME);
+  if (!(ground instanceof Mesh)) return;
+  ground.material = new MeshStandardMaterial({ color: HUB_TERRAIN_COLOR });
 }
 
 /** Replaces lit materials with stepped toon shading */

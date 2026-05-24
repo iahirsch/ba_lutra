@@ -1,7 +1,18 @@
 import { PerspectiveCamera } from 'three';
 
 /** Shared hub GLB and camera tuning used by hub, interaction, and builder scenes. */
-export const HUB_GLTF_URL = '/assets/backgrounds/environment.glb';
+export const HUB_GLTF_URL = '/assets/environment/hub.glb';
+
+export const GRASS_LODS_URL = '/assets/environment/grassLODs.glb';
+export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
+export const GRASS_NOISE_TEXTURE_URL = '/assets/environment/perlinnoise.webp';
+export const HUB_TERRAIN_MESH_NAME = 'ground';
+
+export const HUB_TERRAIN_COLOR = '#5e875e';
+export const GRASS_LOD0_MESH_NAME = 'GrassLOD00';
+export const GRASS_INSTANCE_COUNT = 20000;
+export const GRASS_BLADE_WIDTH = 6;
+export const GRASS_BLADE_HEIGHT = 2.5;
 
 export const HUB_ENVIRONMENT_TRANSFORM = {
   position: [0, 0, 0] as [number, number, number],

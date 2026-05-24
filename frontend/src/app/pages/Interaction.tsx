@@ -12,6 +12,7 @@ import {
 import { useEnvironmentSpawn } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
+import { HubGrass } from '../components/common/HubGrass';
 import { HubLights } from '../components/hub/HubLights';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
@@ -46,6 +47,7 @@ function InteractionScene({
       <HubLights />
       <Suspense fallback={null}>
         <HubBackground />
+        <HubGrass />
         {companionConfig && (
           <group position={interactSpawn}>
             <CompanionBody

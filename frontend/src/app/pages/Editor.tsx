@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import {
   Color,
@@ -18,9 +18,12 @@ import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import {
   ENVIRONMENT_SPAWN,
   HUB_GLTF_URL,
+  HUB_TERRAIN_MESH_NAME,
   type FlowStateUpdate,
 } from '@ba-praktisch/shared-types';
+import { applyHubTerrainMaterial } from '../utils/celShading';
 import { useEnvironmentSpawn } from '../utils/environmentSpawn';
+import { HubGrass } from '../components/common/HubGrass';
 import styles from './Editor.module.scss';
 
 useGLTF.preload(HUB_GLTF_URL);
@@ -30,8 +33,10 @@ function EditorBackgroundMesh() {
 
   const dimmedScene = useMemo(() => {
     const root = scene.clone(true);
+    applyHubTerrainMaterial(root);
     root.traverse((node) => {
       if (!(node instanceof Mesh) || !node.material) return;
+      if (node.name === HUB_TERRAIN_MESH_NAME) return;
 
       const tintMaterial = (mat: Material) => {
         const m = mat.clone();
@@ -115,7 +120,10 @@ export function Editor() {
     <div className={styles.page}>
       <div className={styles.canvasZone}>
         <EditorCanvas>
-          <EditorBackgroundMesh />
+          <Suspense fallback={null}>
+            <EditorBackgroundMesh />
+            <HubGrass applyHubTransform={false} />
+          </Suspense>
           <EditorSceneParts />
         </EditorCanvas>
       </div>

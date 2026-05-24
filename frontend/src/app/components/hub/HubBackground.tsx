@@ -4,7 +4,10 @@ import {
   HUB_GLTF_URL,
   HUB_ENVIRONMENT_TRANSFORM,
 } from '@ba-praktisch/shared-types';
-import { applyCelShading } from '../../utils/celShading';
+import {
+  applyCelShading,
+  applyHubTerrainMaterial,
+} from '../../utils/celShading';
 
 useGLTF.preload(HUB_GLTF_URL);
 
@@ -15,6 +18,7 @@ export function HubBackground() {
 
   const celScene = useMemo(() => {
     const cloned = scene.clone(true);
+    applyHubTerrainMaterial(cloned);
     applyCelShading(cloned);
     return cloned;
   }, [scene]);

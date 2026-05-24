@@ -9,6 +9,7 @@ import {
 } from '../../utils/environmentSpawn';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
+import { HubGrass } from '../common/HubGrass';
 import { HubCharacterGroup } from './HubCharacterGroup';
 
 const COMPANION_ROW_GAP = 1.5;
@@ -40,6 +41,7 @@ function HubCanvasContents({
 
       <Suspense fallback={null}>
         <HubBackground />
+        <HubGrass />
       </Suspense>
 
       {companions.map((companion, index) => (
