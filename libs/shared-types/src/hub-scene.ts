@@ -10,13 +10,26 @@ export const HUB_TERRAIN_MESH_NAME = 'ground';
 
 export const HUB_TERRAIN_COLOR = '#5e875e';
 export const GRASS_LOD0_MESH_NAME = 'GrassLOD00';
+export const GRASS_LOD1_MESH_NAME = 'GrassLOD01';
+export const GRASS_LOD2_MESH_NAME = 'GrassLOD02';
+export const GRASS_LOD_MESH_NAMES = [
+  GRASS_LOD0_MESH_NAME,
+  GRASS_LOD1_MESH_NAME,
+  GRASS_LOD2_MESH_NAME,
+] as const;
+
 export const GRASS_INSTANCE_COUNT = 20000;
 export const GRASS_BLADE_WIDTH = 6;
 export const GRASS_BLADE_HEIGHT = 2.5;
 
+export const GRASS_CHUNK_GRID = 8;
+export const GRASS_LOD1_DISTANCE_RATIO = 0.14;
+export const GRASS_LOD2_DISTANCE_RATIO = 0.28;
+export const GRASS_LOD_CULL_DISTANCE_RATIO = 0.55;
+
 export const HUB_ENVIRONMENT_TRANSFORM = {
   position: [0, 0, 0] as [number, number, number],
-  scale: 0.8 as number,
+  scale: 1 as number,
 };
 
 /** Empty-object markers inside HUB_GLTF for companion placement. */
