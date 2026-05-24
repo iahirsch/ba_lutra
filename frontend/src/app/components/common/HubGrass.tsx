@@ -4,7 +4,9 @@ import { useGLTF } from '@react-three/drei';
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js';
 import {
   Box3,
+  BufferAttribute,
   BufferGeometry,
+  Color,
   Euler,
   Group,
   InstancedMesh,
@@ -27,7 +29,9 @@ import {
   GRASS_LOD_CULL_DISTANCE_RATIO,
   GRASS_LOD_MESH_NAMES,
   GRASS_LODS_URL,
+  GRASS_MIN_SAMPLE_WEIGHT,
   GRASS_NOISE_TEXTURE_URL,
+  GRASS_WEIGHT_ATTRIBUTE,
   HUB_ENVIRONMENT_TRANSFORM,
   HUB_GLTF_URL,
   HUB_TERRAIN_MESH_NAME,
@@ -131,6 +135,69 @@ function getChunkKey(position: Vector3, bounds: Box3, grid: number): string {
   return `${cellX},${cellZ}`;
 }
 
+const GRASS_WEIGHT_BUFFER = 'grassWeight';
+
+function getVertexColorLuminance(
+  colorAttribute: {
+    getX: (index: number) => number;
+    getY: (index: number) => number;
+    getZ: (index: number) => number;
+    count: number;
+  },
+  index: number,
+): number {
+  const r = colorAttribute.getX(index);
+  const g = colorAttribute.getY(index);
+  const b = colorAttribute.getZ(index);
+  return r * 0.2126 + g * 0.7152 + b * 0.0722;
+}
+
+function getSampleColorWeight(color: Color): number {
+  return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722;
+}
+
+function resolveGrassMaskAttribute(geometry: BufferGeometry) {
+  const maskAttribute = geometry.getAttribute(GRASS_WEIGHT_ATTRIBUTE);
+  if (maskAttribute) {
+    return maskAttribute;
+  }
+
+  const fallback = geometry.getAttribute('color');
+  if (fallback) {
+    return fallback;
+  }
+
+  throw new Error(
+    `Ground mesh "${HUB_TERRAIN_MESH_NAME}" is missing vertex colors (${GRASS_WEIGHT_ATTRIBUTE} or color). Paint the grass mask in hub.glb.`,
+  );
+}
+
+/** Builds a luminance weight buffer; MeshSurfaceSampler only reads .getX(). */
+function createGrassSampler(terrainMesh: Mesh): {
+  sampler: MeshSurfaceSampler;
+  samplingGeometry: BufferGeometry;
+} {
+  const maskAttribute = resolveGrassMaskAttribute(terrainMesh.geometry);
+
+  const samplingGeometry = terrainMesh.geometry.clone();
+  const weights = new Float32Array(maskAttribute.count);
+  for (let i = 0; i < maskAttribute.count; i++) {
+    weights[i] = getVertexColorLuminance(maskAttribute, i);
+  }
+  samplingGeometry.setAttribute(
+    GRASS_WEIGHT_BUFFER,
+    new BufferAttribute(weights, 1),
+  );
+  // MeshSurfaceSampler interpolates `color` for sampleColor, not color_1.
+  samplingGeometry.setAttribute('color', maskAttribute.clone());
+
+  const sampler = new MeshSurfaceSampler(new Mesh(samplingGeometry))
+    .setWeightAttribute(GRASS_WEIGHT_BUFFER)
+    .build();
+
+  return { sampler, samplingGeometry };
+}
+
 function buildGrassChunks(
   terrainMesh: Mesh,
   lodGeometries: BufferGeometry[],
@@ -139,8 +206,9 @@ function buildGrassChunks(
   bladeHeight: number,
   grid: number,
   material: MeshLambertMaterial,
-): GrassChunk[] {
-  const sampler = new MeshSurfaceSampler(terrainMesh).build();
+  minSampleWeight: number,
+): { chunks: GrassChunk[]; samplingGeometry: BufferGeometry } {
+  const { sampler, samplingGeometry } = createGrassSampler(terrainMesh);
   terrainMesh.geometry.computeBoundingBox();
   if (!terrainMesh.geometry.boundingBox) {
     throw new Error('Expected ground mesh geometry bounds');
@@ -157,9 +225,19 @@ function buildGrassChunks(
   const normal = new Vector3();
   const yAxis = new Vector3(0, 1, 0);
   const matrix = new Matrix4();
+  const sampleColor = new Color();
 
-  for (let i = 0; i < count; i++) {
-    sampler.sample(position, normal);
+  let placed = 0;
+  let attempts = 0;
+  const maxAttempts = count * 30;
+
+  while (placed < count && attempts < maxAttempts) {
+    attempts++;
+    sampler.sample(position, normal, sampleColor);
+    if (getSampleColorWeight(sampleColor) < minSampleWeight) {
+      continue;
+    }
+
     const key = getChunkKey(position, bounds, grid);
 
     quaternion.setFromUnitVectors(yAxis, normal);
@@ -184,6 +262,7 @@ function buildGrassChunks(
       centerSum.add(position);
       chunkCounts.set(key, sampleCount + 1);
     }
+    placed++;
   }
 
   const chunks: GrassChunk[] = [];
@@ -212,7 +291,7 @@ function buildGrassChunks(
     chunks.push({ localCenter, lodMeshes });
   }
 
-  return chunks;
+  return { chunks, samplingGeometry };
 }
 
 /** Horizontal world-space distance from camera to chunk (ground-plane LOD). */
@@ -285,6 +364,7 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
     chunks,
     materialState,
     lodGeometries,
+    samplingGeometry,
     terrainTransform,
     lodDistances,
   } = useMemo(() => {
@@ -301,7 +381,7 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
     );
     const lodDistances = computeLodDistances(terrainWorldWidth);
 
-    const builtChunks = buildGrassChunks(
+    const { chunks, samplingGeometry } = buildGrassChunks(
       terrainMesh,
       lodGeometries,
       GRASS_INSTANCE_COUNT,
@@ -309,12 +389,14 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
       GRASS_BLADE_HEIGHT,
       GRASS_CHUNK_GRID,
       materialState.material,
+      GRASS_MIN_SAMPLE_WEIGHT,
     );
 
     return {
-      chunks: builtChunks,
+      chunks,
       materialState,
       lodGeometries,
+      samplingGeometry,
       lodDistances,
       terrainTransform: {
         position: terrainMesh.position.toArray() as [number, number, number],
@@ -340,9 +422,10 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
       for (const geometry of lodGeometries) {
         geometry.dispose();
       }
+      samplingGeometry.dispose();
       materialState.material.dispose();
     };
-  }, [lodGeometries, materialState]);
+  }, [lodGeometries, samplingGeometry, materialState]);
 
   useFrame((_state, delta) => {
     timeRef.current += delta;

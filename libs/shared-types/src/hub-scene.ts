@@ -8,6 +8,9 @@ export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
 export const GRASS_NOISE_TEXTURE_URL = '/assets/environment/perlinnoise.webp';
 export const HUB_TERRAIN_MESH_NAME = 'ground';
 
+export const GRASS_WEIGHT_ATTRIBUTE = 'color_1';
+export const GRASS_MIN_SAMPLE_WEIGHT = 0.08;
+
 export const HUB_TERRAIN_COLOR = '#5e875e';
 export const GRASS_LOD0_MESH_NAME = 'GrassLOD00';
 export const GRASS_LOD1_MESH_NAME = 'GrassLOD01';
