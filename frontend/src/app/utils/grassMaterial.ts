@@ -1,4 +1,13 @@
 import {
+  GRASS_BASE_COLOR,
+  GRASS_COLOR_VARIATION_NOISE_SCALE,
+  GRASS_COLOR_VARIATION_STRENGTH,
+  GRASS_COLOR_VARIATION_TERRAIN_SIZE,
+  GRASS_LIGHT_INTENSITY,
+  GRASS_TIP_COLOR_1,
+  GRASS_TIP_COLOR_2,
+} from '@ba-praktisch/shared-types';
+import {
   Color,
   DoubleSide,
   MeshLambertMaterial,
@@ -19,12 +28,14 @@ export interface GrassMaterialState {
 
 const grassUniforms: Record<string, GrassUniform> = {
   uTime: { value: 0 },
-  uGrassLightIntensity: { value: 1 },
-  uNoiseScale: { value: 1.5 },
+  uGrassLightIntensity: { value: GRASS_LIGHT_INTENSITY },
+  uNoiseScale: { value: GRASS_COLOR_VARIATION_NOISE_SCALE },
+  uColorVariationStrength: { value: GRASS_COLOR_VARIATION_STRENGTH },
+  uTerrainSize: { value: GRASS_COLOR_VARIATION_TERRAIN_SIZE },
   uBladeHeight: { value: 1 },
-  baseColor: { value: new Color('#313f1b') },
-  tipColor1: { value: new Color('#9bd38d') },
-  tipColor2: { value: new Color('#1f352a') },
+  baseColor: { value: new Color(GRASS_BASE_COLOR) },
+  tipColor1: { value: new Color(GRASS_TIP_COLOR_1) },
+  tipColor2: { value: new Color(GRASS_TIP_COLOR_2) },
   noiseTexture: { value: null as unknown as Texture },
   grassAlphaTexture: { value: null as unknown as Texture },
   uGrowAnchor: { value: new Vector2() },
@@ -41,6 +52,8 @@ function attachGrassShaders(material: Material): void {
       uBaseColor: grassUniforms.baseColor,
       uGrassLightIntensity: grassUniforms.uGrassLightIntensity,
       uNoiseScale: grassUniforms.uNoiseScale,
+      uColorVariationStrength: grassUniforms.uColorVariationStrength,
+      uTerrainSize: grassUniforms.uTerrainSize,
       uBladeHeight: grassUniforms.uBladeHeight,
       uNoiseTexture: grassUniforms.noiseTexture,
       uGrassAlphaTexture: grassUniforms.grassAlphaTexture,
@@ -53,6 +66,7 @@ function attachGrassShaders(material: Material): void {
       #include <fog_pars_vertex>
       uniform sampler2D uNoiseTexture;
       uniform float uNoiseScale;
+      uniform float uTerrainSize;
       uniform float uTime;
       uniform float uBladeHeight;
       uniform vec2 uGrowAnchor;
@@ -85,8 +99,7 @@ function attachGrassShaders(material: Material): void {
 
         vGrowDist = length(modelPosition.xz - uGrowAnchor);
 
-        float terrainSize = 100.0;
-        vGlobalUV = (terrainSize - vec2(modelPosition.xz)) / terrainSize;
+        vGlobalUV = (uTerrainSize - vec2(modelPosition.xz)) / uTerrainSize;
 
         vec4 noise = texture2D(uNoiseTexture, vGlobalUV + uTime * uNoiseSpeed);
         float sinWave =
@@ -120,6 +133,7 @@ function attachGrassShaders(material: Material): void {
       uniform sampler2D uGrassAlphaTexture;
       uniform sampler2D uNoiseTexture;
       uniform float uNoiseScale;
+      uniform float uColorVariationStrength;
       uniform float uGrassLightIntensity;
 
       varying vec2 vUv;
@@ -133,7 +147,12 @@ function attachGrassShaders(material: Material): void {
 
         vec4 grassAlpha = texture2D(uGrassAlphaTexture, vUv);
         vec4 grassVariation = texture2D(uNoiseTexture, vGlobalUV * uNoiseScale);
-        vec3 tipColor = mix(uTipColor1, uTipColor2, grassVariation.r);
+        float variationMix = clamp(
+          0.5 + (grassVariation.r - 0.5) * uColorVariationStrength,
+          0.0,
+          1.0
+        );
+        vec3 tipColor = mix(uTipColor1, uTipColor2, variationMix);
 
         vec4 diffuseColor = vec4(mix(uBaseColor, tipColor, vUv.y), step(0.1, grassAlpha.r));
         vec3 grassFinalColor = diffuseColor.rgb * uGrassLightIntensity;

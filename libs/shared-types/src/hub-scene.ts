@@ -27,6 +27,15 @@ export const GRASS_INSTANCE_COUNT = 20000;
 export const GRASS_BLADE_WIDTH = 6;
 export const GRASS_BLADE_HEIGHT = 2.5;
 
+export const GRASS_BASE_COLOR = '#313f1b';
+export const GRASS_TIP_COLOR_1 = '#B7E882';
+export const GRASS_TIP_COLOR_2 = '#608A53';
+
+export const GRASS_COLOR_VARIATION_NOISE_SCALE = 1.25;
+export const GRASS_COLOR_VARIATION_STRENGTH = 2.5;
+export const GRASS_COLOR_VARIATION_TERRAIN_SIZE = 125;
+export const GRASS_LIGHT_INTENSITY = 1;
+
 export const GRASS_CHUNK_GRID = 8;
 
 export const GRASS_LOD1_DISTANCE_RATIO = 0.14;
