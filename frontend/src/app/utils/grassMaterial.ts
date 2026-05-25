@@ -3,12 +3,13 @@ import {
   DoubleSide,
   MeshLambertMaterial,
   RepeatWrapping,
+  Vector2,
   type Material,
   type Texture,
 } from 'three';
 
 interface GrassUniform {
-  value: number | boolean | Color | Texture;
+  value: number | boolean | Color | Texture | Vector2;
 }
 
 export interface GrassMaterialState {
@@ -26,6 +27,8 @@ const grassUniforms: Record<string, GrassUniform> = {
   tipColor2: { value: new Color('#1f352a') },
   noiseTexture: { value: null as unknown as Texture },
   grassAlphaTexture: { value: null as unknown as Texture },
+  uGrowAnchor: { value: new Vector2() },
+  uGrowRadius: { value: 1e6 },
 };
 
 function attachGrassShaders(material: Material): void {
@@ -41,6 +44,8 @@ function attachGrassShaders(material: Material): void {
       uBladeHeight: grassUniforms.uBladeHeight,
       uNoiseTexture: grassUniforms.noiseTexture,
       uGrassAlphaTexture: grassUniforms.grassAlphaTexture,
+      uGrowAnchor: grassUniforms.uGrowAnchor,
+      uGrowRadius: grassUniforms.uGrowRadius,
     };
 
     shader.vertexShader = `
@@ -50,11 +55,14 @@ function attachGrassShaders(material: Material): void {
       uniform float uNoiseScale;
       uniform float uTime;
       uniform float uBladeHeight;
+      uniform vec2 uGrowAnchor;
+      uniform float uGrowRadius;
 
       varying vec2 vGlobalUV;
       varying vec2 vUv;
       varying vec3 vNormal;
       varying vec3 vViewPosition;
+      varying float vGrowDist;
 
       void main() {
         #include <color_vertex>
@@ -74,6 +82,8 @@ function attachGrassShaders(material: Material): void {
 
         vec2 windDirection = normalize(uWindDirection);
         vec4 modelPosition = modelMatrix * instanceMatrix * vec4(position, 1.0);
+
+        vGrowDist = length(modelPosition.xz - uGrowAnchor);
 
         float terrainSize = 100.0;
         vGlobalUV = (terrainSize - vec2(modelPosition.xz)) / terrainSize;
@@ -114,8 +124,13 @@ function attachGrassShaders(material: Material): void {
 
       varying vec2 vUv;
       varying vec2 vGlobalUV;
+      varying float vGrowDist;
+
+      uniform float uGrowRadius;
 
       void main() {
+        if (vGrowDist > uGrowRadius) discard;
+
         vec4 grassAlpha = texture2D(uGrassAlphaTexture, vUv);
         vec4 grassVariation = texture2D(uNoiseTexture, vGlobalUV * uNoiseScale);
         vec3 tipColor = mix(uTipColor1, uTipColor2, grassVariation.r);
@@ -168,4 +183,17 @@ export function updateGrassMaterialTime(
   time: number,
 ): void {
   state.uniforms.uTime.value = time;
+}
+
+export function setGrassGrowRadius(
+  state: GrassMaterialState,
+  anchorX: number,
+  anchorZ: number,
+  radius: number,
+): void {
+  const anchor = state.uniforms.uGrowAnchor.value;
+  if (anchor instanceof Vector2) {
+    anchor.set(anchorX, anchorZ);
+  }
+  state.uniforms.uGrowRadius.value = radius;
 }

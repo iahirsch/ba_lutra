@@ -27,11 +27,13 @@ function getCompanionRowPosition(
 interface HubCanvasContentsProps {
   companions: SavedCompanion[];
   latestActivitiesByCompanion: Map<string, Activity>;
+  totalEffortScore: number;
 }
 
 function HubCanvasContents({
   companions,
   latestActivitiesByCompanion,
+  totalEffortScore,
 }: HubCanvasContentsProps) {
   const hubSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.hub);
 
@@ -41,7 +43,7 @@ function HubCanvasContents({
 
       <Suspense fallback={null}>
         <HubBackground />
-        <HubGrass />
+        <HubGrass totalEffortScore={totalEffortScore} />
       </Suspense>
 
       {companions.map((companion, index) => (
@@ -70,11 +72,13 @@ function HubCanvasContents({
 interface HubCanvasProps {
   companions: SavedCompanion[];
   latestActivitiesByCompanion: Map<string, Activity>;
+  totalEffortScore: number;
 }
 
 export function HubCanvas({
   companions,
   latestActivitiesByCompanion,
+  totalEffortScore,
 }: HubCanvasProps) {
   return (
     <Canvas
@@ -85,6 +89,7 @@ export function HubCanvas({
       <HubCanvasContents
         companions={companions}
         latestActivitiesByCompanion={latestActivitiesByCompanion}
+        totalEffortScore={totalEffortScore}
       />
     </Canvas>
   );

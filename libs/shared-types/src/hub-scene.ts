@@ -21,14 +21,30 @@ export const GRASS_LOD_MESH_NAMES = [
   GRASS_LOD2_MESH_NAME,
 ] as const;
 
+export const GRASS_DEBUG_SLIDER = true;
+
 export const GRASS_INSTANCE_COUNT = 20000;
 export const GRASS_BLADE_WIDTH = 6;
 export const GRASS_BLADE_HEIGHT = 2.5;
 
 export const GRASS_CHUNK_GRID = 8;
+
 export const GRASS_LOD1_DISTANCE_RATIO = 0.14;
 export const GRASS_LOD2_DISTANCE_RATIO = 0.28;
 export const GRASS_LOD_CULL_DISTANCE_RATIO = 0.55;
+
+/** TODO: Total companion effort at which grass reaches full spread. */
+export const GRASS_GROW_EFFORT_REF = 3;
+/** TODO: Max grow radius as a fraction of terrain world width at {@link GRASS_GROW_EFFORT_REF}. */
+export const GRASS_GROW_RADIUS_RATIO = 0.55;
+
+export function effortTotalToGrowRadius(
+  totalEffort: number,
+  terrainWorldWidth: number,
+): number {
+  const t = Math.min(1, Math.max(0, totalEffort / GRASS_GROW_EFFORT_REF));
+  return terrainWorldWidth * GRASS_GROW_RADIUS_RATIO * t;
+}
 
 export const HUB_ENVIRONMENT_TRANSFORM = {
   position: [0, 0, 0] as [number, number, number],
@@ -37,6 +53,7 @@ export const HUB_ENVIRONMENT_TRANSFORM = {
 
 /** Empty-object markers inside HUB_GLTF for companion placement. */
 export const ENVIRONMENT_SPAWN = {
+  anchor: 'EMPTY_AnchorPos',
   editor: 'EMPTY_EditorSpawn',
   hub: 'EMPTY_HubSpawn',
   interact: 'EMPTY_InteractSpawn',

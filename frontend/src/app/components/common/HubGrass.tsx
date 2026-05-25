@@ -32,6 +32,8 @@ import {
   GRASS_MIN_SAMPLE_WEIGHT,
   GRASS_NOISE_TEXTURE_URL,
   GRASS_WEIGHT_ATTRIBUTE,
+  ENVIRONMENT_SPAWN,
+  effortTotalToGrowRadius,
   HUB_ENVIRONMENT_TRANSFORM,
   HUB_GLTF_URL,
   HUB_TERRAIN_MESH_NAME,
@@ -39,15 +41,19 @@ import {
 import {
   createGrassMaterial,
   setGrassBladeDimensions,
+  setGrassGrowRadius,
   setGrassMaterialTextures,
   updateGrassMaterialTime,
 } from '../../utils/grassMaterial';
+import { resolveEnvironmentSpawn } from '../../utils/environmentSpawn';
+import { useTotalEffortScore } from '../../hooks/useTotalEffortScore';
 
 useGLTF.preload(HUB_GLTF_URL);
 useGLTF.preload(GRASS_LODS_URL);
 
 interface HubGrassProps {
   applyHubTransform?: boolean;
+  totalEffortScore?: number;
 }
 
 interface GrassChunk {
@@ -347,7 +353,12 @@ function updateChunkLods(
 }
 
 /** Chunked instanced grass with per-chunk distance LOD */
-export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
+export function HubGrass({
+  applyHubTransform = true,
+  totalEffortScore: totalEffortProp,
+}: HubGrassProps) {
+  const liveEffort = useTotalEffortScore();
+  const totalEffortScore = totalEffortProp ?? liveEffort;
   const { scene: hubScene } = useGLTF(HUB_GLTF_URL);
   const { scene: grassLodScene } = useGLTF(GRASS_LODS_URL);
   const [grassAlphaTexture, noiseTexture] = useLoader(TextureLoader, [
@@ -357,6 +368,7 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
   const camera = useThree((state) => state.camera);
 
   const timeRef = useRef(0);
+  const growRadiusRef = useRef(0);
   const terrainGroupRef = useRef<Group>(null);
   const { position, scale } = HUB_ENVIRONMENT_TRANSFORM;
 
@@ -367,6 +379,8 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
     samplingGeometry,
     terrainTransform,
     lodDistances,
+    growAnchor,
+    terrainWorldWidth,
   } = useMemo(() => {
     const terrainMesh = findMeshByName(hubScene, HUB_TERRAIN_MESH_NAME);
     const lodGeometries = extractGrassLodGeometries(grassLodScene);
@@ -380,6 +394,11 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
       hubEnvScale,
     );
     const lodDistances = computeLodDistances(terrainWorldWidth);
+    const [anchorX, , anchorZ] = resolveEnvironmentSpawn(
+      hubScene,
+      ENVIRONMENT_SPAWN.anchor,
+      applyHubTransform,
+    );
 
     const { chunks, samplingGeometry } = buildGrassChunks(
       terrainMesh,
@@ -398,6 +417,8 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
       lodGeometries,
       samplingGeometry,
       lodDistances,
+      growAnchor: [anchorX, anchorZ] as [number, number],
+      terrainWorldWidth,
       terrainTransform: {
         position: terrainMesh.position.toArray() as [number, number, number],
         rotation: [
@@ -427,9 +448,29 @@ export function HubGrass({ applyHubTransform = true }: HubGrassProps) {
     };
   }, [lodGeometries, samplingGeometry, materialState]);
 
+  useEffect(() => {
+    growRadiusRef.current = effortTotalToGrowRadius(
+      totalEffortScore,
+      terrainWorldWidth,
+    );
+  }, [totalEffortScore, terrainWorldWidth]);
+
   useFrame((_state, delta) => {
     timeRef.current += delta;
     updateGrassMaterialTime(materialState, timeRef.current);
+
+    const targetGrowRadius = effortTotalToGrowRadius(
+      totalEffortScore,
+      terrainWorldWidth,
+    );
+    growRadiusRef.current +=
+      (targetGrowRadius - growRadiusRef.current) * Math.min(1, delta * 2.5);
+    setGrassGrowRadius(
+      materialState,
+      growAnchor[0],
+      growAnchor[1],
+      growRadiusRef.current,
+    );
 
     const terrainGroup = terrainGroupRef.current;
     if (!terrainGroup) return;
