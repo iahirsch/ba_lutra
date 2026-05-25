@@ -1,4 +1,13 @@
 @use './tokens' as t;
+@use 'sass:map';
+
+@mixin header() {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: t.$space-lg;
+}
 
 @mixin text-body() {
   font-size: t.$font-size-lg;
@@ -17,6 +26,288 @@
   line-height: normal;
   text-transform: uppercase;
   color: t.$color-neutral-900;
+}
+
+@mixin text-headline() {
+  font-family: t.$font-primary-bold;
+  font-size: t.$font-size-2xl;
+  font-style: normal;
+  font-weight: t.$font-weight-bold;
+  line-height: normal;
+  color: t.$color-neutral-900;
+  text-transform: uppercase;
+}
+
+// --- Button Sizes ---
+@mixin _btn-size($size, $icon-left, $icon-right) {
+  @if $size == sm {
+    height: t.$btn-sm-height;
+    font-size: t.$btn-sm-font-size;
+    border-radius: t.$btn-sm-border-radius;
+    @if $icon-left {
+      padding-left: t.$btn-sm-padding-x-icon;
+    } @else {
+      padding-left: t.$btn-sm-padding-x;
+    }
+    @if $icon-right {
+      padding-right: t.$btn-sm-padding-x-icon;
+    } @else {
+      padding-right: t.$btn-sm-padding-x;
+    }
+    @if $icon-left or $icon-right {
+      gap: t.$btn-sm-gap;
+    }
+    .btn__icon-left {
+      width: t.$btn-sm-icon-size;
+      height: t.$btn-sm-icon-size;
+    }
+    .btn__icon-right {
+      width: t.$btn-sm-icon-size;
+      height: t.$btn-sm-icon-size;
+    }
+  } @else if $size == lg {
+    width: 100%;
+    height: t.$btn-lg-height;
+    font-size: t.$btn-lg-font-size;
+    border-radius: t.$btn-lg-border-radius;
+    @if $icon-left {
+      padding-left: t.$btn-lg-padding-x-icon;
+    } @else {
+      padding-left: t.$btn-lg-padding-x;
+    }
+    @if $icon-right {
+      padding-right: t.$btn-lg-padding-x-icon;
+    } @else {
+      padding-right: t.$btn-lg-padding-x;
+    }
+    @if $icon-left or $icon-right {
+      gap: t.$btn-lg-gap;
+    }
+    .btn__icon-left {
+      width: t.$btn-lg-icon-size;
+      height: t.$btn-lg-icon-size;
+    }
+    .btn__icon-right {
+      width: t.$btn-lg-icon-size;
+      height: t.$btn-lg-icon-size;
+    }
+  } @else {
+    height: t.$btn-md-height;
+    font-size: t.$btn-md-font-size;
+    border-radius: t.$btn-md-border-radius;
+    @if $icon-left {
+      padding-left: t.$btn-md-padding-x-icon;
+    } @else {
+      padding-left: t.$btn-md-padding-x;
+    }
+    @if $icon-right {
+      padding-right: t.$btn-md-padding-x-icon;
+    } @else {
+      padding-right: t.$btn-md-padding-x;
+    }
+    @if $icon-left or $icon-right {
+      gap: t.$btn-md-gap;
+    }
+    .btn__icon-left {
+      width: t.$btn-md-icon-size;
+      height: t.$btn-md-icon-size;
+    }
+    .btn__icon-right {
+      width: t.$btn-md-icon-size;
+      height: t.$btn-md-icon-size;
+    }
+  }
+
+  // Icon-Sichtbarkeit
+  @if $icon-left {
+    .btn__icon-left {
+      display: flex;
+    }
+  } @else {
+    .btn__icon-left {
+      display: none;
+    }
+  }
+  @if $icon-right {
+    .btn__icon-right {
+      display: flex;
+    }
+  } @else {
+    .btn__icon-right {
+      display: none;
+    }
+  }
+}
+// --- Button States ---
+
+@mixin _btn-state($variant, $state) {
+  @if $variant == primär {
+    @if $state == default {
+      @include glass(
+        $frost: t.$glass-frost--100,
+        $shadow: (
+          t.$inner-shadow-w100,
+          t.$drop-shadow-b60,
+        ),
+        $radius: t.$radius-2xl,
+        $radius-position: all
+      );
+      background-color: t.$color-cyan-500-60;
+      color: t.$btn-text-default;
+      cursor: pointer;
+    } @else if $state == pressed {
+      @include glass(
+        $frost: t.$glass-frost--100,
+        $shadow: (
+          t.$inner-shadow-w100,
+          t.$drop-shadow-b60,
+        ),
+        $radius: t.$radius-2xl,
+        $radius-position: all
+      );
+      background-color: t.$color-cyan-500;
+      color: t.$btn-text-default;
+      cursor: pointer;
+      transform: scale(0.98);
+    } @else if $state == disabled {
+      box-shadow: t.$drop-shadow-b50;
+      border: 1px solid t.$color-gray-50;
+      border-radius: t.$radius-2xl;
+      background-color: t.$color-gray-30;
+      opacity: 0.4;
+      color: t.$btn-text-disabled;
+      cursor: not-allowed;
+      pointer-events: none;
+    } @else if $state == focused {
+      @include glass(
+        $frost: t.$glass-frost--100,
+        $shadow: t.$drop-shadow-b25,
+        $radius: t.$radius-2xl,
+        $radius-position: all
+      );
+      background-color: t.$color-gray-30;
+      border: 1px solid t.$color-cyan-500;
+      color: t.$btn-text-default;
+      cursor: pointer;
+      outline: none;
+    }
+  } @else if $variant == sekundär {
+    @if $state == default {
+      @include glass(
+        $frost: t.$glass-frost--100,
+        $shadow: (
+          t.$inner-shadow-w100,
+          t.$drop-shadow-b60,
+        ),
+        $radius: t.$radius-2xl,
+        $radius-position: all
+      );
+      background-color: t.$color-light-30;
+      color: t.$btn-text-default;
+      cursor: pointer;
+    } @else if $state == pressed {
+      @include glass(
+        $frost: t.$glass-frost--100,
+        $shadow: (
+          t.$inner-shadow-w100,
+          t.$drop-shadow-b60,
+        ),
+        $radius: t.$radius-2xl,
+        $radius-position: all
+      );
+      background-color: t.$color-light-80;
+      color: t.$btn-text-default;
+      cursor: pointer;
+      transform: scale(0.98);
+    } @else if $state == disabled {
+      box-shadow: t.$drop-shadow-b50;
+      border: 1px solid t.$color-gray-30;
+      border-radius: t.$radius-2xl;
+      background-color: t.$color-gray-30;
+      opacity: 0.4;
+      color: t.$btn-text-disabled;
+      cursor: not-allowed;
+      pointer-events: none;
+    } @else if $state == focused {
+      @include glass(
+        $frost: t.$glass-frost--100,
+        $shadow: t.$drop-shadow-b25,
+        $radius: t.$radius-2xl,
+        $radius-position: all
+      );
+      background-color: t.$color-gray-30;
+      border: 1px solid t.$color-cyan-500;
+      color: t.$btn-text-default;
+      cursor: pointer;
+      outline: none;
+    }
+  }
+
+  // Icon-Opacity
+  @if $state == disabled {
+    .btn__icon-left,
+    .btn__icon-right {
+      opacity: t.$btn-icon-opacity-disabled;
+    }
+  } @else {
+    .btn__icon-left,
+    .btn__icon-right {
+      opacity: 1;
+    }
+  }
+}
+
+// --- Button Base Style ---
+@mixin _btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: t.$font-secondary;
+  font-weight: t.$btn-font-weight;
+  letter-spacing: t.$btn-letter-spacing;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition:
+    background-color t.$btn-transition,
+    border-color t.$btn-transition,
+    transform t.$btn-transition,
+    opacity t.$btn-transition;
+}
+
+// --- Button Mixins ---
+
+@mixin button(
+  $variant: primär,
+  $state: default,
+  $size: md,
+  $icon-left: true,
+  $icon-right: true
+) {
+  @include _btn-base;
+  @include _btn-size($size, $icon-left, $icon-right);
+  @include _btn-state($variant, $state);
+}
+
+// --- Primary & Secondary Buttons ---
+
+@mixin button-primär(
+  $state: default,
+  $size: md,
+  $icon-left: true,
+  $icon-right: true
+) {
+  @include button(primär, $state, $size, $icon-left, $icon-right);
+}
+
+@mixin button-sekundär(
+  $state: default,
+  $size: md,
+  $icon-left: true,
+  $icon-right: true
+) {
+  @include button(sekundär, $state, $size, $icon-left, $icon-right);
 }
 
 @mixin button-reset {
@@ -60,7 +351,7 @@
   cursor: pointer;
 }
 
-@mixin button-active() {
+@mixin button-toggle() {
   @include glass(
     $frost: t.$glass-frost--100,
     $shadow: t.$inner-shadow-w100,
@@ -166,31 +457,27 @@
   $shadow: t.$drop-shadow-b25 // ← Shadow-Token übergeben
 ) {
   // Frost-Werte aus Token lesen:
-  $blur: map-get($frost, blur);
-  $saturation: map-get($frost, saturation);
-  $frost-color: map-get($frost, frost-color);
+  $blur: map.get($frost, blur);
+  $saturation: map.get($frost, saturation);
+  $frost-color: map.get($frost, frost-color);
 
   position: relative;
 
   $r: $radius;
 
-  border-radius: if(
-    $radius-position == all,
-    $r,
-    if(
-      $radius-position == top,
-      $r $r 0 0,
-      if(
-        $radius-position == bottom,
-        0 0 $r $r,
-        if(
-          $radius-position == left,
-          $r 0 0 $r,
-          if($radius-position == right, 0 $r $r 0, $r)
-        )
-      )
-    )
-  );
+  @if $radius-position == all {
+    border-radius: $r;
+  } @else if $radius-position == top {
+    border-radius: $r $r 0 0;
+  } @else if $radius-position == bottom {
+    border-radius: 0 0 $r $r;
+  } @else if $radius-position == left {
+    border-radius: $r 0 0 $r;
+  } @else if $radius-position == right {
+    border-radius: 0 $r $r 0;
+  } @else {
+    border-radius: $r;
+  }
 
   // --- Frost / Unschärfe ---
   backdrop-filter: blur($blur) saturate($saturation);
@@ -217,23 +504,20 @@
     pointer-events: none;
     position: absolute;
     inset: 0;
-    border-radius: if(
-      $radius-position == all,
-      $r,
-      if(
-        $radius-position == top,
-        $r $r 0 0,
-        if(
-          $radius-position == bottom,
-          0 0 $r $r,
-          if(
-            $radius-position == left,
-            $r 0 0 $r,
-            if($radius-position == right, 0 $r $r 0, $r)
-          )
-        )
-      )
-    );
+
+    @if $radius-position == all {
+      border-radius: $r;
+    } @else if $radius-position == top {
+      border-radius: $r $r 0 0;
+    } @else if $radius-position == bottom {
+      border-radius: 0 0 $r $r;
+    } @else if $radius-position == left {
+      border-radius: $r 0 0 $r;
+    } @else if $radius-position == right {
+      border-radius: 0 $r $r 0;
+    } @else {
+      border-radius: $r;
+    }
     border: $border-width solid transparent;
 
     background: linear-gradient(

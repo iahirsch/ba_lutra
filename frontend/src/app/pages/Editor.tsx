@@ -110,9 +110,11 @@ export function Editor() {
           <EditorSceneParts />
         </EditorCanvas>
       </div>
-      <div className={styles.panelZone}>
-        <EditorPanel />
-      </div>
+      {
+        <div className={styles.panelZone}>
+          <EditorPanel />
+        </div>
+      }
     </div>
   );
 }

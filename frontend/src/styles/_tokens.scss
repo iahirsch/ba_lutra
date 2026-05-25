@@ -19,6 +19,9 @@ $color-black-500: oklch(0 0 0 / 0.55);
 $color-gray-30: oklch(0.7498 0.0037 247.87 / 30%);
 $color-gray-50: oklch(0.6748 0.0131 259.82);
 
+$color-light-30: oklch(0.9625 0.008 253.85 / 30%);
+$color-light-80: oklch(0.9625 0.008 253.85 / 80%);
+
 $color-white-50: oklch(1 0 0 / 0.06);
 $color-white-400: oklch(1 0 0 / 0.6);
 $color-white-900: oklch(1 0 0 / 0.9);
@@ -28,6 +31,8 @@ $color-slate-950: oklch(0.183 0.037 262.7);
 $color-red-500: oklch(0.637 0.208 25.33);
 $color-red-600: oklch(0.577 0.219 27.33);
 $color-red-500-12: oklch(0.637 0.208 25.33 / 12%);
+
+$color-success-500: oklch(0.4182 0.1401 142.55);
 
 $color-green-500: oklch(0.723 0.192 149.58);
 $color-green-600: oklch(0.527 0.136 144.17);
@@ -46,6 +51,8 @@ $space-xl: 1.25rem;
 $space-2xl: 1.5rem;
 $space-3xl: 2rem;
 $space-4xl: 2.875rem;
+$space-5xl: 3rem;
+$space-header: 9.375rem;
 
 // Radius scale
 $radius-sm: 0.625rem;
@@ -54,6 +61,7 @@ $radius-lg: 6.25rem;
 $radius-xl: 1rem;
 $radius-2xl: 1.25rem;
 $radius-3xl: 1.5rem;
+$radius-4xl: 2rem;
 $radius-pill: 62.4375rem;
 
 // Typography scale
@@ -65,6 +73,7 @@ $font-size-base: 0.9375rem;
 $font-size-lg: 1rem;
 $font-size-xl: 1.25rem;
 $font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
@@ -122,3 +131,44 @@ $glass-frost--500: (
 $font-primary-bold: 'Alegreya SC', serif;
 $font-primary-regular: 'Alegreya', serif;
 $font-secondary: 'Nunito', sans-serif;
+
+// Button Design Tokens
+
+// ── Text ─────────────────────────────────────────────────────
+$btn-text-default: $color-neutral-900;
+$btn-text-disabled: $color-neutral-500;
+
+// ── Icon ─────────────────────────────────────────────────────
+$btn-icon-opacity-disabled: 0.4;
+
+// ── Sizing: Small ────────────────────────────────────────────
+$btn-sm-height: $space-4xl;
+$btn-sm-padding-x: $space-md;
+$btn-sm-padding-x-icon: $space-sm;
+$btn-sm-font-size: $font-size-sm;
+$btn-sm-icon-size: 1.25rem;
+$btn-sm-gap: $space-xs;
+$btn-sm-border-radius: $radius-pill;
+
+// ── Sizing: Default (md) ─────────────────────────────────────
+$btn-md-height: $space-4xl;
+$btn-md-padding-x: $space-lg;
+$btn-md-padding-x-icon: $space-sm;
+$btn-md-font-size: $font-size-md;
+$btn-md-icon-size: 2rem;
+$btn-md-gap: $space-sm;
+$btn-md-border-radius: $radius-pill;
+
+// ── Sizing: Large ────────────────────────────────────────────
+$btn-lg-height: $space-5xl;
+$btn-lg-padding-x: $space-xl;
+$btn-lg-padding-x-icon: $space-md;
+$btn-lg-font-size: $font-size-lg;
+$btn-lg-icon-size: 2.5rem;
+$btn-lg-gap: $space-md;
+$btn-lg-border-radius: $radius-pill;
+
+// ── Shared ───────────────────────────────────────────────────
+$btn-font-weight: $font-weight-extrabold;
+$btn-letter-spacing: 0.04em;
+$btn-transition: $duration-fast $easing-standard;

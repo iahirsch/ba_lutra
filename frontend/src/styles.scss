@@ -37,3 +37,24 @@ img {
   display: block;
   max-width: 100%;
 }
+
+header {
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-b25,
+    $radius: s.$radius-2xl,
+    $radius-position: bottom
+  );
+  @include s.text-headline();
+  height: s.$space-header;
+  width: 100%;
+}
+
+input.input--valid {
+  border: 2px solid s.$color-success-500;
+  padding-right: 2.5rem;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.2rem 1.2rem;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path d="M5 13l4 4L19 7" stroke="%2300b87c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}

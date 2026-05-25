@@ -25,7 +25,10 @@
 .content {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  justify-content: flex-end;
+  align-items: flex-start;
+  align-self: stretch;
+  height: 43.875rem;
   width: 100%;
   max-width: 34rem;
   animation: slideUp s.$duration-normal s.$easing-standard both;
@@ -45,20 +48,31 @@
 .view {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: s.$space-3xl;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.viewContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: s.$space-4xl;
+  align-self: stretch;
   width: 100%;
 }
 
-.prompt {
-  @include s.text-body();
-  margin: 0;
-  color: s.$color-neutral-900;
-  line-height: 1.45;
-  text-align: start;
+.formularField {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: s.$space-lg;
+  align-self: stretch;
+  width: 100%;
 }
 
-.nameInput {
+.textfield {
   @include s.textfield();
   width: 100%;
   height: 46px;
@@ -75,13 +89,24 @@
   }
 }
 
+.title {
+  @include s.text-headline();
+  margin: 0;
+  text-align: start;
+}
+
+.prompt {
+  @include s.text-body();
+  margin: 0;
+  color: s.$color-neutral-900;
+  line-height: 1.45;
+  text-align: start;
+}
+
 .actionButton {
-  @include s.button-primary();
-  @include s.focus-ring(s.$space-2xs, s.$radius-xl, s.$color-cyan-500);
-  @include s.interactive-transition(
-    opacity s.$duration-fast s.$easing-standard,
-    transform 0.1s s.$easing-standard
-  );
+  @include s.button(primär, pressed, lg, false, false);
+  margin-top: auto;
+  margin-bottom: 0;
   display: block;
   width: 100%;
   letter-spacing: 0.01em;
@@ -96,7 +121,7 @@
     opacity: 0.35;
     cursor: not-allowed;
     transform: none;
-    @include s.button-disabled();
+    @include s.button(primär, disabled, lg, false, false);
   }
 }
 
