@@ -38,18 +38,6 @@ img {
   max-width: 100%;
 }
 
-header {
-  @include s.glass(
-    $frost: s.$glass-frost--100,
-    $shadow: s.$inner-shadow-b25,
-    $radius: s.$radius-2xl,
-    $radius-position: bottom
-  );
-  @include s.text-headline();
-  height: s.$space-header;
-  width: 100%;
-}
-
 input.input--valid {
   border: 2px solid s.$color-success-500;
   padding-right: 2.5rem;

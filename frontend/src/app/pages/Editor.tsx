@@ -103,23 +103,19 @@ export function Editor() {
   }
 
   return (
-    <>
-      <header className={styles.header}>
-        <h1>Editor</h1>
-      </header>
-      <div className={styles.page}>
-        <div className={styles.canvasZone}>
-          <EditorCanvas>
-            <EditorBackgroundMesh />
-            <EditorSceneParts />
-          </EditorCanvas>
-        </div>
-        {
-          <div className={styles.panelZone}>
-            <EditorPanel />
-          </div>
-        }
+    <div className={styles.page}>
+      <div className={styles.header}>Lutra erstellen</div>
+      <div className={styles.canvasZone}>
+        <EditorCanvas>
+          <EditorBackgroundMesh />
+          <EditorSceneParts />
+        </EditorCanvas>
       </div>
-    </>
+      {
+        <div className={styles.panelZone}>
+          <EditorPanel />
+        </div>
+      }
+    </div>
   );
 }

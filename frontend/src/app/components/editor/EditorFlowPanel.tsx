@@ -68,12 +68,13 @@ function NameInputView({
           />
         </div>
       </div>
+
       <button
         type="submit"
         className={styles.actionButton}
         disabled={!lutraValue.trim() || !userValue.trim()}
       >
-        WEITER
+        Erstellen
       </button>
     </form>
   );
@@ -163,34 +164,37 @@ export function EditorFlowPanel({
 
   return (
     <div className={styles.panel}>
-      <div className={styles.content} key={flowState.stepId}>
-        {type === 'name-input' && (
-          <NameInputView
-            title={title}
-            prompt={prompt}
-            onSubmitName={onSubmitName}
-          />
-        )}
+      <div className={styles.overlay}>
+        <div className={styles.header}>Lutra erstellen</div>
+        <div className={styles.content} key={flowState.stepId}>
+          {type === 'name-input' && (
+            <NameInputView
+              title={title}
+              prompt={prompt}
+              onSubmitName={onSubmitName}
+            />
+          )}
 
-        {type === 'choices' && choices && (
-          <ChoicesView
-            title={title}
-            prompt={prompt}
-            choices={choices}
-            onSelectChoice={onSelectChoice}
-          />
-        )}
+          {type === 'choices' && choices && (
+            <ChoicesView
+              title={title}
+              prompt={prompt}
+              choices={choices}
+              onSelectChoice={onSelectChoice}
+            />
+          )}
 
-        {type === 'confirm' && (
-          <ConfirmView
-            title={title}
-            prompt={prompt}
-            confirmLabel={confirmLabel}
-            onConfirmAction={onConfirmAction}
-          />
-        )}
+          {type === 'confirm' && (
+            <ConfirmView
+              title={title}
+              prompt={prompt}
+              confirmLabel={confirmLabel}
+              onConfirmAction={onConfirmAction}
+            />
+          )}
 
-        {type === 'transition' && <TransitionView prompt={prompt} />}
+          {type === 'transition' && <TransitionView prompt={prompt} />}
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 .tabBar {
   position: relative;
   display: flex;
+  height: fit-content;
   flex-direction: row;
   justify-content: space-around;
   overflow-x: auto;
@@ -67,11 +68,7 @@
   height: 100%;
   gap: s.$space-sm;
   z-index: 3;
-  overflow: hidden;
-  border-top-left-radius: s.$radius-3xl;
-  border-top-right-radius: s.$radius-3xl;
-  border-top: 1px solid s.$color-white-50;
-  padding: s.$space-sm;
+  padding: s.$space-lg;
   @include s.glass(
     $frost: s.$glass-frost--100,
     $shadow: null,
@@ -83,6 +80,7 @@
 .content {
   flex: 1;
   overflow-y: auto;
+  height: 12.5rem;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -93,6 +91,7 @@
 
 .saveButton {
   @include s.button(primär, pressed, lg, false, false);
+  width: 100%;
 }
 
 .eyesSection {
@@ -104,6 +103,8 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  width: 100%;
+  height: fit-content;
   gap: s.$space-sm;
   padding: s.$space-sm;
   overflow-x: auto;
@@ -350,9 +351,9 @@
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: s.$space-lg;
-    height: s.$space-lg;
-    margin-top: -4px; // Thumb mittig auf Track
+    width: s.$space-2xl;
+    height: s.$space-2xl;
+    margin-top: -9px; // Thumb mittig auf Track
     border-radius: 50%;
     cursor: pointer;
     @include s.glass(
@@ -361,7 +362,7 @@
         s.$drop-shadow-b25,
         s.$inner-shadow-w25,
       ),
-      $radius: s.$radius-sm,
+      $radius: s.$radius-xl,
       $radius-position: all
     );
     position: relative;

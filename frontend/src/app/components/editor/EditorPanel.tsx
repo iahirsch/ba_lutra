@@ -20,7 +20,7 @@ import { NoseIcon, ShortsIcon } from '../common/icons';
 
 const SECTIONS: { key: EditorSection; label: string; icon: string }[] = [
   { key: 'lutra', label: 'Lutra', icon: 'pets' },
-  { key: 'clothing', label: 'Clothing', icon: 'checkroom' },
+  { key: 'clothing', label: 'Kleidung', icon: 'checkroom' },
 ];
 
 const LUTRA_TABS: {
@@ -29,9 +29,9 @@ const LUTRA_TABS: {
   icon?: string;
   iconComponent?: React.FC<React.SVGProps<SVGSVGElement>>;
 }[] = [
-  { key: 'body', label: 'Body', icon: 'accessibility_new' },
-  { key: 'fur', label: 'Fur', icon: 'palette' },
-  { key: 'eyes', label: 'Sclera', icon: 'visibility' },
+  { key: 'body', label: 'Körper', icon: 'accessibility_new' },
+  { key: 'fur', label: 'Fell', icon: 'palette' },
+  { key: 'eyes', label: 'Augen', icon: 'visibility' },
   { key: 'iris', label: 'Iris', icon: 'radio_button_checked' },
   { key: 'nose', label: 'Nose', iconComponent: NoseIcon },
 ];
@@ -123,8 +123,8 @@ interface MorphSliderDef {
 }
 
 const MORPH_SLIDERS: MorphSliderDef[] = [
-  { morphName: 'body_fat', label: 'Body' },
-  { morphName: 'face_fat', label: 'Face' },
+  { morphName: 'body_fat', label: 'Körper' },
+  { morphName: 'face_fat', label: 'Gesicht' },
 ];
 
 function BodySliders() {
@@ -171,7 +171,7 @@ function EyeScleraPicker() {
 
   return (
     <div className={styles.gridTab}>
-      <div className={styles.gridTitle}>Scleracolor</div>
+      <div className={styles.gridTitle}>Augenfarbe</div>
       <div className={styles.grid}>
         {EYE_SCLERA_PRESETS.map((preset) => {
           const selected = eyeColor.primary === preset;
@@ -182,7 +182,7 @@ function EyeScleraPicker() {
               className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
               onClick={() => setEyeColorPart('primary', preset)}
               aria-pressed={selected}
-              aria-label={`Eye color ${preset}`}
+              aria-label={`Augenfarbe ${preset}`}
             >
               <span
                 className={styles.colorSwatchPreview}
@@ -202,7 +202,7 @@ function IrisColorPicker() {
 
   return (
     <div className={styles.gridTab}>
-      <div className={styles.gridTitle}>Iriscolor</div>
+      <div className={styles.gridTitle}>Irisfarbe</div>
       <div className={styles.grid}>
         {IRIS_COLOR_PRESETS.map((preset) => {
           const selected = eyeColor.secondary === preset;
@@ -213,7 +213,7 @@ function IrisColorPicker() {
               className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
               onClick={() => setEyeColorPart('secondary', preset)}
               aria-pressed={selected}
-              aria-label={`Iris color ${preset}`}
+              aria-label={`Irisfarbe ${preset}`}
             >
               <span
                 className={styles.colorSwatchPreview}
@@ -233,7 +233,7 @@ function NoseColorPicker() {
 
   return (
     <div className={styles.gridTab}>
-      <div className={styles.gridTitle}>Nosencolor</div>
+      <div className={styles.gridTitle}>Nasenfarbe</div>
       <div className={styles.grid}>
         {NOSE_COLOR_PRESETS.map((preset) => {
           const selected = noseColor === preset;
@@ -244,7 +244,7 @@ function NoseColorPicker() {
               className={`${styles.cell} ${styles.colorSwatch} ${selected ? styles.cellActive : ''}`}
               onClick={() => setNoseColor(preset)}
               aria-pressed={selected}
-              aria-label={`Nose color ${preset}`}
+              aria-label={`Nasenfarbe ${preset}`}
             >
               <span
                 className={styles.colorSwatchPreview}
@@ -264,7 +264,7 @@ function FurColorPicker() {
 
   return (
     <div className={styles.gridTab}>
-      <div className={styles.gridTitle}>Furcolor</div>
+      <div className={styles.gridTitle}>Fellfarbe</div>
       <div className={styles.grid}>
         {FUR_COLOR_PRESETS.map((preset) => {
           const selected =
@@ -277,7 +277,7 @@ function FurColorPicker() {
               className={`${styles.cell} ${selected ? styles.cellActive : ''}`}
               onClick={() => setFurColor(preset)}
               aria-pressed={selected}
-              aria-label={`Fur colors ${preset.primary} and ${preset.secondary}`}
+              aria-label={`Fellfarbe ${preset.primary} and ${preset.secondary}`}
             >
               <span
                 className={styles.colorSwatchPreview}
@@ -308,7 +308,7 @@ function PartGrid({ category }: { category: PartCategory }) {
 
   const allowNone = OPTIONAL_PART_CATEGORIES.includes(category);
 
-  const title = category === 'clothingTop' ? 'Shirt' : 'Pants';
+  const title = category === 'clothingTop' ? 'Shirt' : 'Hose';
 
   return (
     <div className={styles.gridTab}>
@@ -322,7 +322,7 @@ function PartGrid({ category }: { category: PartCategory }) {
             aria-pressed={selected === ''}
           >
             <span className={styles.nonePlaceholder} aria-hidden="true">
-              — <span className={styles.variantLabel}>None</span>
+              — <span className={styles.variantLabel}>keine</span>
             </span>
           </button>
         )}
@@ -415,16 +415,16 @@ export function EditorPanel() {
         <CategoryContent />
       </div>
 
-      <div className={styles.footer}>
-        <button
-          className={styles.saveButton}
-          onClick={handleSave}
-          disabled={saving}
-          aria-busy={saving}
-        >
-          {saving ? 'Saving…' : saved ? 'Saved!' : 'CREATE'}
-        </button>
-      </div>
+      <button
+        className={styles.saveButton}
+        onClick={handleSave}
+        disabled={saving}
+        aria-busy={saving}
+      >
+        {saving ? 'Saving…' : saved ? 'Saved!' : 'Weiter'}
+      </button>
+      {/* <div className={styles.footer}>
+      </div> */}
     </div>
   );
 }
