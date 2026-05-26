@@ -9,7 +9,7 @@ import {
   Vignette,
 } from '@react-three/postprocessing';
 import { Vector3, MathUtils, Spherical } from 'three';
-import { ENVIRONMENT_SPAWN, HUB_CAMERA } from '@ba-praktisch/shared-types';
+import { ENVIRONMENT_SPAWN, HUB_CAMERA } from '../../constants/hub-scene';
 import { useCompanionStore } from '../../store/companionStore';
 import {
   CAMERA_PRESETS,

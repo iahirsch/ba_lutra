@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   GRASS_DEBUG_SLIDER,
   GRASS_GROW_EFFORT_REF,
-} from '@ba-praktisch/shared-types';
+} from '../constants/environment-vegetation';
 import { useCompanionSocket } from '../hooks/useCompanionSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
 import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
@@ -49,7 +49,7 @@ export function Hub() {
           )}
         </div>
 
-        {/* Temporary debug slider. Controlled by GRASS_DEBUG_SLIDER in hub-scene.ts */}
+        {/* Temporary debug slider. Controlled by GRASS_DEBUG_SLIDER in environment-vegetation.ts */}
         {GRASS_DEBUG_SLIDER && (
           <div className={styles.debugControl}>
             <label className={styles.debugLabel} htmlFor="hub-effort-score">

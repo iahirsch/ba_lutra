@@ -18,7 +18,7 @@ import {
 import {
   HUB_TERRAIN_COLOR,
   HUB_TERRAIN_MESH_NAME,
-} from '@ba-praktisch/shared-types';
+} from '../constants/hub-scene';
 
 let sharedGradient: DataTexture | null = null;
 

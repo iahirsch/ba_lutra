@@ -4,15 +4,12 @@ import type {
   CompanionConfig,
   RenderedCompanionPart,
 } from '@ba-praktisch/shared-types';
-import {
-  ENVIRONMENT_SPAWN,
-  INTERACTION_CAMERA,
-  RENDERED_COMPANION_PARTS,
-} from '@ba-praktisch/shared-types';
+import { RENDERED_COMPANION_PARTS } from '@ba-praktisch/shared-types';
+import { ENVIRONMENT_SPAWN, INTERACTION_CAMERA } from '../constants/hub-scene';
 import { useEnvironmentSpawn } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
-import { HubGrass } from '../components/common/HubGrass';
+import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import { HubLights } from '../components/hub/HubLights';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
@@ -47,7 +44,7 @@ function InteractionScene({
       <HubLights />
       <Suspense fallback={null}>
         <HubBackground />
-        <HubGrass />
+        <EnvironmentVegetation />
         {companionConfig && (
           <group position={interactSpawn}>
             <CompanionBody

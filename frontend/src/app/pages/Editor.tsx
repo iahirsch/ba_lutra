@@ -15,15 +15,15 @@ import { EditorFlowPanel } from '../components/editor/EditorFlowPanel';
 import '../constants/companion-part-variants';
 import { useCompanionStore, DEFAULT_CONFIG } from '../store/companionStore';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
+import type { FlowStateUpdate } from '@ba-praktisch/shared-types';
 import {
   ENVIRONMENT_SPAWN,
   HUB_GLTF_URL,
   HUB_TERRAIN_MESH_NAME,
-  type FlowStateUpdate,
-} from '@ba-praktisch/shared-types';
+} from '../constants/hub-scene';
 import { applyHubTerrainMaterial } from '../utils/celShading';
 import { useEnvironmentSpawn } from '../utils/environmentSpawn';
-import { HubGrass } from '../components/common/HubGrass';
+import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import styles from './Editor.module.scss';
 
 useGLTF.preload(HUB_GLTF_URL);
@@ -122,7 +122,7 @@ export function Editor() {
         <EditorCanvas>
           <Suspense fallback={null}>
             <EditorBackgroundMesh />
-            <HubGrass applyHubTransform={false} />
+            <EnvironmentVegetation applyEnvironmentTransform={false} />
           </Suspense>
           <EditorSceneParts />
         </EditorCanvas>

@@ -2,14 +2,14 @@ import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
-import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '@ba-praktisch/shared-types';
+import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '../../constants/hub-scene';
 import {
   addSpawnOffset,
   useEnvironmentSpawn,
 } from '../../utils/environmentSpawn';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
-import { HubGrass } from '../common/HubGrass';
+import { EnvironmentVegetation } from '../common/EnvironmentVegetation';
 import { HubCharacterGroup } from './HubCharacterGroup';
 
 const COMPANION_ROW_GAP = 1.5;
@@ -43,7 +43,7 @@ function HubCanvasContents({
 
       <Suspense fallback={null}>
         <HubBackground />
-        <HubGrass totalEffortScore={totalEffortScore} />
+        <EnvironmentVegetation totalEffortScore={totalEffortScore} />
       </Suspense>
 
       {companions.map((companion, index) => (

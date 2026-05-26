@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import {
-  HUB_GLTF_URL,
   HUB_ENVIRONMENT_TRANSFORM,
-} from '@ba-praktisch/shared-types';
+  HUB_GLTF_URL,
+} from '../../constants/hub-scene';
 import {
   applyCelShading,
   applyHubTerrainMaterial,
