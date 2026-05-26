@@ -95,28 +95,6 @@
   @include s.button(primär, pressed, lg, false, false);
 }
 
-// .saveButton {
-//   @include s.button-primary();
-//   @include s.focus-ring(s.$space-xs, s.$radius-xl, s.$color-cyan-500);
-//   @include s.interactive-transition(
-//     opacity s.$duration-fast s.$easing-standard,
-//     transform 0.1s s.$easing-standard
-//   );
-//   display: block;
-//   width: 100%;
-//   letter-spacing: 0.02em;
-//   &:active {
-//     opacity: 0.8;
-//     transform: scale(0.98);
-//   }
-
-//   &:disabled {
-//     opacity: 0.5;
-//     cursor: not-allowed;
-//     transform: none;
-//   }
-// }
-
 .eyesSection {
   display: flex;
   flex-direction: column;

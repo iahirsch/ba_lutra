@@ -103,18 +103,23 @@ export function Editor() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.canvasZone}>
-        <EditorCanvas>
-          <EditorBackgroundMesh />
-          <EditorSceneParts />
-        </EditorCanvas>
-      </div>
-      {
-        <div className={styles.panelZone}>
-          <EditorPanel />
+    <>
+      <header className={styles.header}>
+        <h1>Editor</h1>
+      </header>
+      <div className={styles.page}>
+        <div className={styles.canvasZone}>
+          <EditorCanvas>
+            <EditorBackgroundMesh />
+            <EditorSceneParts />
+          </EditorCanvas>
         </div>
-      }
-    </div>
+        {
+          <div className={styles.panelZone}>
+            <EditorPanel />
+          </div>
+        }
+      </div>
+    </>
   );
 }

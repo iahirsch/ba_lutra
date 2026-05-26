@@ -9,9 +9,10 @@ function NameInputView({
 }: {
   title?: string[];
   prompt?: string[];
-  onSubmitName: (name: string) => void;
+  onSubmitName: (lutraName: string, userName: string) => void;
 }) {
-  const [value, setValue] = useState('');
+  const [lutraValue, setLutraValue] = useState('');
+  const [userValue, setUserValue] = useState('');
   const inputRefLutra = useRef<HTMLInputElement>(null);
   const inputRefUser = useRef<HTMLInputElement>(null);
 
@@ -21,9 +22,10 @@ function NameInputView({
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    onSubmitName(trimmed);
+    const trimmedLutra = lutraValue.trim();
+    const trimmedUser = userValue.trim();
+    if (!trimmedLutra || !trimmedUser) return;
+    onSubmitName(trimmedLutra, trimmedUser);
   }
 
   return (
@@ -35,9 +37,9 @@ function NameInputView({
           <input
             ref={inputRefLutra}
             type="text"
-            className={`${styles.textfield} ${value.trim() ? 'input--valid' : ''}`}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
+            className={`${styles.textfield} ${lutraValue.trim() ? 'input--valid' : ''}`}
+            value={lutraValue}
+            onChange={(e) => setLutraValue(e.target.value)}
             placeholder="Trage einen Namen ein"
             maxLength={30}
             autoComplete="off"
@@ -53,9 +55,9 @@ function NameInputView({
           <input
             ref={inputRefUser}
             type="text"
-            className={`${styles.textfield} ${value.trim() ? 'input--valid' : ''}`}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
+            className={`${styles.textfield} ${userValue.trim() ? 'input--valid' : ''}`}
+            value={userValue}
+            onChange={(e) => setUserValue(e.target.value)}
             placeholder="Trage deinen Spitznamen ein"
             maxLength={30}
             autoComplete="off"
@@ -69,7 +71,7 @@ function NameInputView({
       <button
         type="submit"
         className={styles.actionButton}
-        disabled={!value.trim()}
+        disabled={!lutraValue.trim() || !userValue.trim()}
       >
         WEITER
       </button>
