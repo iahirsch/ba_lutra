@@ -60,15 +60,22 @@ export const GRASS_LOD1_DISTANCE_RATIO = 0.14;
 export const GRASS_LOD2_DISTANCE_RATIO = 0.28;
 export const GRASS_LOD_CULL_DISTANCE_RATIO = 0.55;
 
-export const GROUND_DESERT_COLOR = '#C4A574';
-export const GROUND_GRASS_COLOR = '#5E875E';
+export const GROUND_ASSETS_URL = '/assets/environment/ground/';
+export const GROUND_SAND_COLOR_URL = `${GROUND_ASSETS_URL}Sand_basecolor.png`;
+export const GROUND_SAND_NORMAL_URL = `${GROUND_ASSETS_URL}Sand_normal.png`;
+export const GROUND_SAND_HEIGHT_URL = `${GROUND_ASSETS_URL}Sand_height.png`;
+export const GROUND_GRASS_COLOR_URL = `${GROUND_ASSETS_URL}Grass_Basecolor.png`;
+export const GROUND_GRASS_NORMAL_URL = `${GROUND_ASSETS_URL}Grass_Normal.png`;
+export const GROUND_TEXTURE_REPEAT = 15;
+export const GROUND_DISPLACEMENT_SCALE = 0.15;
+export const GROUND_NORMAL_SCALE = 1;
 
 /** Total companion effort at which grass reaches full spread. */
 export const GRASS_GROW_EFFORT_REF = 3;
 /** Max grow radius as a fraction of terrain world width at {@link GRASS_GROW_EFFORT_REF}. */
 export const GRASS_GROW_RADIUS_RATIO = 0.55;
 export const GROUND_GROW_RADIUS_RATIO = 0.75;
-export const VEGETATION_GROW_FADE_RATIO = 0.2;
+export const VEGETATION_GROW_FADE_RATIO = 0.14;
 
 export function effortTotalToGrowRadius(
   totalEffort: number,

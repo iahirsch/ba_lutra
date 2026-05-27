@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
+import { TextureLoader } from 'three';
 import {
   HUB_ENVIRONMENT_TRANSFORM,
   HUB_GLTF_URL,
 } from '../../constants/hub-scene';
+import * as veg from '../../constants/environment-vegetation';
 import {
   applyCelShading,
   applyHubTerrainMaterial,
@@ -13,7 +15,6 @@ import {
   attachTerrainGrowShader,
   setTerrainGrowReveal,
 } from '../../utils/terrainMaterial';
-import { GROUND_GROW_RADIUS_RATIO } from '../../constants/environment-vegetation';
 import {
   useEnvironmentTerrainWorldWidth,
   useVegetationGrow,
@@ -35,20 +36,34 @@ export function HubBackground({
   const terrainWorldWidth = useEnvironmentTerrainWorldWidth(true);
   const { scene } = useGLTF(HUB_GLTF_URL);
   const { position, scale } = HUB_ENVIRONMENT_TRANSFORM;
+  const [sandColor, sandNormal, sandHeight, grassColor, grassNormal] =
+    useLoader(TextureLoader, [
+      veg.GROUND_SAND_COLOR_URL,
+      veg.GROUND_SAND_NORMAL_URL,
+      veg.GROUND_SAND_HEIGHT_URL,
+      veg.GROUND_GRASS_COLOR_URL,
+      veg.GROUND_GRASS_NORMAL_URL,
+    ]);
 
   const celScene = useMemo(() => {
     const cloned = scene.clone(true);
     applyHubTerrainMaterial(cloned);
     applyCelShading(cloned);
-    attachTerrainGrowShader(cloned);
+    attachTerrainGrowShader(cloned, {
+      sandColor,
+      sandNormal,
+      sandHeight,
+      grassColor,
+      grassNormal,
+    });
     return cloned;
-  }, [scene]);
+  }, [scene, sandColor, sandNormal, sandHeight, grassColor, grassNormal]);
 
   const { anchorX, anchorZ, growRadiusRef, fadeWidth } = useVegetationGrow({
     applyEnvironmentTransform: true,
     totalEffortScore,
     terrainWorldWidth,
-    growRadiusRatio: GROUND_GROW_RADIUS_RATIO,
+    growRadiusRatio: veg.GROUND_GROW_RADIUS_RATIO,
   });
 
   useFrame(() => {
