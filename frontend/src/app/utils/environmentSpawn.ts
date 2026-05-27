@@ -35,6 +35,43 @@ export function addSpawnOffset(
   return [point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]];
 }
 
+export function resolveHubScenePosition(
+  scene: Object3D,
+  objectName: string,
+  applyEnvironmentTransform = true,
+): Vector3 {
+  const [x, y, z] = resolveEnvironmentSpawn(
+    scene,
+    objectName,
+    applyEnvironmentTransform,
+  );
+  return new Vector3(x, y, z);
+}
+
+export function collectHubSceneMarkers(
+  scene: Object3D,
+  namePrefix: string,
+  applyEnvironmentTransform = true,
+): Array<{ name: string; position: Vector3 }> {
+  const markers: Array<{ name: string; position: Vector3 }> = [];
+
+  scene.traverse((object) => {
+    if (!object.name.startsWith(namePrefix)) {
+      return;
+    }
+    markers.push({
+      name: object.name,
+      position: resolveHubScenePosition(
+        scene,
+        object.name,
+        applyEnvironmentTransform,
+      ),
+    });
+  });
+
+  return markers;
+}
+
 export function useEnvironmentSpawn(
   spawnName: SpawnName,
   applyEnvironmentTransform = true,

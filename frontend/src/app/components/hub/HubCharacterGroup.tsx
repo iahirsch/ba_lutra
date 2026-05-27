@@ -8,30 +8,42 @@ import {
 import { CompanionBody } from '../common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../common/CompanionPartGlb';
 import { effortToConduitGlow } from '../../utils/celShading';
+import { useCompanionHubBehavior } from '../../hooks/useCompanionHubBehavior';
+import type { HubWalkTerrain } from '../../hooks/useHubWalkTerrain';
+import type { Vector3 } from 'three';
 
 interface HubCharacterGroupProps {
   companion: SavedCompanion;
-  position: [number, number, number];
+  walkTerrain: HubWalkTerrain;
+  initialPosition: Vector3;
   effortScore?: number;
 }
 
-/** One saved companion in the hub row */
+/** One saved companion roaming the hub camp. */
 export function HubCharacterGroup({
   companion,
-  position,
+  walkTerrain,
+  initialPosition,
   effortScore,
 }: HubCharacterGroupProps) {
   const bodyMorphs = companion.bodyMorphs ?? {};
   const conduitGlow = effortToConduitGlow(effortScore ?? 0);
+  const { groupRef, activeClip } = useCompanionHubBehavior({
+    companionId: companion.id,
+    walkTerrain,
+    initialPosition,
+  });
 
   return (
-    <group position={position}>
+    <group ref={groupRef}>
       <Suspense fallback={null}>
         <CompanionBody
           bodyMorphs={bodyMorphs}
           furColor={companion.furColor}
           eyeColor={companion.eyeColor}
           noseColor={companion.noseColor}
+          activeClip={activeClip}
+          activeClipKey={activeClip}
         >
           {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
             const variantId = companion[category];
