@@ -1,7 +1,6 @@
 import React from 'react';
 
-// ─── Icon Base Types ──────────────────────────────────────────────────────────
-
+// Icon Base Types
 export interface IconProps {
   size?: number | string;
   color?: string;
@@ -10,8 +9,7 @@ export interface IconProps {
   'aria-label'?: string;
 }
 
-// ─── Icon Definitions ─────────────────────────────────────────────────────────
-
+// Icon Definitions
 export const ShortsIcon: React.FC<IconProps> = ({
   size = 24,
   color = '#1B1B1B',
@@ -69,19 +67,15 @@ export const NoseIcon: React.FC<IconProps> = ({
   </svg>
 );
 
-// ─── Icon Map (für dynamische Verwendung) ─────────────────────────────────────
-
+// Icon Map
 export const Icons = {
   shorts: ShortsIcon,
   nose: NoseIcon,
-  // Neue Icons hier einfach hinzufügen:
-  // myNewIcon: MyNewIconComponent,
 } as const;
 
 export type IconName = keyof typeof Icons;
 
-// ─── Generische Icon-Komponente ───────────────────────────────────────────────
-
+// Generic icon components
 interface DynamicIconProps extends IconProps {
   name: IconName;
 }
@@ -90,23 +84,3 @@ export const Icon: React.FC<DynamicIconProps> = ({ name, ...props }) => {
   const IconComponent = Icons[name];
   return <IconComponent {...props} />;
 };
-
-// ─── Verwendungsbeispiele ─────────────────────────────────────────────────────
-//
-// 1. Direkt als Named Export:
-//    import { ShortsIcon, NoseIcon } from "./icons";
-//    <ShortsIcon size={24} color="red" />
-//
-// 2. Dynamisch über den Icon-Namen:
-//    import { Icon } from "./icons";
-//    <Icon name="shorts" size={32} />
-//
-// 3. Über die Icons-Map (z. B. in einer Schleife):
-//    import { Icons, IconName } from "./icons";
-//    const MyIcon = Icons["nose"];
-//    <MyIcon size={20} />
-//
-// 4. Neues Icon hinzufügen:
-//    - Komponente erstellen (gleiche IconProps-Schnittstelle)
-//    - In Icons-Map eintragen: myIcon: MyIconComponent
-//    - Fertig – automatisch über <Icon name="myIcon" /> nutzbar
