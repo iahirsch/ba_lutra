@@ -1,7 +1,7 @@
 import type { CompanionBodyClip } from './companion-body-clips';
 
 /** Interaction flow steps that play a one-shot wave (re-triggers when `stepId` changes). */
-const INTERACTION_WAVE_STEP_IDS = new Set(['companion_appeared']);
+const INTERACTION_WAVE_STEP_IDS = new Set([]);
 
 const INTERACTION_EXIT_STEP_IDS = new Set(['active_exit', 'passive_exit']);
 

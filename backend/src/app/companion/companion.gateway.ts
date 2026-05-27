@@ -37,8 +37,7 @@ interface FlowSession {
 // Gateway
 @WebSocketGateway({ cors: { origin: '*' } })
 export class CompanionGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -47,7 +46,7 @@ export class CompanionGateway
   constructor(
     @InjectRepository(Companion)
     private readonly companionRepository: Repository<Companion>,
-  ) {}
+  ) { }
 
   /** Maps socket ID → registered screen ID */
   private readonly screenRegistry = new Map<string, ScreenId>();
@@ -184,7 +183,7 @@ export class CompanionGateway
     if (!step) return createIdleFlowStateUpdate();
 
     const dialogue = this.session.companionName
-      ? step.companionDialogue.replace(/\[name\]/g, this.session.companionName)
+      ? step.companionDialogue.replace(/\[companionName\]/g, this.session.companionName)
       : step.companionDialogue;
 
     return {

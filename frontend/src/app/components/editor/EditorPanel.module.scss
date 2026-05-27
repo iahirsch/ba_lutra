@@ -353,7 +353,7 @@
     appearance: none;
     width: s.$space-2xl;
     height: s.$space-2xl;
-    margin-top: -9px; // Thumb mittig auf Track
+    margin-top: -9px;
     border-radius: 50%;
     cursor: pointer;
     @include s.glass(

@@ -17,22 +17,16 @@
     content: '';
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     background: inherit;
     filter: blur(8px);
   }
 }
 
 .content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  align-self: stretch;
-  height: 43.875rem;
+  flex: 1 1 0;
+  overflow-y: auto;
   width: 100%;
-  max-width: 34rem;
   animation: slideUp s.$duration-normal s.$easing-standard both;
 }
 
@@ -50,16 +44,16 @@
 .view {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex: 1 0 0;
-  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .viewContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: s.$space-4xl;
   align-self: stretch;
   width: 100%;
@@ -107,7 +101,8 @@
 
 .actionButton {
   @include s.button(primary, pressed, lg, false, false);
-  margin-top: auto;
+  margin-top: s.$space-xl;
+  flex-shrink: 0;
   margin-bottom: 0;
   display: block;
   width: 100%;
@@ -195,10 +190,27 @@
 }
 
 .header {
-  position: relative;
   @include s.header();
   padding: 0 s.$space-lg;
+  flex-shrink: 0;
   justify-content: center;
   align-items: center;
   z-index: 2;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  width: 100%;
+  overflow: hidden;
 }

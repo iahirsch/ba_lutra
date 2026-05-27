@@ -30,6 +30,7 @@ function NameInputView({
 
   return (
     <form onSubmit={handleSubmit} className={styles.view}>
+      <div className={styles.header}>Lutra erstellen</div>
       <div className={styles.viewContainer}>
         <div className={styles.formularField}>
           {title && <h2 className={styles.title}>{title[0]}</h2>}
@@ -100,7 +101,7 @@ function ChoicesView({
           {choices.map((choice) => (
             <button
               key={choice.id}
-              className={styles.choiceButton}
+              className={styles.actionButton}
               onClick={() => onSelectChoice(choice.id)}
             >
               {choice.label}
@@ -165,7 +166,6 @@ export function EditorFlowPanel({
   return (
     <div className={styles.panel}>
       <div className={styles.overlay}>
-        <div className={styles.header}>Lutra erstellen</div>
         <div className={styles.content} key={flowState.stepId}>
           {type === 'name-input' && (
             <NameInputView
