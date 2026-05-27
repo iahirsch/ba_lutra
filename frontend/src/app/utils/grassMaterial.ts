@@ -72,8 +72,6 @@ function attachGrassShaders(material: Material): void {
 
       varying vec2 vGlobalUV;
       varying vec2 vUv;
-      varying vec3 vNormal;
-      varying vec3 vViewPosition;
       varying float vReveal;
 
       void main() {
@@ -81,8 +79,6 @@ function attachGrassShaders(material: Material): void {
         #include <begin_vertex>
         #include <project_vertex>
         #include <fog_vertex>
-        #include <beginnormal_vertex>
-        #include <defaultnormal_vertex>
         #include <worldpos_vertex>
 
         vec2 uWindDirection = vec2(1.0, 1.0);
@@ -120,8 +116,6 @@ function attachGrassShaders(material: Material): void {
         gl_Position = projectionMatrix * viewPosition;
 
         vUv = vec2(uv.x, 1.0 - uv.y);
-        vNormal = normalize(normalMatrix * normal);
-        vViewPosition = mvPosition.xyz;
       }
     `;
 

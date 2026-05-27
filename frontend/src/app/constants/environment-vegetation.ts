@@ -6,12 +6,15 @@ export interface EnvironmentVegetationEntry {
 }
 
 export const TREES_URL = '/assets/environment/trees/';
+export const TREE_LEAVES_ALPHA_TEXTURE_URL = TREES_URL + 'leaves.png';
 export const BUSHES_URL = '/assets/environment/bushes/';
+
+export const TREE_LEAVES_WIND_SCALE = 4;
 
 export const ENVIRONMENT_VEGETATION: EnvironmentVegetationEntry[] = [
   {
     id: 'tree-1',
-    glbUrl: TREES_URL + 'tree01.glb',
+    glbUrl: TREES_URL + 'tree03.glb',
     spawn: 'EMPTY_Tree01',
     scale: 1,
   },
@@ -19,6 +22,12 @@ export const ENVIRONMENT_VEGETATION: EnvironmentVegetationEntry[] = [
     id: 'tree-2',
     glbUrl: TREES_URL + 'tree02.glb',
     spawn: 'EMPTY_Tree02',
+    scale: 1,
+  },
+  {
+    id: 'tree-3',
+    glbUrl: TREES_URL + 'tree01.glb',
+    spawn: 'EMPTY_Tree03',
     scale: 1,
   },
 ];
