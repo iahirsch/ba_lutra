@@ -37,6 +37,7 @@ export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
 export const GRASS_NOISE_TEXTURE_URL = '/assets/environment/perlinnoise.webp';
 
 export const GRASS_WEIGHT_ATTRIBUTE = 'color_1';
+export const GRASS_MASK_INSTANCE_ATTRIBUTE = 'aGrassMask';
 /** Vertex paint on ground: black = grass texture, white = dirt texture. */
 export const GROUND_SURFACE_MASK_ATTRIBUTE = 'color_3';
 export const GRASS_MIN_SAMPLE_WEIGHT = 0.08;

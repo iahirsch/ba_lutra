@@ -70,6 +70,8 @@ function attachGrassShaders(material: Material): void {
       uniform float uGrowRadius;
       uniform float uGrowFade;
 
+      attribute float aGrassMask;
+
       varying vec2 vGlobalUV;
       varying vec2 vUv;
       varying float vReveal;
@@ -92,16 +94,18 @@ function attachGrassShaders(material: Material): void {
         vec4 instanceBase = modelMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
         float growDist = length(instanceBase.xz - uGrowAnchor);
         float reveal = 1.0 - smoothstep(uGrowRadius - uGrowFade, uGrowRadius, growDist);
-        vReveal = reveal;
+        float maskWeight = clamp(aGrassMask, 0.0, 1.0);
+        float effectiveReveal = reveal * maskWeight;
+        vReveal = effectiveReveal;
 
         vec3 grownPosition = position;
-        grownPosition.y -= (1.0 - reveal) * uLocalBladeExtent;
+        grownPosition.y -= (1.0 - effectiveReveal) * uLocalBladeExtent;
         vec4 modelPosition = modelMatrix * instanceMatrix * vec4(grownPosition, 1.0);
 
         vGlobalUV = (uTerrainSize - vec2(modelPosition.xz)) / uTerrainSize;
 
         vec4 noise = texture2D(uNoiseTexture, vGlobalUV + uTime * uNoiseSpeed);
-        float tipFactor = (1.0 - uv.y) * reveal;
+        float tipFactor = (1.0 - uv.y) * effectiveReveal;
         float sinWave =
           sin(uWindFreq * dot(windDirection, vGlobalUV) + noise.g * uNoiseFactor + uTime * uSpeed)
           * uWindAmp

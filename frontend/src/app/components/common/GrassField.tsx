@@ -9,6 +9,7 @@ import {
   Color,
   Euler,
   Group,
+  InstancedBufferAttribute,
   InstancedMesh,
   Matrix4,
   Mesh,
@@ -141,6 +142,15 @@ function getSampleColorWeight(color: Color): number {
   return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722;
 }
 
+/** Maps sampled mask luminance to 0–1 for shader bury (0 at min placement weight). */
+function normalizeGrassMaskWeight(
+  rawWeight: number,
+  minSampleWeight: number,
+): number {
+  if (rawWeight <= minSampleWeight) return 0;
+  return Math.min(1, (rawWeight - minSampleWeight) / (1 - minSampleWeight));
+}
+
 function resolveGrassMaskAttribute(geometry: BufferGeometry) {
   const maskAttribute = geometry.getAttribute(veg.GRASS_WEIGHT_ATTRIBUTE);
   if (maskAttribute) {
@@ -209,7 +219,11 @@ function buildGrassChunks(
   grid: number,
   material: MeshLambertMaterial,
   minSampleWeight: number,
-): { chunks: GrassChunk[]; samplingGeometry: BufferGeometry } {
+): {
+  chunks: GrassChunk[];
+  samplingGeometry: BufferGeometry;
+  instanceGeometries: BufferGeometry[];
+} {
   const { sampler, samplingGeometry } = createGrassSampler(terrainMesh);
   terrainMesh.geometry.computeBoundingBox();
   if (!terrainMesh.geometry.boundingBox) {
@@ -218,6 +232,7 @@ function buildGrassChunks(
   const bounds = new Box3().copy(terrainMesh.geometry.boundingBox);
 
   const chunkMatrices = new Map<string, Matrix4[]>();
+  const chunkMaskWeights = new Map<string, number[]>();
   const chunkCenterSums = new Map<string, Vector3>();
   const chunkCounts = new Map<string, number>();
 
@@ -236,9 +251,11 @@ function buildGrassChunks(
   while (placed < count && attempts < maxAttempts) {
     attempts++;
     sampler.sample(position, normal, sampleColor);
-    if (getSampleColorWeight(sampleColor) < minSampleWeight) {
+    const sampleWeight = getSampleColorWeight(sampleColor);
+    if (sampleWeight < minSampleWeight) {
       continue;
     }
+    const maskWeight = normalizeGrassMaskWeight(sampleWeight, minSampleWeight);
 
     const key = getChunkKey(position, bounds, grid);
 
@@ -251,12 +268,15 @@ function buildGrassChunks(
 
     if (!chunkMatrices.has(key)) {
       chunkMatrices.set(key, []);
+      chunkMaskWeights.set(key, []);
       chunkCenterSums.set(key, new Vector3());
       chunkCounts.set(key, 0);
     }
     const matrices = chunkMatrices.get(key);
-    if (matrices) {
+    const maskWeights = chunkMaskWeights.get(key);
+    if (matrices && maskWeights) {
       matrices.push(matrix.clone());
+      maskWeights.push(maskWeight);
     }
     const centerSum = chunkCenterSums.get(key);
     const sampleCount = chunkCounts.get(key);
@@ -268,15 +288,25 @@ function buildGrassChunks(
   }
 
   const chunks: GrassChunk[] = [];
+  const instanceGeometries: BufferGeometry[] = [];
 
   for (const [key, matrices] of chunkMatrices) {
     const centerSum = chunkCenterSums.get(key);
     const sampleCount = chunkCounts.get(key);
-    if (!centerSum || !sampleCount) continue;
+    const maskWeights = chunkMaskWeights.get(key);
+    if (!centerSum || !sampleCount || !maskWeights) continue;
 
     const localCenter = centerSum.divideScalar(sampleCount);
+    const maskArray = new Float32Array(maskWeights);
 
-    const lodMeshes = lodGeometries.map((geometry) => {
+    const lodMeshes = lodGeometries.map((sourceGeometry) => {
+      const geometry = sourceGeometry.clone();
+      instanceGeometries.push(geometry);
+      geometry.setAttribute(
+        veg.GRASS_MASK_INSTANCE_ATTRIBUTE,
+        new InstancedBufferAttribute(maskArray, 1),
+      );
+
       const mesh = new InstancedMesh(geometry, material, matrices.length);
       for (let i = 0; i < matrices.length; i++) {
         mesh.setMatrixAt(i, matrices[i]);
@@ -293,7 +323,7 @@ function buildGrassChunks(
     chunks.push({ localCenter, lodMeshes });
   }
 
-  return { chunks, samplingGeometry };
+  return { chunks, samplingGeometry, instanceGeometries };
 }
 
 /** Horizontal world-space distance from camera to chunk (ground-plane LOD). */
@@ -371,6 +401,7 @@ export function GrassField({
     chunks,
     materialState,
     lodGeometries,
+    instanceGeometries,
     samplingGeometry,
     terrainTransform,
     lodDistances,
@@ -393,7 +424,7 @@ export function GrassField({
     const terrainWorldWidth = computeTerrainWorldWidth(terrainMesh, envScale);
     const lodDistances = computeLodDistances(terrainWorldWidth);
 
-    const { chunks, samplingGeometry } = buildGrassChunks(
+    const { chunks, samplingGeometry, instanceGeometries } = buildGrassChunks(
       terrainMesh,
       lodGeometries,
       veg.GRASS_INSTANCE_COUNT,
@@ -408,6 +439,7 @@ export function GrassField({
       chunks,
       materialState,
       lodGeometries,
+      instanceGeometries,
       samplingGeometry,
       lodDistances,
       terrainWorldWidth,
@@ -441,10 +473,13 @@ export function GrassField({
       for (const geometry of lodGeometries) {
         geometry.dispose();
       }
+      for (const geometry of instanceGeometries) {
+        geometry.dispose();
+      }
       samplingGeometry.dispose();
       materialState.material.dispose();
     };
-  }, [lodGeometries, samplingGeometry, materialState]);
+  }, [lodGeometries, instanceGeometries, samplingGeometry, materialState]);
 
   useFrame((_state, delta) => {
     timeRef.current += delta;
