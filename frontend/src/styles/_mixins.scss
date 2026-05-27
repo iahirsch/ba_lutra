@@ -131,7 +131,7 @@
     }
   }
 
-  // Icon-Show/Hide
+  // Icon Visibility
   @if $icon-left {
     .btn__icon-left {
       display: flex;
@@ -490,7 +490,7 @@
     border-radius: $r;
   }
 
-  // Frost / Unschärfe
+  // Frost / Blur
   backdrop-filter: blur($blur) saturate($saturation);
   -webkit-backdrop-filter: blur($blur) saturate($saturation);
 
@@ -509,7 +509,7 @@
     box-shadow: $shadow;
   }
 
-  // Gradient-Border via ::before (border-radius-kompatibel)
+  // Gradient-Border
   &::before {
     content: '';
     pointer-events: none;
