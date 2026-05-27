@@ -28,6 +28,8 @@ export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
 export const GRASS_NOISE_TEXTURE_URL = '/assets/environment/perlinnoise.webp';
 
 export const GRASS_WEIGHT_ATTRIBUTE = 'color_1';
+/** Vertex paint on ground: black = grass texture, white = dirt texture. */
+export const GROUND_SURFACE_MASK_ATTRIBUTE = 'color_3';
 export const GRASS_MIN_SAMPLE_WEIGHT = 0.08;
 
 export const GRASS_LOD0_MESH_NAME = 'GrassLOD00';
@@ -66,6 +68,8 @@ export const GROUND_SAND_NORMAL_URL = `${GROUND_ASSETS_URL}Sand_normal.png`;
 export const GROUND_SAND_HEIGHT_URL = `${GROUND_ASSETS_URL}Sand_height.png`;
 export const GROUND_GRASS_COLOR_URL = `${GROUND_ASSETS_URL}Grass_Basecolor.png`;
 export const GROUND_GRASS_NORMAL_URL = `${GROUND_ASSETS_URL}Grass_Normal.png`;
+export const GROUND_DIRT_COLOR_URL = `${GROUND_ASSETS_URL}Dirt_basecolor.png`;
+export const GROUND_DIRT_NORMAL_URL = `${GROUND_ASSETS_URL}Dirt_Normal.png`;
 export const GROUND_TEXTURE_REPEAT = 15;
 export const GROUND_DISPLACEMENT_SCALE = 0.15;
 export const GROUND_NORMAL_SCALE = 1;

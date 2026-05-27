@@ -15,6 +15,8 @@ export interface GroundTextures {
   sandHeight: Texture;
   grassColor: Texture;
   grassNormal: Texture;
+  dirtColor: Texture;
+  dirtNormal: Texture;
 }
 
 interface TerrainUniform {
@@ -27,10 +29,14 @@ const terrainUniforms: Record<string, TerrainUniform> = {
   uSandHeightMap: { value: null as unknown as Texture },
   uGrassColorMap: { value: null as unknown as Texture },
   uGrassNormalMap: { value: null as unknown as Texture },
+  uDirtColorMap: { value: null as unknown as Texture },
+  uDirtNormalMap: { value: null as unknown as Texture },
   uGrowAnchor: { value: new Vector2() },
   uGrowRadius: { value: 0 },
   uGrowFade: { value: 0 },
 };
+
+const SURFACE_MASK_LUMINANCE = 'vec3(0.2126, 0.7152, 0.0722)';
 
 function configureGroundTexture(texture: Texture): void {
   texture.wrapS = RepeatWrapping;
@@ -39,7 +45,10 @@ function configureGroundTexture(texture: Texture): void {
   texture.needsUpdate = true;
 }
 
-function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
+function attachTerrainGrowShaderToMaterial(
+  material: MeshToonMaterial,
+  hasSurfaceMask: boolean,
+): void {
   material.onBeforeCompile = (shader) => {
     shader.uniforms = {
       ...shader.uniforms,
@@ -48,10 +57,25 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
       uSandHeightMap: terrainUniforms.uSandHeightMap,
       uGrassColorMap: terrainUniforms.uGrassColorMap,
       uGrassNormalMap: terrainUniforms.uGrassNormalMap,
+      uDirtColorMap: terrainUniforms.uDirtColorMap,
+      uDirtNormalMap: terrainUniforms.uDirtNormalMap,
       uGrowAnchor: terrainUniforms.uGrowAnchor,
       uGrowRadius: terrainUniforms.uGrowRadius,
       uGrowFade: terrainUniforms.uGrowFade,
     };
+
+    const surfaceMaskVertex = hasSurfaceMask
+      ? `
+      attribute vec3 ${veg.GROUND_SURFACE_MASK_ATTRIBUTE};
+      varying float vSurfaceMask;
+    `
+      : `
+      varying float vSurfaceMask;
+    `;
+
+    const surfaceMaskAssign = hasSurfaceMask
+      ? `vSurfaceMask = 1.0 - dot(${veg.GROUND_SURFACE_MASK_ATTRIBUTE}, ${SURFACE_MASK_LUMINANCE});`
+      : 'vSurfaceMask = 1.0;';
 
     shader.vertexShader =
       `
@@ -60,6 +84,7 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
       uniform float uGrowRadius;
       uniform float uGrowFade;
       uniform sampler2D uSandHeightMap;
+      ${surfaceMaskVertex}
     ` + shader.vertexShader;
 
     shader.vertexShader = shader.vertexShader.replace(
@@ -67,6 +92,7 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
       `
         #include <begin_vertex>
         vTerrainWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;
+        ${surfaceMaskAssign}
       `,
     );
 
@@ -83,6 +109,7 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
     shader.fragmentShader =
       `
       varying vec3 vTerrainWorldPosition;
+      varying float vSurfaceMask;
       uniform vec2 uGrowAnchor;
       uniform float uGrowRadius;
       uniform float uGrowFade;
@@ -90,6 +117,8 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
       uniform sampler2D uSandNormalMap;
       uniform sampler2D uGrassColorMap;
       uniform sampler2D uGrassNormalMap;
+      uniform sampler2D uDirtColorMap;
+      uniform sampler2D uDirtNormalMap;
     ` + shader.fragmentShader;
 
     shader.fragmentShader = shader.fragmentShader.replace(
@@ -100,7 +129,9 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
         float reveal = 1.0 - smoothstep(uGrowRadius - uGrowFade, uGrowRadius, growDist);
         vec3 sandCol = texture2D(uSandColorMap, vMapUv).rgb;
         vec3 grassCol = texture2D(uGrassColorMap, vMapUv).rgb;
-        diffuseColor.rgb = mix(sandCol, grassCol, reveal);
+        vec3 dirtCol = texture2D(uDirtColorMap, vMapUv).rgb;
+        vec3 grownCol = mix(dirtCol, grassCol, vSurfaceMask);
+        diffuseColor.rgb = mix(sandCol, grownCol, reveal);
       `,
     );
 
@@ -111,12 +142,15 @@ function attachTerrainGrowShaderToMaterial(material: MeshToonMaterial): void {
         float revealN = 1.0 - smoothstep(uGrowRadius - uGrowFade, uGrowRadius, growDistN);
         vec3 sandMapN = texture2D(uSandNormalMap, vNormalMapUv).xyz * 2.0 - 1.0;
         vec3 grassMapN = texture2D(uGrassNormalMap, vNormalMapUv).xyz * 2.0 - 1.0;
-        vec3 mapN = mix(sandMapN, grassMapN, revealN);
+        vec3 dirtMapN = texture2D(uDirtNormalMap, vNormalMapUv).xyz * 2.0 - 1.0;
+        vec3 grownMapN = mix(dirtMapN, grassMapN, vSurfaceMask);
+        vec3 mapN = mix(sandMapN, grownMapN, revealN);
         normal = perturbNormal2Arb(-vViewPosition, normal, mapN, uNormalScale);
       `,
     );
   };
-  material.customProgramCacheKey = () => 'terrain-grow-textured';
+  material.customProgramCacheKey = () =>
+    hasSurfaceMask ? 'terrain-grow-textured-masked' : 'terrain-grow-textured';
   material.needsUpdate = true;
 }
 
@@ -126,9 +160,11 @@ function setTerrainTextureUniforms(textures: GroundTextures): void {
   terrainUniforms.uSandHeightMap.value = textures.sandHeight;
   terrainUniforms.uGrassColorMap.value = textures.grassColor;
   terrainUniforms.uGrassNormalMap.value = textures.grassNormal;
+  terrainUniforms.uDirtColorMap.value = textures.dirtColor;
+  terrainUniforms.uDirtNormalMap.value = textures.dirtNormal;
 }
 
-/** Sand/grass ground textures with radial grow blend (after cel shading). */
+/** Sand/grass/dirt ground textures with radial grow blend (after cel shading). */
 export function attachTerrainGrowShader(
   root: Object3D,
   textures: GroundTextures,
@@ -138,6 +174,10 @@ export function attachTerrainGrowShader(
 
   const material = ground.material;
   if (!(material instanceof MeshToonMaterial)) return;
+
+  const hasSurfaceMask = Boolean(
+    ground.geometry.getAttribute(veg.GROUND_SURFACE_MASK_ATTRIBUTE),
+  );
 
   for (const texture of Object.values(textures)) {
     configureGroundTexture(texture);
@@ -151,7 +191,7 @@ export function attachTerrainGrowShader(
   material.color.set(0xffffff);
 
   setTerrainTextureUniforms(textures);
-  attachTerrainGrowShaderToMaterial(material);
+  attachTerrainGrowShaderToMaterial(material, hasSurfaceMask);
 }
 
 export function setTerrainGrowReveal(

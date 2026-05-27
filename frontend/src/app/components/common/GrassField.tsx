@@ -161,19 +161,37 @@ function createGrassSampler(terrainMesh: Mesh): {
   sampler: MeshSurfaceSampler;
   samplingGeometry: BufferGeometry;
 } {
-  const maskAttribute = resolveGrassMaskAttribute(terrainMesh.geometry);
+  const densityAttribute = resolveGrassMaskAttribute(terrainMesh.geometry);
+  const surfaceAttribute = terrainMesh.geometry.getAttribute(
+    veg.GROUND_SURFACE_MASK_ATTRIBUTE,
+  );
 
   const samplingGeometry = terrainMesh.geometry.clone();
-  const weights = new Float32Array(maskAttribute.count);
-  for (let i = 0; i < maskAttribute.count; i++) {
-    weights[i] = getVertexColorLuminance(maskAttribute, i);
+  const vertexCount = densityAttribute.count;
+  const weights = new Float32Array(vertexCount);
+  const combinedColors = new Float32Array(vertexCount * 3);
+
+  for (let i = 0; i < vertexCount; i++) {
+    const densityWeight = getVertexColorLuminance(densityAttribute, i);
+    const surfaceWeight = surfaceAttribute
+      ? 1 - getVertexColorLuminance(surfaceAttribute, i)
+      : 1;
+    const combinedWeight = densityWeight * surfaceWeight;
+    weights[i] = combinedWeight;
+    combinedColors[i * 3] = combinedWeight;
+    combinedColors[i * 3 + 1] = combinedWeight;
+    combinedColors[i * 3 + 2] = combinedWeight;
   }
+
   samplingGeometry.setAttribute(
     GRASS_WEIGHT_BUFFER,
     new BufferAttribute(weights, 1),
   );
-  // MeshSurfaceSampler interpolates `color` for sampleColor, not color_1.
-  samplingGeometry.setAttribute('color', maskAttribute.clone());
+  // MeshSurfaceSampler interpolates `color` for sampleColor at the pick point.
+  samplingGeometry.setAttribute(
+    'color',
+    new BufferAttribute(combinedColors, 3),
+  );
 
   const sampler = new MeshSurfaceSampler(new Mesh(samplingGeometry))
     .setWeightAttribute(GRASS_WEIGHT_BUFFER)
