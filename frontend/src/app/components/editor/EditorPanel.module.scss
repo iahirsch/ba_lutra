@@ -90,7 +90,7 @@
 }
 
 .saveButton {
-  @include s.button(primär, pressed, lg, false, false);
+  @include s.button(primary, pressed, lg, false, false);
   width: 100%;
 }
 

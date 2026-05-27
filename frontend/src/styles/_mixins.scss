@@ -51,7 +51,7 @@
   text-transform: uppercase;
 }
 
-// --- Button Sizes ---
+// Button Sizes
 @mixin _btn-size($size, $icon-left, $icon-right) {
   @if $size == sm {
     height: t.$btn-sm-height;
@@ -131,7 +131,7 @@
     }
   }
 
-  // Icon-Sichtbarkeit
+  // Icon-Show/Hide
   @if $icon-left {
     .btn__icon-left {
       display: flex;
@@ -151,10 +151,10 @@
     }
   }
 }
-// --- Button States ---
 
+// Button States
 @mixin _btn-state($variant, $state) {
-  @if $variant == primär {
+  @if $variant == primary {
     @if $state == default {
       @include glass(
         $frost: t.$glass-frost--100,
@@ -204,7 +204,7 @@
       cursor: pointer;
       outline: none;
     }
-  } @else if $variant == sekundär {
+  } @else if $variant == secondary {
     @if $state == default {
       @include glass(
         $frost: t.$glass-frost--100,
@@ -270,7 +270,7 @@
   }
 }
 
-// --- Button Base Style ---
+// Button Base Styles
 @mixin _btn-base {
   display: inline-flex;
   align-items: center;
@@ -289,10 +289,9 @@
     opacity t.$btn-transition;
 }
 
-// --- Button Mixins ---
-
+// Button Mixins
 @mixin button(
-  $variant: primär,
+  $variant: primary,
   $state: default,
   $size: md,
   $icon-left: true,
@@ -303,24 +302,23 @@
   @include _btn-state($variant, $state);
 }
 
-// --- Primary & Secondary Buttons ---
-
-@mixin button-primär(
+// Primary & Secondary Buttons
+@mixin button-primary(
   $state: default,
   $size: md,
   $icon-left: true,
   $icon-right: true
 ) {
-  @include button(primär, $state, $size, $icon-left, $icon-right);
+  @include button(primary, $state, $size, $icon-left, $icon-right);
 }
 
-@mixin button-sekundär(
+@mixin button-secondary(
   $state: default,
   $size: md,
   $icon-left: true,
   $icon-right: true
 ) {
-  @include button(sekundär, $state, $size, $icon-left, $icon-right);
+  @include button(secondary, $state, $size, $icon-left, $icon-right);
 }
 
 @mixin button-reset {
@@ -455,6 +453,8 @@
   }
 }
 
+// Glass Effect
+
 @mixin glass(
   $radius: t.$radius-md,
   $radius-position: all,
@@ -462,14 +462,12 @@
   $light-angle: 0deg,
   $light-opacity: 0.8,
   $frost: t.$glass-frost--100,
-  // ← Frost-Token übergeben
   $border-light: rgba(255, 255, 255, 0.55),
-  // Dispersion: 50
   $border-dark: rgba(255, 255, 255, 0.05),
   $border-width: 1px,
-  $shadow: t.$drop-shadow-b25 // ← Shadow-Token übergeben
+  $shadow: t.$drop-shadow-b25
 ) {
-  // Frost-Werte aus Token lesen:
+  // Frost-Value from Tokens:
   $blur: map.get($frost, blur);
   $saturation: map.get($frost, saturation);
   $frost-color: map.get($frost, frost-color);
@@ -492,26 +490,26 @@
     border-radius: $r;
   }
 
-  // --- Frost / Unschärfe ---
+  // Frost / Unschärfe
   backdrop-filter: blur($blur) saturate($saturation);
   -webkit-backdrop-filter: blur($blur) saturate($saturation);
 
-  // --- Grundfarbe ---
+  // Basic Color
   background-color: $frost-color;
 
-  // --- Licht-Gradient (Light: -45°, 80%) ---
+  // Light-Gradient (Light: -45°, 80%)
   background-image: linear-gradient(
     calc(#{$light-angle} + 90deg),
     rgba(255, 255, 255, calc(#{$light-opacity} * 0)) 0%,
     rgba(255, 255, 255, 0) 65%
   );
 
-  // --- Shadow Token ---
+  // Shadow Token
   @if $shadow != null {
     box-shadow: $shadow;
   }
 
-  // --- Gradient-Border via ::before (border-radius-kompatibel) ---
+  // Gradient-Border via ::before (border-radius-kompatibel)
   &::before {
     content: '';
     pointer-events: none;
