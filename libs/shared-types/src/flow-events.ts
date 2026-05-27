@@ -33,7 +33,8 @@ export type EditorViewType =
 
 export interface EditorViewConfig {
   type: EditorViewType;
-  prompt?: string;
+  title?: string[];
+  prompt?: string[];
   choices?: { id: string; label: string }[];
   confirmLabel?: string;
 }

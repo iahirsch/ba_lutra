@@ -8,7 +8,8 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-family: s.$font-secondary;
+  font-size: s.$font-size-lg;
   -webkit-font-smoothing: antialiased;
   color: s.$color-neutral-900;
   background: s.$color-neutral-50;
@@ -27,9 +28,21 @@ input,
 textarea,
 select {
   font: inherit;
+  border: none;
+  outline: none;
+  background: none;
 }
 
 img {
   display: block;
   max-width: 100%;
+}
+
+input.input--valid {
+  border: 2px solid s.$color-success-500;
+  padding-right: 2.5rem;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.2rem 1.2rem;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path d="M5 13l4 4L19 7" stroke="%2300b87c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }

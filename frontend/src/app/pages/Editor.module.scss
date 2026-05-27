@@ -10,16 +10,28 @@
   touch-action: none;
 }
 
+.header {
+  @include s.header();
+  padding: 0 s.$space-lg;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
 .canvasZone {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 60%;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
+  z-index: 0;
 }
 
 .panelZone {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 40%;
+  position: absolute;
+  display: flex;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
   overflow: hidden;
 }

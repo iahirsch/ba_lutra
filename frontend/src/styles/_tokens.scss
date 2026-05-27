@@ -6,19 +6,25 @@ $color-neutral-400: oklch(0.685 0 0);
 $color-neutral-500: oklch(0.626 0 0);
 $color-neutral-600: oklch(0.446 0 0);
 $color-neutral-700: oklch(0.322 0 0);
-$color-neutral-900: oklch(0.182 0 0);
+$color-neutral-900: oklch(0.2221 0 0);
 
 $color-neutral-100-75: oklch(0.964 0.006 85.9 / 75%);
 $color-neutral-100-50: oklch(0.964 0.006 85.9 / 50%);
 
-$color-black-50: oklch(0 0 0 / 6%);
-$color-black-100: oklch(0 0 0 / 8%);
-$color-black-200: oklch(0 0 0 / 14%);
-$color-black-500: oklch(0 0 0 / 55%);
+$color-black-50: oklch(0 0 0 / 0.05);
+$color-black-100: oklch(0 0 0 / 0.08);
+$color-black-200: oklch(0 0 0 / 0.14);
+$color-black-500: oklch(0 0 0 / 0.55);
 
-$color-white-50: oklch(1 0 0 / 6%);
-$color-white-400: oklch(1 0 0 / 60%);
-$color-white-900: oklch(1 0 0 / 90%);
+$color-gray-30: oklch(0.7498 0.0037 247.87 / 30%);
+$color-gray-50: oklch(0.6748 0.0131 259.82);
+
+$color-light-30: oklch(0.9625 0.008 253.85 / 30%);
+$color-light-80: oklch(0.9625 0.008 253.85 / 80%);
+
+$color-white-50: oklch(1 0 0 / 0.06);
+$color-white-400: oklch(1 0 0 / 0.6);
+$color-white-900: oklch(1 0 0 / 0.9);
 
 $color-slate-950: oklch(0.183 0.037 262.7);
 
@@ -26,9 +32,14 @@ $color-red-500: oklch(0.637 0.208 25.33);
 $color-red-600: oklch(0.577 0.219 27.33);
 $color-red-500-12: oklch(0.637 0.208 25.33 / 12%);
 
+$color-success-500: oklch(0.4182 0.1401 142.55);
+
 $color-green-500: oklch(0.723 0.192 149.58);
 $color-green-600: oklch(0.527 0.136 144.17);
 $color-green-500-12: oklch(0.723 0.192 149.58 / 12%);
+
+$color-cyan-500: oklch(0.9212 0.1146 195.35);
+$color-cyan-500-60: oklch(0.9212 0.1146 195.35 / 60%);
 
 // Spacing scale
 $space-2xs: 0.125rem;
@@ -39,14 +50,18 @@ $space-lg: 1rem;
 $space-xl: 1.25rem;
 $space-2xl: 1.5rem;
 $space-3xl: 2rem;
+$space-4xl: 2.875rem;
+$space-5xl: 3rem;
+$space-header: 6.25rem;
 
 // Radius scale
-$radius-sm: 0.25rem;
-$radius-md: 0.5rem;
-$radius-lg: 0.75rem;
+$radius-sm: 0.625rem;
+$radius-md: 1.25rem;
+$radius-lg: 6.25rem;
 $radius-xl: 1rem;
 $radius-2xl: 1.25rem;
 $radius-3xl: 1.5rem;
+$radius-4xl: 2rem;
 $radius-pill: 62.4375rem;
 
 // Typography scale
@@ -57,12 +72,14 @@ $font-size-md: 0.875rem;
 $font-size-base: 0.9375rem;
 $font-size-lg: 1rem;
 $font-size-xl: 1.25rem;
-$font-size-2xl: 2rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
+$font-weight-extrabold: 800;
 
 // Motion
 $duration-fast: 0.15s;
@@ -75,3 +92,82 @@ $blur-md: 1.125rem;
 $blur-lg: 1.25rem;
 $shadow-soft: 0 0.5rem 1.5rem oklch(0 0 0 / 8%);
 $shadow-thumb: 0 0.0625rem 0.25rem oklch(0 0 0 / 2%);
+
+$drop-shadow-b25: 0 0.25rem 0.25rem 0 oklch(0 0 0 / 25%);
+$drop-shadow-b50: 0 0.25rem 0.25rem 0 oklch(0 0 0 / 50%);
+$drop-shadow-b60: 0 0.25rem 0.25rem 0 oklch(0 0 0 / 60%);
+$inner-shadow-b25: inset 0 0.3rem 0.25rem 0 oklch(0 0 0 / 25%);
+$inner-shadow-b50: inset 0 0.025rem 0.25rem 0 oklch(0 0 0 / 60%);
+$inner-shadow-w25: inset 0 0.25rem 0.25rem 0 oklch(1 0 0 / 25%);
+$inner-shadow-w50: inset 0 0.25rem 0.25rem 0 oklch(1 0 0 / 50%);
+$inner-shadow-w100: inset 0 0.25rem 0.25rem 0 oklch(1 0 0 / 100%);
+
+$glass-frost--4: (
+  blur: 4px,
+  saturation: 110%,
+  frost-color: rgba(255, 255, 255, 0.04),
+);
+
+$glass-frost--50: (
+  blur: 10px,
+  saturation: 130%,
+  frost-color: oklch(1 0 0 / 8%),
+) !default;
+
+$glass-frost--100: (
+  blur: 20px,
+  saturation: 180%,
+  frost-color: oklch(1 0 0 / 15%),
+) !default;
+
+$glass-frost--500: (
+  blur: 0px,
+  saturation: 0%,
+  frost-color: oklch(0.9212 0.1146 195.35 / 100%),
+) !default;
+
+// Font families
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+SC:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400;1,500;1,700;1,800;1,900&family=Alegreya:ital,wght@0,400..900;1,400..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+$font-primary-bold: 'Alegreya SC', serif;
+$font-primary-regular: 'Alegreya', serif;
+$font-secondary: 'Nunito', sans-serif;
+
+// Button Design Tokens
+// Text
+$btn-text-default: $color-neutral-900;
+$btn-text-disabled: $color-neutral-500;
+
+// Icon
+$btn-icon-opacity-disabled: 0.4;
+
+// Sizing: Small
+$btn-sm-height: $space-4xl;
+$btn-sm-padding-x: $space-md;
+$btn-sm-padding-x-icon: $space-sm;
+$btn-sm-font-size: $font-size-sm;
+$btn-sm-icon-size: 1.25rem;
+$btn-sm-gap: $space-xs;
+$btn-sm-border-radius: $radius-pill;
+
+// Sizing: Default (md)
+$btn-md-height: $space-4xl;
+$btn-md-padding-x: $space-lg;
+$btn-md-padding-x-icon: $space-sm;
+$btn-md-font-size: $font-size-md;
+$btn-md-icon-size: 2rem;
+$btn-md-gap: $space-sm;
+$btn-md-border-radius: $radius-pill;
+
+// Sizing: Large
+$btn-lg-height: $space-5xl;
+$btn-lg-padding-x: $space-xl;
+$btn-lg-padding-x-icon: $space-md;
+$btn-lg-font-size: $font-size-lg;
+$btn-lg-icon-size: 2.5rem;
+$btn-lg-gap: $space-md;
+$btn-lg-border-radius: $radius-pill;
+
+// Shared
+$btn-font-weight: $font-weight-extrabold;
+$btn-letter-spacing: 0.04em;
+$btn-transition: $duration-fast $easing-standard;

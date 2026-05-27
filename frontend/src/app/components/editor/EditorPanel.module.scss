@@ -1,19 +1,28 @@
 @use '../../../styles/index' as s;
 
 .tabBar {
+  position: relative;
   display: flex;
+  height: fit-content;
   flex-direction: row;
+  justify-content: space-around;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
-  padding: 0 s.$space-lg;
+  padding: s.$space-sm;
   scrollbar-width: none;
   flex-shrink: 0;
 
   &::-webkit-scrollbar {
     display: none;
   }
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-b25,
+    $radius: s.$radius-lg,
+    $radius-position: all
+  );
 }
 
 .tab {
@@ -57,59 +66,32 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  border-top-left-radius: s.$radius-3xl;
-  border-top-right-radius: s.$radius-3xl;
-  border-top: 1px solid s.$color-white-50;
-  padding-top: s.$space-sm;
-  @include s.glass-surface(
-    s.$color-neutral-100-75,
-    s.$blur-lg,
-    s.$color-white-50,
-    1.4
+  gap: s.$space-sm;
+  z-index: 3;
+  padding: s.$space-lg;
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: null,
+    $radius: s.$radius-md,
+    $radius-position: top
   );
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
+  height: 12.5rem;
   -webkit-overflow-scrolling: touch;
 }
 
 .footer {
   flex-shrink: 0;
-  padding: s.$space-md s.$space-2xl;
   padding-bottom: max(s.$space-xl, env(safe-area-inset-bottom));
-  border-top: 1px solid s.$color-black-50;
-  background: s.$color-neutral-100-50;
 }
 
 .saveButton {
-  @include s.button-base(s.$radius-lg, 0, 0);
-  @include s.focus-ring(s.$space-xs);
-  @include s.interactive-transition(
-    opacity s.$duration-fast s.$easing-standard,
-    transform 0.1s s.$easing-standard
-  );
-
-  display: block;
+  @include s.button(primary, pressed, lg, false, false);
   width: 100%;
-  min-height: 3.125rem;
-  background: s.$color-neutral-900;
-  color: s.$color-neutral-0;
-  font-size: s.$font-size-lg;
-  font-weight: s.$font-weight-semibold;
-  letter-spacing: 0.02em;
-  &:active {
-    opacity: 0.8;
-    transform: scale(0.98);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
 }
 
 .eyesSection {
@@ -120,96 +102,171 @@
 .subTabBar {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  height: fit-content;
   gap: s.$space-sm;
-  padding: s.$space-sm s.$space-lg s.$space-xs;
+  padding: s.$space-sm;
   overflow-x: auto;
   scrollbar-width: none;
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-b25,
+    $radius: s.$radius-lg,
+    $radius-position: all
+  );
 
   &::-webkit-scrollbar {
     display: none;
   }
 }
 
-.subTab {
-  @include s.button-reset;
+.subTabActive {
+  position: relative;
+  pointer-events: none;
+  z-index: 0;
+  @include s.button-toggle();
   @include s.focus-ring(s.$space-2xs, s.$radius-sm);
-  @include s.interactive-transition(
-    color s.$duration-normal s.$easing-standard,
-    background s.$duration-fast s.$easing-standard
-  );
-
   flex: 1;
   min-height: 2.25rem;
-  padding: s.$space-sm s.$space-md;
+  padding: s.$space-xs s.$space-md;
   border-radius: s.$radius-lg;
   font-size: s.$font-size-sm;
   font-weight: s.$font-weight-medium;
   color: s.$color-neutral-600;
-  background: s.$color-white-400;
 }
 
-.subTabActive {
+.subTab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: s.$space-2xs;
   color: s.$color-neutral-900;
-  background: s.$color-white-900;
+  background: none;
+  min-height: 2.25rem;
+  padding: s.$space-xs s.$space-md;
+  border-radius: s.$radius-lg;
+  font-size: s.$font-size-sm;
+  font-weight: s.$font-weight-medium;
+}
+
+.gridTab {
+  display: flex;
+  flex-direction: column;
+  padding: s.$space-lg;
+  height: 12.5rem;
+
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-w100,
+    $radius: s.$radius-md,
+    $radius-position: all
+  );
+}
+
+.gridTitle {
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-900;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: s.$space-md;
-  padding: s.$space-lg;
-}
-
-.cell {
-  @include s.button-base(s.$radius-xl, s.$space-md, s.$space-sm);
-  @include s.focus-ring(s.$space-2xs);
-  @include s.interactive-transition(
-    border-color s.$duration-fast s.$easing-standard,
-    background s.$duration-fast s.$easing-standard
-  );
-
-  @include s.flex-center(column, s.$space-xs);
-
-  min-height: 5.625rem;
-  min-width: 2.75rem;
-  background: s.$color-white-400;
-  border: 2px solid transparent;
-  border-radius: s.$radius-xl;
-  &:active {
-    background: s.$color-white-900;
+  gap: s.$space-sm;
+  padding: s.$space-sm s.$space-lg;
+  width: 100%;
+  justify-content: center;
+  overflow: -moz-scrollbars-vertical;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 0.75rem;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    @include s.glass(
+      $frost: s.$glass-frost--500,
+      $shadow: (
+        s.$drop-shadow-b25,
+        s.$inner-shadow-w25,
+      ),
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    min-height: 2rem;
+  }
+  &::-webkit-scrollbar-track {
+    @include s.glass(
+      $frost: s.$glass-frost--100,
+      $shadow: (
+        s.$inner-shadow-b25,
+      ),
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    border-radius: 1rem;
   }
 }
 
-.cellActive {
-  border-color: s.$color-neutral-900;
-  background: s.$color-white-900;
+.cell {
+  @include s.flex-center(column, s.$space-xl);
 }
 
-.colorSwatch {
-  padding: s.$space-sm;
+.cellActive {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3.125rem;
+    height: 3.125rem;
+    background: s.$color-black-500;
+    border-radius: s.$radius-sm;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+  }
+  // cyan Haken exakt zentriert
+  &::before {
+    content: 'check';
+    font-family: 'Material Symbols Outlined';
+    color: s.$color-cyan-500;
+    font-size: s.$font-size-3xl;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+  }
 }
 
 .colorSwatchPreview {
+  @include s.button-checkroom();
   display: block;
-  width: 3rem;
-  height: 3rem;
-  border-radius: s.$radius-md;
+  height: 3.125rem;
+  width: 3.125rem;
 }
 
 .thumbnail {
-  width: 3rem;
-  height: 3rem;
+  width: 3.125rem;
+  height: 3.125rem;
   object-fit: contain;
 }
 
 .nonePlaceholder {
+  @include s.button-checkroom();
   @include s.flex-center;
-
-  width: 3rem;
-  height: 3rem;
-  font-size: s.$font-size-2xl;
-  font-weight: s.$font-weight-regular;
-  color: s.$color-neutral-400;
+  flex-direction: column;
+  width: 3.125rem;
+  height: 3.125rem;
+  font-size: s.$font-size-md;
+  font-weight: s.$font-weight-bold;
+  color: s.$color-neutral-900;
   user-select: none;
 }
 
@@ -233,14 +290,22 @@
 .sliderList {
   display: flex;
   flex-direction: column;
-  gap: s.$space-2xl;
-  padding: s.$space-xl s.$space-2xl;
+  justify-content: center;
+  height: 12.5rem;
+  gap: s.$space-lg;
+  padding: s.$space-3xl s.$space-lg;
+  @include s.glass(
+    $frost: s.$glass-frost--100,
+    $shadow: s.$inner-shadow-w100,
+    $radius: s.$radius-md,
+    $radius-position: all
+  );
 }
 
 .sliderRow {
   display: flex;
   flex-direction: column;
-  gap: s.$space-sm;
+  gap: s.$space-lg;
 }
 
 .sliderHeader {
@@ -250,47 +315,57 @@
 }
 
 .sliderLabel {
-  font-size: s.$font-size-md;
-  font-weight: s.$font-weight-medium;
+  font-size: s.$font-size-lg;
+  font-weight: s.$font-weight-bold;
   color: s.$color-neutral-900;
 }
 
 .sliderValue {
   font-size: s.$font-size-sm;
-  color: s.$color-neutral-500;
+  font-weight: s.$font-weight-regular;
+  color: s.$color-neutral-900;
   font-variant-numeric: tabular-nums;
 }
 
 .slider {
   @include s.focus-ring(s.$space-xs, s.$radius-sm);
-
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  height: s.$space-xs;
-  border-radius: s.$radius-sm;
-  background: s.$color-black-200;
   outline: none;
   cursor: pointer;
+  width: 100%;
+  border-radius: s.$radius-sm;
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: s.$space-sm;
+    @include s.glass(
+      $frost: s.$glass-frost--100,
+      $shadow: s.$inner-shadow-b25,
+      $radius: s.$radius-sm,
+      $radius-position: all
+    );
+    z-index: 1;
+  }
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: s.$space-2xl;
     height: s.$space-2xl;
+    margin-top: -9px; // Thumb mittig auf Track
     border-radius: 50%;
-    background: s.$color-neutral-900;
     cursor: pointer;
-    box-shadow: s.$shadow-thumb;
-  }
-
-  &::-moz-range-thumb {
-    width: s.$space-2xl;
-    height: s.$space-2xl;
-    border-radius: 50%;
-    background: s.$color-neutral-900;
-    cursor: pointer;
-    border: none;
-    box-shadow: s.$shadow-thumb;
+    @include s.glass(
+      $frost: s.$glass-frost--500,
+      $shadow: (
+        s.$drop-shadow-b25,
+        s.$inner-shadow-w25,
+      ),
+      $radius: s.$radius-xl,
+      $radius-position: all
+    );
+    position: relative;
+    z-index: 2;
   }
 }

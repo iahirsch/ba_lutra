@@ -3,92 +3,129 @@ import type { FlowStateUpdate } from '@ba-praktisch/shared-types';
 import styles from './EditorFlowPanel.module.scss';
 
 function NameInputView({
+  title,
   prompt,
   onSubmitName,
 }: {
-  prompt?: string;
-  onSubmitName: (name: string) => void;
+  title?: string[];
+  prompt?: string[];
+  onSubmitName: (lutraName: string, userName: string) => void;
 }) {
-  const [value, setValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [lutraValue, setLutraValue] = useState('');
+  const [userValue, setUserValue] = useState('');
+  const inputRefLutra = useRef<HTMLInputElement>(null);
+  const inputRefUser = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    inputRefLutra.current?.focus();
   }, []);
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    onSubmitName(trimmed);
+    const trimmedLutra = lutraValue.trim();
+    const trimmedUser = userValue.trim();
+    if (!trimmedLutra || !trimmedUser) return;
+    onSubmitName(trimmedLutra, trimmedUser);
   }
 
   return (
     <form onSubmit={handleSubmit} className={styles.view}>
-      {prompt && <p className={styles.prompt}>{prompt}</p>}
-      <input
-        ref={inputRef}
-        type="text"
-        className={styles.nameInput}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Type a name…"
-        maxLength={30}
-        autoComplete="off"
-        autoCapitalize="words"
-        autoCorrect="off"
-        spellCheck={false}
-        aria-label="Companion name"
-      />
+      <div className={styles.viewContainer}>
+        <div className={styles.formularField}>
+          {title && <h2 className={styles.title}>{title[0]}</h2>}
+          {prompt && <p className={styles.prompt}>{prompt[0]}</p>}
+          <input
+            ref={inputRefLutra}
+            type="text"
+            className={`${styles.textfield} ${lutraValue.trim() ? 'input--valid' : ''}`}
+            value={lutraValue}
+            onChange={(e) => setLutraValue(e.target.value)}
+            placeholder="Trage einen Namen ein"
+            maxLength={30}
+            autoComplete="off"
+            autoCapitalize="words"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-label="Companion name"
+          />
+        </div>
+        <div className={styles.formularField}>
+          {title && <h2 className={styles.title}>{title[1]}</h2>}
+          {prompt && <p className={styles.prompt}>{prompt[1]}</p>}
+          <input
+            ref={inputRefUser}
+            type="text"
+            className={`${styles.textfield} ${userValue.trim() ? 'input--valid' : ''}`}
+            value={userValue}
+            onChange={(e) => setUserValue(e.target.value)}
+            placeholder="Trage deinen Spitznamen ein"
+            maxLength={30}
+            autoComplete="off"
+            autoCapitalize="words"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-label="Companion name"
+          />
+        </div>
+      </div>
+
       <button
         type="submit"
         className={styles.actionButton}
-        disabled={!value.trim()}
+        disabled={!lutraValue.trim() || !userValue.trim()}
       >
-        Done
+        Erstellen
       </button>
     </form>
   );
 }
 
 function ChoicesView({
+  title,
   prompt,
   choices,
   onSelectChoice,
 }: {
-  prompt?: string;
+  title?: string[];
+  prompt?: string[];
   choices: { id: string; label: string }[];
   onSelectChoice: (id: string) => void;
 }) {
   return (
     <div className={styles.view}>
-      {prompt && <p className={styles.prompt}>{prompt}</p>}
-      <div className={styles.choiceList}>
-        {choices.map((choice) => (
-          <button
-            key={choice.id}
-            className={styles.choiceButton}
-            onClick={() => onSelectChoice(choice.id)}
-          >
-            {choice.label}
-          </button>
-        ))}
+      <div className={styles.viewContainer}>
+        {title && <h2 className={styles.title}>{title}</h2>}
+        {prompt && <p className={styles.prompt}>{prompt}</p>}
+        <div className={styles.choiceList}>
+          {choices.map((choice) => (
+            <button
+              key={choice.id}
+              className={styles.choiceButton}
+              onClick={() => onSelectChoice(choice.id)}
+            >
+              {choice.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 function ConfirmView({
+  title,
   prompt,
   confirmLabel,
   onConfirmAction,
 }: {
-  prompt?: string;
+  title?: string[];
+  prompt?: string[];
   confirmLabel?: string;
   onConfirmAction: () => void;
 }) {
   return (
     <div className={styles.view}>
+      {title && <h2 className={styles.title}>{title}</h2>}
       {prompt && <p className={styles.prompt}>{prompt}</p>}
       <button className={styles.actionButton} onClick={onConfirmAction}>
         {confirmLabel ?? 'Continue'}
@@ -97,7 +134,7 @@ function ConfirmView({
   );
 }
 
-function TransitionView({ prompt }: { prompt?: string }) {
+function TransitionView({ prompt }: { prompt?: string[] }) {
   return (
     <div className={styles.view}>
       {prompt && <p className={styles.prompt}>{prompt}</p>}
@@ -123,32 +160,41 @@ export function EditorFlowPanel({
   onSelectChoice,
   onConfirmAction,
 }: EditorFlowPanelProps) {
-  const { type, prompt, choices, confirmLabel } = flowState.creatorView;
+  const { type, title, prompt, choices, confirmLabel } = flowState.creatorView;
 
   return (
     <div className={styles.panel}>
-      <div className={styles.content} key={flowState.stepId}>
-        {type === 'name-input' && (
-          <NameInputView prompt={prompt} onSubmitName={onSubmitName} />
-        )}
+      <div className={styles.overlay}>
+        <div className={styles.header}>Lutra erstellen</div>
+        <div className={styles.content} key={flowState.stepId}>
+          {type === 'name-input' && (
+            <NameInputView
+              title={title}
+              prompt={prompt}
+              onSubmitName={onSubmitName}
+            />
+          )}
 
-        {type === 'choices' && choices && (
-          <ChoicesView
-            prompt={prompt}
-            choices={choices}
-            onSelectChoice={onSelectChoice}
-          />
-        )}
+          {type === 'choices' && choices && (
+            <ChoicesView
+              title={title}
+              prompt={prompt}
+              choices={choices}
+              onSelectChoice={onSelectChoice}
+            />
+          )}
 
-        {type === 'confirm' && (
-          <ConfirmView
-            prompt={prompt}
-            confirmLabel={confirmLabel}
-            onConfirmAction={onConfirmAction}
-          />
-        )}
+          {type === 'confirm' && (
+            <ConfirmView
+              title={title}
+              prompt={prompt}
+              confirmLabel={confirmLabel}
+              onConfirmAction={onConfirmAction}
+            />
+          )}
 
-        {type === 'transition' && <TransitionView prompt={prompt} />}
+          {type === 'transition' && <TransitionView prompt={prompt} />}
+        </div>
       </div>
     </div>
   );
