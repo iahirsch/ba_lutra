@@ -10,6 +10,7 @@ import {
 } from '../constants/hub-scene';
 import {
   effortTotalToGrowRadius,
+  GRASS_GROW_RADIUS_RATIO,
   VEGETATION_GROW_FADE_RATIO,
 } from '../constants/environment-vegetation';
 import { resolveEnvironmentSpawn } from './environmentSpawn';
@@ -100,12 +101,14 @@ export interface UseVegetationGrowOptions {
   applyEnvironmentTransform?: boolean;
   totalEffortScore: number;
   terrainWorldWidth: number;
+  growRadiusRatio?: number;
 }
 
 export function useVegetationGrow({
   applyEnvironmentTransform = true,
   totalEffortScore,
   terrainWorldWidth,
+  growRadiusRatio = GRASS_GROW_RADIUS_RATIO,
 }: UseVegetationGrowOptions) {
   const [anchorX, anchorZ] = useVegetationGrowAnchor(applyEnvironmentTransform);
   const growRadiusRef = useRef(0);
@@ -115,11 +118,16 @@ export function useVegetationGrow({
     growRadiusRef.current = effortTotalToGrowRadius(
       totalEffortScore,
       terrainWorldWidth,
+      growRadiusRatio,
     );
-  }, [totalEffortScore, terrainWorldWidth]);
+  }, [totalEffortScore, terrainWorldWidth, growRadiusRatio]);
 
   useFrame((_state, delta) => {
-    const target = effortTotalToGrowRadius(totalEffortScore, terrainWorldWidth);
+    const target = effortTotalToGrowRadius(
+      totalEffortScore,
+      terrainWorldWidth,
+      growRadiusRatio,
+    );
     growRadiusRef.current +=
       (target - growRadiusRef.current) * Math.min(1, delta * GROW_RADIUS_LERP);
   });

@@ -42,7 +42,7 @@ function HubCanvasContents({
       <HubLights />
 
       <Suspense fallback={null}>
-        <HubBackground />
+        <HubBackground totalEffortScore={totalEffortScore} />
         <EnvironmentVegetation totalEffortScore={totalEffortScore} />
       </Suspense>
 

@@ -4,7 +4,6 @@ import { PerspectiveCamera } from 'three';
 export const HUB_GLTF_URL = '/assets/environment/hub.glb';
 
 export const HUB_TERRAIN_MESH_NAME = 'ground';
-export const HUB_TERRAIN_COLOR = '#5e875e';
 
 export const HUB_ENVIRONMENT_TRANSFORM = {
   position: [0, 0, 0] as [number, number, number],

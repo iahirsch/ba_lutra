@@ -15,10 +15,8 @@ import {
   type Material,
   type Object3D,
 } from 'three';
-import {
-  HUB_TERRAIN_COLOR,
-  HUB_TERRAIN_MESH_NAME,
-} from '../constants/hub-scene';
+import { GROUND_DESERT_COLOR } from '../constants/environment-vegetation';
+import { HUB_TERRAIN_MESH_NAME } from '../constants/hub-scene';
 
 let sharedGradient: DataTexture | null = null;
 
@@ -110,7 +108,7 @@ function upgradeMaterial(material: Material): Material {
 export function applyHubTerrainMaterial(root: Object3D): void {
   const ground = root.getObjectByName(HUB_TERRAIN_MESH_NAME);
   if (!(ground instanceof Mesh)) return;
-  ground.material = new MeshStandardMaterial({ color: HUB_TERRAIN_COLOR });
+  ground.material = new MeshStandardMaterial({ color: GROUND_DESERT_COLOR });
 }
 
 /** Replaces lit materials with stepped toon shading */
