@@ -180,7 +180,7 @@ function TransitionView({
 
 interface EditorFlowPanelProps {
   flowState: FlowStateUpdate;
-  onSubmitName: (name: string) => void;
+  onSubmitName: (lutraName: string, userName: string) => void;
   onSelectChoice: (choiceId: string) => void;
   onConfirmAction: () => void;
   onResetFlow: () => void;
