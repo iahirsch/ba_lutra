@@ -331,22 +331,24 @@
   appearance: none;
 }
 
-@mixin button-primary() {
-  @include glass(
-    $frost: t.$glass-frost--100,
-    $shadow: (
-      t.$inner-shadow-w100,
-      t.$drop-shadow-b60,
-    ),
-    $radius: t.$radius-2xl,
-    $radius-position: all
-  );
-  padding: t.$space-sm t.$space-lg;
-  min-height: t.$space-4xl;
-  background: t.$color-cyan-500;
-  font-family: t.$font-secondary;
-  font-weight: t.$font-weight-extrabold;
-  font-size: t.$font-size-md;
+@mixin button-reset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+}
+
+@mixin button-admin(
+  $radius: t.$radius-md,
+  $padding-y: t.$space-sm,
+  $padding-x: t.$space-lg
+) {
+  @include button-reset;
+  border-radius: $radius;
+  padding: $padding-y $padding-x;
   cursor: pointer;
 }
 

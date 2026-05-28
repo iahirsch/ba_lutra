@@ -67,7 +67,7 @@
 }
 
 .builderLink {
-  @include s.button-primary();
+  @include s.button-admin();
   font-size: s.$font-size-md;
   font-weight: s.$font-weight-semibold;
   color: s.$color-neutral-900;
@@ -86,7 +86,7 @@
 }
 
 .navLink {
-  @include s.button-primary();
+  @include s.button-admin();
   font-size: s.$font-size-md;
   font-weight: s.$font-weight-medium;
   color: s.$color-neutral-600;
@@ -169,7 +169,7 @@
 }
 
 .stravaButton {
-  @include s.button-primary();
+  @include s.button-admin();
   font-size: s.$font-size-sm;
   font-weight: s.$font-weight-semibold;
   color: s.$color-neutral-0;

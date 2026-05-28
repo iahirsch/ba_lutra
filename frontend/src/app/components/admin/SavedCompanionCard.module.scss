@@ -52,7 +52,7 @@
 }
 
 .deleteBtn {
-  @include s.button-primary();
+  @include s.button-admin();
   @include s.flex-center;
   @include s.focus-ring(s.$space-2xs, s.$radius-md);
   @include s.interactive-transition(
