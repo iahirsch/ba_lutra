@@ -3,7 +3,7 @@ export const COMPANION_BODY_CLIPS = [
   'idle',
   'wave',
   'walking',
-  'run',
+  'running',
   'win',
 ] as const;
 
@@ -18,7 +18,7 @@ export const COMPANION_BODY_CLIP_PLAYBACK: Record<
   idle: { once: false },
   wave: { once: true },
   walking: { once: false },
-  run: { once: false },
+  running: { once: false },
   win: { once: true },
 };
 
