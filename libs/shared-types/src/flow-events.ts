@@ -36,7 +36,7 @@ export interface EditorViewConfig {
   type: EditorViewType;
   title?: string[];
   prompt?: string[];
-  choices?: { id: string; label: string }[];
+  choices?: { id: string; label: string; variant?: 'primary' | 'secondary' }[];
   confirmLabel?: string;
 }
 

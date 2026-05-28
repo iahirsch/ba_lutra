@@ -33,7 +33,7 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
 
       choices: [
-        { id: 'iSee', label: 'Ja! Ich sehe ihn' },
+        { id: 'iSee', label: 'Ja! Ich sehe ihn', variant: 'primary' },
       ],
     },
     transitions: {
@@ -51,8 +51,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'more', label: 'Ja, erzähl mir mehr!' },
-        { id: 'sport', label: 'Wie kann ich die Welt beeinflussen?' },
+        { id: 'more', label: 'Ja, erzähl mir mehr!', variant: 'primary' },
+        { id: 'sport', label: 'Wie kann ich die Welt beeinflussen?', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -71,11 +71,11 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutra', label: 'Wieso Lutra?' },
-        { id: 'heartland', label: 'Das Herzland' },
-        { id: 'worldanchor', label: 'Die Weltenanker' },
-        { id: 'conduit', label: 'Die Conduit' },
-        { id: 'sport', label: 'Welt Beeinflussen' },
+        { id: 'lutra', label: 'Wieso Lutra?', variant: 'secondary' },
+        { id: 'heartland', label: 'Das Herzland', variant: 'secondary' },
+        { id: 'worldanchor', label: 'Die Weltenanker', variant: 'secondary' },
+        { id: 'conduit', label: 'Die Conduit', variant: 'secondary' },
+        { id: 'sport', label: 'Welt Beeinflussen', variant: 'primary' },
       ],
     },
     transitions: {
@@ -97,8 +97,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutraInfo2', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'lutraInfo2', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -117,7 +117,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutraInfo3', label: 'Weiter' },
+        { id: 'lutraInfo3', label: 'Weiter', variant: 'primary' },
         { id: 'skip', label: 'Überspringen' },
       ],
     },
@@ -137,8 +137,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutraInfo4', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'lutraInfo4', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -157,7 +157,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'more', label: 'Weiter' },
+        { id: 'more', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -175,8 +175,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'conduitInfo2', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'conduitInfo2', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -195,8 +195,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'conduitInfo3', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'conduitInfo3', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -215,7 +215,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'more', label: 'Weiter' },
+        { id: 'more', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -234,8 +234,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'worldanchorInfo2', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'worldanchorInfo2', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -254,8 +254,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'worldanchorInfo3', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'worldanchorInfo3', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -274,8 +274,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'worldanchorInfo4', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'worldanchorInfo4', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -293,7 +293,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'more', label: 'Weiter' },
+        { id: 'more', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -310,8 +310,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'heartlandInfo2', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'heartlandInfo2', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -330,8 +330,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'heartlandInfo3', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'heartlandInfo3', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -349,8 +349,8 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'heartlandInfo4', label: 'Weiter' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'heartlandInfo4', label: 'Weiter', variant: 'primary' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {
@@ -368,7 +368,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'more', label: 'Weiter' },
+        { id: 'more', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -386,7 +386,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'treadmill', label: 'Weiter' },
+        { id: 'treadmill', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -412,8 +412,8 @@ export const FLOW_STEPS: FlowStep[] = [
         'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.'
       ],
       choices: [
-        { id: 'activity_started', label: 'Aktivität starten' },
-        { id: 'activity_exit', label: 'Ich mag kein sport machen' }
+        { id: 'activity_started', label: 'Aktivität starten', variant: 'primary' },
+        { id: 'activity_exit', label: 'Ich mag kein sport machen', variant: 'secondary' }
       ],
     },
     transitions: {
@@ -440,7 +440,7 @@ export const FLOW_STEPS: FlowStep[] = [
         'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.'
       ],
       choices: [
-        { id: 'activity_finished', label: 'Aktivität beenden!' },
+        { id: 'activity_finished', label: 'Aktivität beenden!', variant: 'primary' },
       ],
     },
     transitions: {
@@ -459,7 +459,7 @@ export const FLOW_STEPS: FlowStep[] = [
         'Schau dir das Ergebnis deiner Power auf der Leinwand an!'
       ],
       choices: [
-        { id: 'lutra_exit', label: 'Weiter' },
+        { id: 'lutra_exit', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -476,7 +476,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutra_exit', label: 'Weiter' },
+        { id: 'lutra_exit', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
@@ -486,14 +486,14 @@ export const FLOW_STEPS: FlowStep[] = [
     },
   },
   {
-    id: 'activity_exit',
+    id: 'lutra_exit',
     companionDialogue:
       'Möchtest du noch tiefer in meine Welt eintauchen und sehen, was wir in Zukunft noch alles erreichen können? Dann geh einfach rüber zur Maus auf dem anderen Sockel. Auf dem Monitor dort erfährst du mehr zu unserer App-Vision!',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'hub_transition', label: 'Von [companionName] verabschieden' },
+        { id: 'hub_transition', label: 'Von [companionName] verabschieden', variant: 'primary' },
       ],
     },
     transitions: {
