@@ -14,10 +14,11 @@ import {
 export interface UseFlowSocketReturn {
   flowState: FlowStateUpdate | null;
   connected: boolean;
-  submitName: (name: string) => void;
+  submitName: (name: string, userName: string) => void;
   selectChoice: (choiceId: string) => void;
   confirmAction: () => void;
   notifyExitComplete: () => void;
+  resetFlow: () => void;
 }
 
 /**
@@ -58,8 +59,8 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
     };
   }, [screenId]);
 
-  const submitName = useCallback((name: string) => {
-    const payload: NameSubmittedPayload = { name };
+  const submitName = useCallback((name: string, userName: string) => {
+    const payload: NameSubmittedPayload = { name, userName };
     socketRef.current?.emit(FLOW_EVENTS.NAME_SUBMITTED, payload);
   }, []);
 
@@ -75,6 +76,9 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
   const notifyExitComplete = useCallback(() => {
     socketRef.current?.emit(FLOW_EVENTS.EXIT_COMPLETE);
   }, []);
+  const resetFlow = useCallback(() => {       // muss VOR dem return stehen
+    socketRef.current?.emit(FLOW_EVENTS.RESET);
+  }, []);
 
   return {
     flowState,
@@ -83,6 +87,7 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
     selectChoice,
     confirmAction,
     notifyExitComplete,
+    resetFlow,
   };
 }
 

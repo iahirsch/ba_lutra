@@ -25,16 +25,15 @@ import {
   createIdleFlowStateUpdate,
 } from '@ba-praktisch/shared-types';
 
-// Active flow session
 interface FlowSession {
   companionId: string;
   companionConfig: CompanionConfig;
   companionName: string | null;
+  userName?: string | null;
   companionCreatedAt: string;
   currentStepId: string;
 }
 
-// Gateway
 @WebSocketGateway({ cors: { origin: '*' } })
 export class CompanionGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
@@ -48,10 +47,9 @@ export class CompanionGateway
     private readonly companionRepository: Repository<Companion>,
   ) { }
 
-  /** Maps socket ID → registered screen ID */
   private readonly screenRegistry = new Map<string, ScreenId>();
-
   private session: FlowSession | null = null;
+  private resetTimer: NodeJS.Timeout | null = null;
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
@@ -88,9 +86,9 @@ export class CompanionGateway
       currentStepId: FIRST_STEP_ID,
     };
     this.broadcastFlowState();
+    this.startResetTimer();
   }
 
-  // Screen registration
   @SubscribeMessage(FLOW_EVENTS.REGISTER)
   handleRegister(
     @ConnectedSocket() client: Socket,
@@ -107,7 +105,6 @@ export class CompanionGateway
     );
   }
 
-  // Flow event handlers
   @SubscribeMessage(FLOW_EVENTS.NAME_SUBMITTED)
   async handleNameSubmitted(
     @MessageBody() payload: NameSubmittedPayload,
@@ -115,6 +112,7 @@ export class CompanionGateway
     if (!this.session) return;
     const name = payload.name.trim();
     this.session.companionName = name;
+    this.session.userName = payload.userName;
 
     await this.companionRepository.update(this.session.companionId, { name });
 
@@ -146,7 +144,11 @@ export class CompanionGateway
     if (next !== undefined) this.advanceTo(next);
   }
 
-  // Advance to the given step, or end the session if nextStepId is null.
+  @SubscribeMessage(FLOW_EVENTS.RESET)
+  async handleReset(): Promise<void> {
+    await this.resetSession();
+  }
+
   private advanceTo(nextStepId: string | null): void {
     if (nextStepId === null) {
       this.endSession();
@@ -155,10 +157,12 @@ export class CompanionGateway
     if (!this.session) return;
     this.session.currentStepId = nextStepId;
     this.broadcastFlowState();
+    this.startResetTimer();
   }
 
   private endSession(): void {
     if (!this.session) return;
+    this.clearResetTimer();
 
     this.server.emit(FLOW_EVENTS.COMPANION_ENTERED_HUB, {
       id: this.session.companionId,
@@ -168,9 +172,32 @@ export class CompanionGateway
     });
 
     this.session = null;
-
-    // Reset all screens to idle
     this.server.emit(FLOW_EVENTS.STATE_UPDATE, createIdleFlowStateUpdate());
+  }
+
+  private async resetSession(): Promise<void> {
+    if (!this.session) return;
+    this.clearResetTimer();
+
+    await this.companionRepository.delete(this.session.companionId);
+
+    this.session = null;
+    this.server.emit(FLOW_EVENTS.STATE_UPDATE, createIdleFlowStateUpdate());
+  }
+
+  private startResetTimer(): void {
+    this.clearResetTimer();
+    this.resetTimer = setTimeout(() => {
+      this.logger.warn('Flow session timed out after 10 minutes — resetting.');
+      this.resetSession();
+    }, 10 * 60 * 1000);
+  }
+
+  private clearResetTimer(): void {
+    if (this.resetTimer) {
+      clearTimeout(this.resetTimer);
+      this.resetTimer = null;
+    }
   }
 
   private broadcastFlowState(): void {
@@ -182,9 +209,22 @@ export class CompanionGateway
     const step = FLOW_STEP_MAP.get(this.session.currentStepId);
     if (!step) return createIdleFlowStateUpdate();
 
-    const dialogue = this.session.companionName
-      ? step.companionDialogue.replace(/\[companionName\]/g, this.session.companionName)
-      : step.companionDialogue;
+    const replace = (text: string) =>
+      text
+        .replace(/\[companionName\]/g, this.session!.companionName ?? '')
+        .replace(/\[userName\]/g, this.session!.userName ?? '');
+
+    const dialogue = step.companionDialogue ? replace(step.companionDialogue) : '';
+
+    const creatorView = {
+      ...step.creatorView,
+      prompt: step.creatorView.prompt?.map(replace),
+      title: step.creatorView.title?.map(replace),
+      choices: step.creatorView.choices?.map((c) => ({
+        ...c,
+        label: replace(c.label),
+      })),
+    };
 
     return {
       stepId: this.session.currentStepId,
@@ -192,7 +232,7 @@ export class CompanionGateway
       companionConfig: this.session.companionConfig,
       companionName: this.session.companionName,
       companionDialogue: dialogue,
-      creatorView: step.creatorView,
+      creatorView,
     };
   }
 

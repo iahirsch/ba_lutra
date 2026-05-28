@@ -11,9 +11,21 @@ export interface FlowStep {
 export const FLOW_STEPS: FlowStep[] = [
 
   {
+    id: 'nameInput',
+    creatorView: {
+      type: 'name-input',
+      title: ['Name des Lutra`s', 'Dein Name'],
+      prompt: ['Wie soll dein Lutra heissen?', 'Wie soll dich dein Lutra nennen ? Was ist dein Spitzname ?'],
+    },
+    transitions: {
+      [FLOW_EVENTS.NAME_SUBMITTED]: 'firstLook',
+    },
+  },
+
+  {
     id: 'firstLook',
     companionDialogue:
-      'Hallo [Dein-Name]! Ich bin dein Lutra [companionName]. Schön, dass du da bist! Du kannst ganz einfach über die Buttons auf dem Tablet mit mir kommunizieren.',
+      'Hallo [userName]! Ich bin dein Lutra [companionName]. Schön, dass du da bist! Du kannst ganz einfach über die Buttons auf dem Tablet mit mir kommunizieren.',
     creatorView: {
       type: 'choices',
       prompt: [
@@ -32,7 +44,7 @@ export const FLOW_STEPS: FlowStep[] = [
   },
 
   {
-    id: 'firstLook',
+    id: 'infoOrSport',
     companionDialogue:
       'Möchtest du mehr über mich und meine Heimat erfahren? Oder willst du direkt sehen, wie deine Bewegung meine Welt beeinflussen kann?',
     creatorView: {
@@ -291,83 +303,65 @@ export const FLOW_STEPS: FlowStep[] = [
     },
   },
   {
-    id: 'hartlandInfo1',
+    id: 'heartlandInfo1',
     companionDialogue:
       'Das Herzland ist mein Zuhause. Früher war es eine paradiesische Kernzone voller Leben: Durchzogen von dichten Wäldern, klaren Flüssen, bunten Wiesen und unzähligen Tieren.',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'hartlandInfo2', label: 'Weiter' },
+        { id: 'heartlandInfo2', label: 'Weiter' },
         { id: 'skip', label: 'Überspringen' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        hartlandInfo2: 'hartlandInfo2',
+        heartlandInfo2: 'heartlandInfo2',
         skip: 'moreInfo',
       },
     },
   },
 
   {
-    id: 'hartlandInfo2',
+    id: 'heartlandInfo2',
     companionDialogue:
       'Unsere Welt konnte diese Lebensenergie nie von selbst erzeugen. Sie war immer auf die Weltenanker und somit auf eure menschliche Aktivität angewiesen.',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'hartlandInfo3', label: 'Weiter' },
+        { id: 'heartlandInfo3', label: 'Weiter' },
         { id: 'skip', label: 'Überspringen' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        hartlandInfo3: 'hartlandInfo3',
+        heartlandInfo3: 'heartlandInfo3',
         skip: 'moreInfo',
       },
     },
   },
   {
-    id: 'hartlandInfo3',
+    id: 'heartlandInfo3',
     companionDialogue:
       'Als ihr euch weniger bewegt habt, fiel die Energiequelle aus. Nach dem grossen Kollaps hat das triste Ödland mein geliebtes Herzland verschluckt. Fast alles ist grau und leblos... Der Urzeitanker liegt tief unter Sand und Asche begraben.',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'hartlandInfo4', label: 'Weiter' },
+        { id: 'heartlandInfo4', label: 'Weiter' },
         { id: 'skip', label: 'Überspringen' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        hartlandInfo4: 'hartlandInfo4',
+        heartlandInfo4: 'heartlandInfo4',
         skip: 'moreInfo',
       },
     },
   },
   {
-    id: 'hartlandInfo4',
-    companionDialogue:
-      'Aber jetzt bist du ja hier! Sobald du aktiv wirst, können wir Schritt für Schritt das Ödland zurückdrängen und meine Heimat wieder zum Blühen bringen. Packen wir es an?',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'more', label: 'Weiter' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        more: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'hartlandInfo4',
+    id: 'heartlandInfo4',
     companionDialogue:
       'Aber jetzt bist du ja hier! Sobald du aktiv wirst, können wir Schritt für Schritt das Ödland zurückdrängen und meine Heimat wieder zum Blühen bringen. Packen wir es an?',
     creatorView: {
@@ -499,7 +493,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'hub_transition', label: 'Von [Lutra-Name] verabschieden' },
+        { id: 'hub_transition', label: 'Von [companionName] verabschieden' },
       ],
     },
     transitions: {
@@ -513,7 +507,7 @@ export const FLOW_STEPS: FlowStep[] = [
     id: 'hub_transition',
     creatorView: {
       type: 'transition',
-      prompt: ['Du findest dein Lutra [Lutra-Name] nun im Zeltlager. Danke das du ihn erschaffen hast. '],
+      prompt: ['Du findest dein Lutra [companionName] nun im Zeltlager. Danke das du ihn erschaffen hast.'],
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,

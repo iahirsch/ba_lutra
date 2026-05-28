@@ -380,6 +380,98 @@
   );
 }
 
+// Icon Button Sizes
+@mixin _icon-btn-size($shape) {
+  width: 3.875rem;
+  height: 3.875rem;
+  padding: t.$space-lg;
+
+  @if $shape == rounded {
+    border-radius: t.$radius-pill;
+  } @else {
+    border-radius: t.$radius-2xl;
+  }
+}
+
+// Icon Button States
+@mixin _icon-btn-state($state) {
+  @if $state == default {
+    @include glass(
+      $frost: t.$glass-frost--100,
+      $shadow: (
+        t.$inner-shadow-w100,
+        t.$drop-shadow-b60,
+      ),
+      $radius: t.$radius-2xl,
+      $radius-position: all
+    );
+    background-color: t.$color-light-30;
+    color: t.$color-neutral-900;
+    cursor: pointer;
+  } @else if $state == pressed {
+    @include glass(
+      $frost: t.$glass-frost--100,
+      $shadow: (
+        t.$inner-shadow-w100,
+        t.$drop-shadow-b60,
+      ),
+      $radius: t.$radius-2xl,
+      $radius-position: all
+    );
+    background-color: t.$color-light-80;
+    color: t.$color-neutral-900;
+    cursor: pointer;
+    transform: scale(0.98);
+  } @else if $state == disabled {
+    box-shadow: t.$drop-shadow-b50;
+    border: 1px solid t.$color-gray-50;
+    border-radius: t.$radius-2xl;
+    background-color: t.$color-gray-30;
+    opacity: 0.4;
+    color: t.$btn-text-disabled;
+    cursor: not-allowed;
+    pointer-events: none;
+  } @else if $state == focused {
+    @include glass(
+      $frost: t.$glass-frost--100,
+      $shadow: t.$drop-shadow-b25,
+      $radius: t.$radius-2xl,
+      $radius-position: all
+    );
+    background-color: t.$color-gray-30;
+    border: 1px solid t.$color-cyan-500;
+    color: t.$color-neutral-900;
+    cursor: pointer;
+    outline: none;
+  }
+}
+
+// Icon Button Mixin
+@mixin icon-button(
+  $state: default,
+  $shape: default // default | rounded
+) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-sizing: border-box;
+  transition:
+    background-color t.$btn-transition,
+    transform t.$btn-transition,
+    opacity t.$btn-transition;
+
+  @include _icon-btn-size($shape);
+  @include _icon-btn-state($state);
+
+  @if $shape == rounded {
+    border-radius: t.$radius-pill !important;
+    &::before {
+      border-radius: t.$radius-pill !important;
+    }
+  }
+}
+
 @mixin textfield() {
   @include glass(
     $frost: t.$glass-frost--100,

@@ -135,10 +135,23 @@ function ConfirmView({
   );
 }
 
-function TransitionView({ prompt }: { prompt?: string[] }) {
+function TransitionView({
+  prompt,
+  onExitComplete,
+}: {
+  prompt?: string[];
+  onExitComplete: () => void;
+}) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onExitComplete();
+    }, 3000); // 3 Sekunden anzeigen, dann weiter
+    return () => clearTimeout(timer);
+  }, [onExitComplete]);
+
   return (
     <div className={styles.view}>
-      {prompt && <p className={styles.prompt}>{prompt}</p>}
+      {prompt && <p className={styles.prompt}>{prompt.join(' ')}</p>}
       <div className={styles.dots} aria-hidden="true">
         <span />
         <span />
@@ -153,6 +166,8 @@ interface EditorFlowPanelProps {
   onSubmitName: (name: string) => void;
   onSelectChoice: (choiceId: string) => void;
   onConfirmAction: () => void;
+  onResetFlow: () => void;
+  onExitComplete: () => void;
 }
 
 export function EditorFlowPanel({
@@ -160,11 +175,20 @@ export function EditorFlowPanel({
   onSubmitName,
   onSelectChoice,
   onConfirmAction,
+  onResetFlow,
+  onExitComplete,
 }: EditorFlowPanelProps) {
   const { type, title, prompt, choices, confirmLabel } = flowState.creatorView;
 
   return (
     <div className={styles.panel}>
+      <button
+        className={styles.resetButton}
+        onClick={onResetFlow}
+        aria-label="Reset"
+      >
+        ✕
+      </button>
       <div className={styles.overlay}>
         <div className={styles.content} key={flowState.stepId}>
           {type === 'name-input' && (
@@ -193,7 +217,9 @@ export function EditorFlowPanel({
             />
           )}
 
-          {type === 'transition' && <TransitionView prompt={prompt} />}
+          {type === 'transition' && (
+            <TransitionView prompt={prompt} onExitComplete={onExitComplete} />
+          )}
         </div>
       </div>
     </div>

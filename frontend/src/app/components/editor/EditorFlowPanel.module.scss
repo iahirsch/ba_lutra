@@ -214,3 +214,11 @@
   width: 100%;
   overflow: hidden;
 }
+
+.resetButton {
+  @include s.icon-button($state: default, $shape: default);
+  position: fixed;
+  top: s.$space-lg;
+  left: s.$space-lg;
+  z-index: 100;
+}

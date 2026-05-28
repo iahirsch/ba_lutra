@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import {
   Color,
@@ -68,9 +68,16 @@ function EditorSceneParts() {
 }
 
 export function Editor() {
-  const { flowState, submitName, selectChoice, confirmAction } = useFlowSocket(
-    SCREENS.EDITOR,
-  );
+  const {
+    flowState,
+    submitName,
+    selectChoice,
+    confirmAction,
+    resetFlow,
+    notifyExitComplete,
+  } = useFlowSocket(SCREENS.EDITOR);
+
+  const [userName, setUserName] = useState<string | null>(null);
 
   const prevFlowRef = useRef<FlowStateUpdate | null>(null);
 
@@ -94,9 +101,13 @@ export function Editor() {
       <div className={styles.page}>
         <EditorFlowPanel
           flowState={flowState}
-          onSubmitName={submitName}
+          onSubmitName={(lutraName, userName) => {
+            submitName(lutraName, userName);
+          }}
           onSelectChoice={selectChoice}
           onConfirmAction={confirmAction}
+          onResetFlow={resetFlow}
+          onExitComplete={notifyExitComplete}
         />
       </div>
     );
