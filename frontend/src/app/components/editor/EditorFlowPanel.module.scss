@@ -27,7 +27,7 @@
   flex: 1 1 0;
   overflow-y: auto;
   width: 100%;
-  animation: slideUp s.$duration-normal s.$easing-standard both;
+  // animation: slideUp s.$duration-normal s.$easing-standard both;
 }
 
 @keyframes slideUp {
@@ -203,6 +203,22 @@
   40% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid transparent;
+  border-top-color: s.$color-cyan-500;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-top: s.$space-xl;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

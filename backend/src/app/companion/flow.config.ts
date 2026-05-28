@@ -118,7 +118,7 @@ export const FLOW_STEPS: FlowStep[] = [
       prompt: [],
       choices: [
         { id: 'lutraInfo3', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen' },
+        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
       ],
     },
     transitions: {

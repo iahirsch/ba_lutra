@@ -78,7 +78,17 @@ function NameInputView({
   );
 }
 
-function ChoicesView({ title, prompt, choices, onSelectChoice }) {
+function ChoicesView({
+  title,
+  prompt,
+  choices,
+  onSelectChoice,
+}: {
+  title?: string[];
+  prompt?: string[];
+  choices: { id: string; label: string; variant?: 'primary' | 'secondary' }[];
+  onSelectChoice: (id: string) => void;
+}) {
   return (
     <div className={styles.view}>
       <div className={styles.viewContainer}>
@@ -159,7 +169,7 @@ function TransitionView({
   return (
     <div className={styles.view}>
       {prompt && <p className={styles.prompt}>{prompt.join(' ')}</p>}
-      <div className={styles.dots} aria-hidden="true">
+      <div className={styles.spinner} aria-hidden="true">
         <span />
         <span />
         <span />
