@@ -5,7 +5,7 @@ import { Group } from 'three';
 import {
   prepareVegetationPropModel,
   type TreeLeavesMaterialState,
-} from '../../utils/treeLeavesMaterial';
+} from '../../utils/leavesMaterial';
 import {
   computeGrowReveal,
   computeHorizontalFootprintRadius,

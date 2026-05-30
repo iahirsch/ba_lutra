@@ -7,30 +7,75 @@ export interface EnvironmentVegetationEntry {
 
 export const TREES_URL = '/assets/environment/trees/';
 export const TREE_LEAVES_ALPHA_TEXTURE_URL = TREES_URL + 'leaves.png';
+export const TREE_DEFAULT_GLB = TREES_URL + 'tree01.glb';
+export const TREE_SPAWN_PREFIX = 'EMPTY_Tree';
+
 export const BUSHES_URL = '/assets/environment/bushes/';
+export const BUSH_LEAVES_ALPHA_TEXTURE_URL = BUSHES_URL + 'leaves.png';
+export const BUSH_DEFAULT_GLB = BUSHES_URL + 'bush01.glb';
+export const BUSH_SPAWN_PREFIX = 'EMPTY_Bush';
 
-export const TREE_LEAVES_WIND_SCALE = 4;
+export interface LeavesMaterialConfig {
+  baseColor: string;
+  tipColor1: string;
+  tipColor2: string;
+  windScale: number;
+  lightIntensity: number;
+  colorVariationNoiseScale: number;
+  colorVariationStrength: number;
+  terrainSize: number;
+}
 
+export const TREE_LEAVES_MATERIAL_CONFIG: LeavesMaterialConfig = {
+  baseColor: '#313F1B',
+  tipColor1: '#B7E882',
+  tipColor2: '#608A53',
+  windScale: 4,
+  lightIntensity: 1,
+  colorVariationNoiseScale: 2.5,
+  colorVariationStrength: 2.5,
+  terrainSize: 75,
+};
+
+export const BUSH_LEAVES_MATERIAL_CONFIG: LeavesMaterialConfig = {
+  baseColor: '#2A3518',
+  tipColor1: '#8FB86A',
+  tipColor2: '#4A6B3F',
+  windScale: 1.5,
+  lightIntensity: 0.92,
+  colorVariationNoiseScale: 3,
+  colorVariationStrength: 1.5,
+  terrainSize: 50,
+};
+
+/**
+ * Overrides for tree spawn defaults
+ */
 export const ENVIRONMENT_VEGETATION: EnvironmentVegetationEntry[] = [
   {
     id: 'tree-1',
     glbUrl: TREES_URL + 'tree03.glb',
-    spawn: 'EMPTY_Tree01',
+    spawn: 'EMPTY_Tree001',
     scale: 1,
   },
   {
     id: 'tree-2',
     glbUrl: TREES_URL + 'tree02.glb',
-    spawn: 'EMPTY_Tree02',
+    spawn: 'EMPTY_Tree002',
     scale: 1,
   },
   {
     id: 'tree-3',
     glbUrl: TREES_URL + 'tree01.glb',
-    spawn: 'EMPTY_Tree03',
+    spawn: 'EMPTY_Tree003',
     scale: 1,
   },
 ];
+
+/**
+ * Overrides for bush spawn defaults
+ */
+export const ENVIRONMENT_BUSHES: EnvironmentVegetationEntry[] = [];
 
 export const GRASS_LODS_URL = '/assets/environment/grassLODs.glb';
 export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
@@ -38,7 +83,6 @@ export const GRASS_NOISE_TEXTURE_URL = '/assets/environment/perlinnoise.webp';
 
 export const GRASS_WEIGHT_ATTRIBUTE = 'color_1';
 export const GRASS_MASK_INSTANCE_ATTRIBUTE = 'aGrassMask';
-/** Vertex paint on ground: black = grass texture, white = dirt texture. */
 export const GROUND_SURFACE_MASK_ATTRIBUTE = 'color_3';
 export const GRASS_MIN_SAMPLE_WEIGHT = 0.08;
 
@@ -53,7 +97,7 @@ export const GRASS_LOD_MESH_NAMES = [
 
 export const GRASS_DEBUG_SLIDER = true;
 
-export const GRASS_INSTANCE_COUNT = 20000;
+export const GRASS_INSTANCE_COUNT = 10000;
 export const GRASS_BLADE_WIDTH = 6;
 export const GRASS_BLADE_HEIGHT = 2.5;
 
