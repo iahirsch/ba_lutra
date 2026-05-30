@@ -19,6 +19,7 @@ export const FLOW_STEPS: FlowStep[] = [
         'Wie soll dich dein Lutra nennen ? Was ist dein Spitzname ?',
       ],
     },
+
     transitions: {
       [FLOW_EVENTS.NAME_SUBMITTED]: 'firstLook',
     },
