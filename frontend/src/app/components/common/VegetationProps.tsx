@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
+import { useMemo } from 'react';
+import { useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { TextureLoader } from 'three';
 import { HUB_GLTF_URL } from '../../constants/hub-scene';
@@ -9,8 +9,7 @@ import { collectHubSceneMarkers } from '../../utils/environmentSpawn';
 import {
   getOrCreateBushLeavesMaterial,
   getOrCreateTreeLeavesMaterial,
-  setTreeLeavesMaterialTextures,
-  updateTreeLeavesMaterialTime,
+  useLeavesMaterial,
 } from '../../utils/leavesMaterial';
 import { useEnvironmentTerrainWorldWidth } from '../../utils/vegetationGrow';
 import { VegetationProp } from './VegetationProp';
@@ -47,33 +46,9 @@ export function VegetationProps({
 
   const treeMaterialState = useMemo(() => getOrCreateTreeLeavesMaterial(), []);
   const bushMaterialState = useMemo(() => getOrCreateBushLeavesMaterial(), []);
-  const texturesReadyRef = useRef(false);
 
-  useEffect(() => {
-    if (texturesReadyRef.current) return;
-    setTreeLeavesMaterialTextures(
-      treeMaterialState,
-      leavesAlphaTexture,
-      noiseTexture,
-    );
-    setTreeLeavesMaterialTextures(
-      bushMaterialState,
-      bushLeavesAlphaTexture,
-      noiseTexture,
-    );
-    texturesReadyRef.current = true;
-  }, [
-    treeMaterialState,
-    bushMaterialState,
-    leavesAlphaTexture,
-    bushLeavesAlphaTexture,
-    noiseTexture,
-  ]);
-
-  useFrame((state) => {
-    updateTreeLeavesMaterialTime(treeMaterialState, state.clock.elapsedTime);
-    updateTreeLeavesMaterialTime(bushMaterialState, state.clock.elapsedTime);
-  });
+  useLeavesMaterial(treeMaterialState, leavesAlphaTexture, noiseTexture);
+  useLeavesMaterial(bushMaterialState, bushLeavesAlphaTexture, noiseTexture);
 
   const terrainWorldWidth = useEnvironmentTerrainWorldWidth(
     applyEnvironmentTransform,
@@ -120,7 +95,7 @@ export function VegetationProps({
           number,
           number,
         ],
-        scale: override?.scale ?? 1,
+        scale: override?.scale ?? 0.75,
       };
     });
   }, [scene, applyEnvironmentTransform]);

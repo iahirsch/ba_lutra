@@ -28,7 +28,10 @@ import {
   setGrassMaterialTextures,
   updateGrassMaterialTime,
 } from '../../utils/grassMaterial';
-import { useVegetationGrow } from '../../utils/vegetationGrow';
+import {
+  computeTerrainWorldWidth,
+  useVegetationGrow,
+} from '../../utils/vegetationGrow';
 import { useTotalEffortScore } from '../../hooks/useTotalEffortScore';
 
 useGLTF.preload(hub.HUB_GLTF_URL);
@@ -85,18 +88,6 @@ function extractGrassLodGeometries(lodScene: Object3D): BufferGeometry[] {
     }
     return geometry;
   });
-}
-
-function computeTerrainWorldWidth(terrainMesh: Mesh, envScale: number): number {
-  terrainMesh.geometry.computeBoundingBox();
-  if (!terrainMesh.geometry.boundingBox) {
-    throw new Error('Expected ground mesh geometry bounds');
-  }
-  const size = new Vector3();
-  terrainMesh.geometry.boundingBox.getSize(size);
-  const worldX = size.x * terrainMesh.scale.x * envScale;
-  const worldZ = size.z * terrainMesh.scale.z * envScale;
-  return Math.max(worldX, worldZ);
 }
 
 function computeLodDistances(terrainWorldWidth: number): LodDistances {

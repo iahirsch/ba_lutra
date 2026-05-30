@@ -1,3 +1,4 @@
+import { FlowerField } from './FlowerField';
 import { GrassField } from './GrassField';
 import { VegetationProps } from './VegetationProps';
 
@@ -18,6 +19,10 @@ export function EnvironmentVegetation({
         totalEffortScore={totalEffortScore}
       />
       <VegetationProps
+        applyEnvironmentTransform={applyEnvironmentTransform}
+        totalEffortScore={totalEffortScore}
+      />
+      <FlowerField
         applyEnvironmentTransform={applyEnvironmentTransform}
         totalEffortScore={totalEffortScore}
       />

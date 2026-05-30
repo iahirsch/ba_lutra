@@ -12,8 +12,23 @@ export const TREE_SPAWN_PREFIX = 'EMPTY_Tree';
 
 export const BUSHES_URL = '/assets/environment/bushes/';
 export const BUSH_LEAVES_ALPHA_TEXTURE_URL = BUSHES_URL + 'leaves.png';
-export const BUSH_DEFAULT_GLB = BUSHES_URL + 'bush01.glb';
-export const BUSH_SPAWN_PREFIX = 'EMPTY_Bush';
+export const BUSH_DEFAULT_GLB = BUSHES_URL + 'bush.glb';
+export const BUSH_SPAWN_PREFIX = 'EMPTY_Bush.';
+
+export const FLOWERS_URL = '/assets/environment/flowers/';
+export const FLOWER_ALPHA_TEXTURE_URL = FLOWERS_URL + 'flowers.png';
+export const FLOWER_GLBS = [
+  `${FLOWERS_URL}flower01.glb`,
+  `${FLOWERS_URL}flower02.glb`,
+  `${FLOWERS_URL}flower03.glb`,
+  `${FLOWERS_URL}flower04.glb`,
+  `${FLOWERS_URL}flower05.glb`,
+  `${FLOWERS_URL}flower06.glb`,
+  `${FLOWERS_URL}flower07.glb`,
+] as const;
+export const FLOWER_COUNT = 2000;
+/** Max sampler attempts per flower before skipping that slot. */
+export const FLOWER_SPAWN_MAX_ATTEMPTS = 3000;
 
 export interface LeavesMaterialConfig {
   baseColor: string;
@@ -82,6 +97,7 @@ export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
 export const GRASS_NOISE_TEXTURE_URL = '/assets/environment/perlinnoise.webp';
 
 export const GRASS_WEIGHT_ATTRIBUTE = 'color_1';
+export const FLOWER_WEIGHT_ATTRIBUTE = 'color_4';
 export const GRASS_MASK_INSTANCE_ATTRIBUTE = 'aGrassMask';
 export const GROUND_SURFACE_MASK_ATTRIBUTE = 'color_3';
 export const GRASS_MIN_SAMPLE_WEIGHT = 0.08;
@@ -97,9 +113,9 @@ export const GRASS_LOD_MESH_NAMES = [
 
 export const GRASS_DEBUG_SLIDER = true;
 
-export const GRASS_INSTANCE_COUNT = 10000;
-export const GRASS_BLADE_WIDTH = 6;
-export const GRASS_BLADE_HEIGHT = 2.5;
+export const GRASS_INSTANCE_COUNT = 25000;
+export const GRASS_BLADE_WIDTH = 4.75;
+export const GRASS_BLADE_HEIGHT = 1.8;
 
 export const GRASS_BASE_COLOR = '#313F1B';
 export const GRASS_TIP_COLOR_1 = '#B7E882';

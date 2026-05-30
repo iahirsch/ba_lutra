@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import { Group } from 'three';
+import { Group, Object3D } from 'three';
 import {
   prepareVegetationPropModel,
   type TreeLeavesMaterialState,
@@ -22,6 +22,7 @@ interface VegetationPropProps {
   totalEffortScore: number;
   terrainWorldWidth: number;
   leavesMaterialState: TreeLeavesMaterialState;
+  prepareModel?: (root: Object3D, state: TreeLeavesMaterialState) => void;
 }
 
 /** Whole-object vegetation that scales in when the grow ring reaches it. */
@@ -34,6 +35,7 @@ export function VegetationProp({
   totalEffortScore,
   terrainWorldWidth,
   leavesMaterialState,
+  prepareModel = prepareVegetationPropModel,
 }: VegetationPropProps) {
   const { scene } = useGLTF(glbUrl);
   const groupRef = useRef<Group>(null);
@@ -45,9 +47,9 @@ export function VegetationProp({
 
   const model = useMemo(() => {
     const cloned = scene.clone(true);
-    prepareVegetationPropModel(cloned, leavesMaterialState);
+    prepareModel(cloned, leavesMaterialState);
     return cloned;
-  }, [scene, leavesMaterialState]);
+  }, [scene, leavesMaterialState, prepareModel]);
 
   const footprintRadius = useMemo(
     () => computeHorizontalFootprintRadius(model),
