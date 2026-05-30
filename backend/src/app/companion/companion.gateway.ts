@@ -32,11 +32,13 @@ interface FlowSession {
   userName?: string | null;
   companionCreatedAt: string;
   currentStepId: string;
+  moreInfoVisited: boolean;
 }
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class CompanionGateway
-  implements OnGatewayConnection, OnGatewayDisconnect {
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server!: Server;
 
@@ -45,7 +47,7 @@ export class CompanionGateway
   constructor(
     @InjectRepository(Companion)
     private readonly companionRepository: Repository<Companion>,
-  ) { }
+  ) {}
 
   private readonly screenRegistry = new Map<string, ScreenId>();
   private session: FlowSession | null = null;
@@ -84,6 +86,7 @@ export class CompanionGateway
       companionName: null,
       companionCreatedAt: companion.createdAt.toISOString(),
       currentStepId: FIRST_STEP_ID,
+      moreInfoVisited: false,
     };
     this.broadcastFlowState();
     this.startResetTimer();
@@ -155,6 +158,9 @@ export class CompanionGateway
       return;
     }
     if (!this.session) return;
+    if (this.session.currentStepId === 'moreInfo') {
+      this.session.moreInfoVisited = true;
+    }
     this.session.currentStepId = nextStepId;
     this.broadcastFlowState();
     this.startResetTimer();
@@ -187,10 +193,15 @@ export class CompanionGateway
 
   private startResetTimer(): void {
     this.clearResetTimer();
-    this.resetTimer = setTimeout(() => {
-      this.logger.warn('Flow session timed out after 10 minutes — resetting.');
-      this.resetSession();
-    }, 10 * 60 * 1000);
+    this.resetTimer = setTimeout(
+      () => {
+        this.logger.warn(
+          'Flow session timed out after 10 minutes — resetting.',
+        );
+        this.resetSession();
+      },
+      10 * 60 * 1000,
+    );
   }
 
   private clearResetTimer(): void {
@@ -214,7 +225,11 @@ export class CompanionGateway
         .replace(/\[companionName\]/g, this.session!.companionName ?? '')
         .replace(/\[userName\]/g, this.session!.userName ?? '');
 
-    const dialogue = step.companionDialogue ? replace(step.companionDialogue) : '';
+    const rawDialogue =
+      step.id === 'moreInfo' && this.session.moreInfoVisited
+        ? 'Was möchtest du sonst noch erfahren?'
+        : step.companionDialogue;
+    const dialogue = rawDialogue ? replace(rawDialogue) : '';
 
     const creatorView = {
       ...step.creatorView,

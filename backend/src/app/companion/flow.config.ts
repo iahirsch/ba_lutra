@@ -9,13 +9,15 @@ export interface FlowStep {
 
 // Flow definition
 export const FLOW_STEPS: FlowStep[] = [
-
   {
     id: 'nameInput',
     creatorView: {
       type: 'name-input',
       title: ['Name des Lutra`s', 'Dein Name'],
-      prompt: ['Wie soll dein Lutra heissen?', 'Wie soll dich dein Lutra nennen ? Was ist dein Spitzname ?'],
+      prompt: [
+        'Wie soll dein Lutra heissen?',
+        'Wie soll dich dein Lutra nennen ? Was ist dein Spitzname ?',
+      ],
     },
     transitions: {
       [FLOW_EVENTS.NAME_SUBMITTED]: 'firstLook',
@@ -32,9 +34,7 @@ export const FLOW_STEPS: FlowStep[] = [
         'Dein Lutra ist nun im Herzland auf der Leinwand vor dir sichtbar. Siehst du ihn?',
       ],
 
-      choices: [
-        { id: 'iSee', label: 'Ja! Ich sehe ihn', variant: 'primary' },
-      ],
+      choices: [{ id: 'iSee', label: 'Ja! Ich sehe ihn', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -52,7 +52,11 @@ export const FLOW_STEPS: FlowStep[] = [
       prompt: [],
       choices: [
         { id: 'more', label: 'Ja, erzähl mir mehr!', variant: 'primary' },
-        { id: 'sport', label: 'Wie kann ich die Welt beeinflussen?', variant: 'secondary' },
+        {
+          id: 'sport',
+          label: 'Wie kann ich die Welt beeinflussen?',
+          variant: 'secondary',
+        },
       ],
     },
     transitions: {
@@ -74,7 +78,7 @@ export const FLOW_STEPS: FlowStep[] = [
         { id: 'lutra', label: 'Wieso Lutra?', variant: 'secondary' },
         { id: 'heartland', label: 'Das Herzland', variant: 'secondary' },
         { id: 'worldanchor', label: 'Die Weltenanker', variant: 'secondary' },
-        { id: 'conduit', label: 'Die Conduit', variant: 'secondary' },
+        { id: 'conduit', label: 'Der Conduit', variant: 'secondary' },
         { id: 'sport', label: 'Welt Beeinflussen', variant: 'primary' },
       ],
     },
@@ -156,9 +160,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'more', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -214,9 +216,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'more', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -224,7 +224,6 @@ export const FLOW_STEPS: FlowStep[] = [
       },
     },
   },
-
 
   {
     id: 'worldanchorInfo1',
@@ -292,9 +291,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'more', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -363,13 +360,11 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'heartlandInfo4',
     companionDialogue:
-      'Aber jetzt bist du ja hier! Sobald du aktiv wirst, können wir Schritt für Schritt das Ödland zurückdrängen und meine Heimat wieder zum Blühen bringen. Packen wir es an?',
+      'Aber jetzt bist du ja hier! Sobald du aktiv wirst, können wir Schritt für Schritt das Ödland zurückdrängen und meine Heimat wieder zum Blühen bringen.',
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'more', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -385,9 +380,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'treadmill', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'treadmill', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -409,11 +402,19 @@ export const FLOW_STEPS: FlowStep[] = [
         'Schritt 4: Schalte das Laufband ein. Laufe so schnell und so lange du möchtest!',
         'Schritt 5: Schalte das Laufband danach wieder aus.',
         'Schritt 6: Beende den Lauf in Strava und veröffentliche ihn.',
-        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.'
+        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
       ],
       choices: [
-        { id: 'activity_started', label: 'Aktivität starten', variant: 'primary' },
-        { id: 'activity_exit', label: 'Ich mag kein sport machen', variant: 'secondary' }
+        {
+          id: 'activity_started',
+          label: 'Aktivität starten',
+          variant: 'primary',
+        },
+        {
+          id: 'activity_exit',
+          label: 'Ich mag kein sport machen',
+          variant: 'secondary',
+        },
       ],
     },
     transitions: {
@@ -437,10 +438,14 @@ export const FLOW_STEPS: FlowStep[] = [
         'Schritt 4: Schalte das Laufband ein. Laufe so schnell und so lange du möchtest!',
         'Schritt 5: Schalte das Laufband danach wieder aus.',
         'Schritt 6: Beende den Lauf in Strava und veröffentliche ihn.',
-        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.'
+        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
       ],
       choices: [
-        { id: 'activity_finished', label: 'Aktivität beenden!', variant: 'primary' },
+        {
+          id: 'activity_finished',
+          label: 'Aktivität beenden!',
+          variant: 'primary',
+        },
       ],
     },
     transitions: {
@@ -455,12 +460,8 @@ export const FLOW_STEPS: FlowStep[] = [
       'Wow, du warst einfach der Wahnsinn! Du hast unglaubliche [X] Energie gesammelt. Was für eine tolle Leistung! Schau mal auf die Leinwand, wie sich die Welt durch dich verändert hat. Weiter so, du bist mein Held!',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'Schau dir das Ergebnis deiner Power auf der Leinwand an!'
-      ],
-      choices: [
-        { id: 'lutra_exit', label: 'Weiter', variant: 'primary' },
-      ],
+      prompt: ['Schau dir das Ergebnis deiner Power auf der Leinwand an!'],
+      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -475,9 +476,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'lutra_exit', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -493,7 +492,11 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'hub_transition', label: 'Von [companionName] verabschieden', variant: 'primary' },
+        {
+          id: 'hub_transition',
+          label: 'Von [companionName] verabschieden',
+          variant: 'primary',
+        },
       ],
     },
     transitions: {
@@ -507,7 +510,9 @@ export const FLOW_STEPS: FlowStep[] = [
     id: 'hub_transition',
     creatorView: {
       type: 'transition',
-      prompt: ['Du findest dein Lutra [companionName] nun im Zeltlager. Danke das du ihn erschaffen hast.'],
+      prompt: [
+        'Du findest dein Lutra [companionName] nun im Zeltlager. Danke das du ihn erschaffen hast.',
+      ],
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,
@@ -549,7 +554,6 @@ export const FLOW_STEPS: FlowStep[] = [
   //     },
   //   },
 
-
   //   {
   //     id: 'passive_reaction',
   //     companionDialogue:
@@ -575,7 +579,7 @@ export const FLOW_STEPS: FlowStep[] = [
   //       [FLOW_EVENTS.EXIT_COMPLETE]: null,
   //     },
   //   },
-  // 
+  //
 ];
 export const FLOW_STEP_MAP = new Map<string, FlowStep>(
   FLOW_STEPS.map((step) => [step.id, step]),
