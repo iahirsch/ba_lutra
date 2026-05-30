@@ -81,7 +81,7 @@ function PartThumb({
 interface SavedCompanionCardProps {
   companion: SavedCompanion;
   activity?: Activity | null;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => void | Promise<void>;
 }
 
 export function SavedCompanionCard({

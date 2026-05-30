@@ -6,10 +6,12 @@ function NameInputView({
   title,
   prompt,
   onSubmitName,
+  onValueChange,
 }: {
   title?: string[];
   prompt?: string[];
   onSubmitName: (lutraName: string, userName: string) => void;
+  onValueChange: (valid: boolean) => void;
 }) {
   const [lutraValue, setLutraValue] = useState('');
   const [userValue, setUserValue] = useState('');
@@ -20,6 +22,10 @@ function NameInputView({
     inputRefLutra.current?.focus();
   }, []);
 
+  useEffect(() => {
+    onValueChange(!!lutraValue.trim() && !!userValue.trim());
+  }, [lutraValue, userValue, onValueChange]);
+
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmedLutra = lutraValue.trim();
@@ -29,7 +35,7 @@ function NameInputView({
   }
 
   return (
-    <form onSubmit={handleSubmit} className={styles.view}>
+    <form id="name-input-form" onSubmit={handleSubmit} className={styles.view}>
       <div className={styles.viewContainer}>
         <div className={styles.formularField}>
           {title && <h2 className={styles.title}>{title[0]}</h2>}
@@ -68,14 +74,6 @@ function NameInputView({
           />
         </div>
       </div>
-
-      <button
-        type="submit"
-        className={styles.actionButton}
-        disabled={!lutraValue.trim() || !userValue.trim()}
-      >
-        Erstellen
-      </button>
     </form>
   );
 }
@@ -88,19 +86,39 @@ function ChoicesView({
 }: {
   title?: string[];
   prompt?: string[];
-  choices: { id: string; label: string }[];
+  choices: { id: string; label: string; variant?: 'primary' | 'secondary' }[];
   onSelectChoice: (id: string) => void;
 }) {
   return (
     <div className={styles.view}>
       <div className={styles.viewContainer}>
         {title && <h2 className={styles.title}>{title}</h2>}
-        {prompt && <p className={styles.prompt}>{prompt}</p>}
+
+        {prompt && prompt.length > 0 && (
+          <div className={styles.promptList}>
+            <p className={styles.prompt}>{prompt[0]}</p>
+            {prompt.length > 1 && (
+              <ol className={styles.stepList}>
+                {prompt.slice(1).map((step, i) => (
+                  <li key={i} className={styles.stepItem}>
+                    <strong>Schritt {i + 1}:</strong>{' '}
+                    {step.replace(/^Schritt \d+:\s*/, '')}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        )}
+
         <div className={styles.choiceList}>
           {choices.map((choice) => (
             <button
               key={choice.id}
-              className={styles.choiceButton}
+              className={
+                choice.variant === 'secondary'
+                  ? styles.actionButtonSecondary
+                  : styles.actionButton
+              }
               onClick={() => onSelectChoice(choice.id)}
             >
               {choice.label}
@@ -134,11 +152,24 @@ function ConfirmView({
   );
 }
 
-function TransitionView({ prompt }: { prompt?: string[] }) {
+function TransitionView({
+  prompt,
+  onExitComplete,
+}: {
+  prompt?: string[];
+  onExitComplete: () => void;
+}) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onExitComplete();
+    }, 3000); // 3 Sekunden anzeigen, dann weiter
+    return () => clearTimeout(timer);
+  }, [onExitComplete]);
+
   return (
     <div className={styles.view}>
-      {prompt && <p className={styles.prompt}>{prompt}</p>}
-      <div className={styles.dots} aria-hidden="true">
+      {prompt && <p className={styles.prompt}>{prompt.join(' ')}</p>}
+      <div className={styles.spinner} aria-hidden="true">
         <span />
         <span />
         <span />
@@ -149,9 +180,11 @@ function TransitionView({ prompt }: { prompt?: string[] }) {
 
 interface EditorFlowPanelProps {
   flowState: FlowStateUpdate;
-  onSubmitName: (name: string) => void;
+  onSubmitName: (lutraName: string, userName: string) => void;
   onSelectChoice: (choiceId: string) => void;
   onConfirmAction: () => void;
+  onResetFlow: () => void;
+  onExitComplete: () => void;
 }
 
 export function EditorFlowPanel({
@@ -159,19 +192,34 @@ export function EditorFlowPanel({
   onSubmitName,
   onSelectChoice,
   onConfirmAction,
+  onResetFlow,
+  onExitComplete,
 }: EditorFlowPanelProps) {
   const { type, title, prompt, choices, confirmLabel } = flowState.creatorView;
+  const [isNameInputValid, setIsNameInputValid] = useState(false);
 
   return (
     <div className={styles.panel}>
-      <div className={styles.overlay}>
+      <button
+        className={styles.resetButton}
+        onClick={onResetFlow}
+        aria-label="Reset"
+      >
+        <span className="material-symbols-outlined">close</span>
+      </button>
+
+      {type === 'name-input' && (
         <div className={styles.header}>Lutra erstellen</div>
+      )}
+
+      <div className={styles.overlay}>
         <div className={styles.content} key={flowState.stepId}>
           {type === 'name-input' && (
             <NameInputView
               title={title}
               prompt={prompt}
               onSubmitName={onSubmitName}
+              onValueChange={setIsNameInputValid}
             />
           )}
 
@@ -193,9 +241,22 @@ export function EditorFlowPanel({
             />
           )}
 
-          {type === 'transition' && <TransitionView prompt={prompt} />}
+          {type === 'transition' && (
+            <TransitionView prompt={prompt} onExitComplete={onExitComplete} />
+          )}
         </div>
       </div>
+
+      {type === 'name-input' && (
+        <button
+          type="submit"
+          form="name-input-form"
+          className={styles.actionButton}
+          disabled={!isNameInputValid}
+        >
+          Erstellen
+        </button>
+      )}
     </div>
   );
 }

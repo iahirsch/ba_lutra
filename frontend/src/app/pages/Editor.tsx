@@ -68,9 +68,14 @@ function EditorSceneParts() {
 }
 
 export function Editor() {
-  const { flowState, submitName, selectChoice, confirmAction } = useFlowSocket(
-    SCREENS.EDITOR,
-  );
+  const {
+    flowState,
+    submitName,
+    selectChoice,
+    confirmAction,
+    resetFlow,
+    notifyExitComplete,
+  } = useFlowSocket(SCREENS.EDITOR);
 
   const prevFlowRef = useRef<FlowStateUpdate | null>(null);
 
@@ -97,6 +102,8 @@ export function Editor() {
           onSubmitName={submitName}
           onSelectChoice={selectChoice}
           onConfirmAction={confirmAction}
+          onResetFlow={resetFlow}
+          onExitComplete={notifyExitComplete}
         />
       </div>
     );

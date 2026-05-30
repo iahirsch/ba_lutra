@@ -16,6 +16,7 @@ export const FLOW_EVENTS = {
   NAME_SUBMITTED: 'flow:name-submitted',
   CHOICE_SELECTED: 'flow:choice-selected',
   ACTION_CONFIRMED: 'flow:action-confirmed',
+  RESET: 'flow:reset',
 
   // Server → Client
   STATE_UPDATE: 'flow:state-update',
@@ -35,7 +36,7 @@ export interface EditorViewConfig {
   type: EditorViewType;
   title?: string[];
   prompt?: string[];
-  choices?: { id: string; label: string }[];
+  choices?: { id: string; label: string; variant?: 'primary' | 'secondary' }[];
   confirmLabel?: string;
 }
 
@@ -54,6 +55,7 @@ export interface RegisterScreenPayload {
 
 export interface NameSubmittedPayload {
   name: string;
+  userName: string;
 }
 
 export interface ChoiceSelectedPayload {
