@@ -11,6 +11,8 @@ import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
 import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import { HubLights } from '../components/hub/HubLights';
+import { EnvironmentAtmosphere } from '../components/common/EnvironmentAtmosphere';
+import { EnvironmentComposer } from '../components/common/EnvironmentComposer';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
 import {
@@ -41,7 +43,8 @@ function InteractionScene({
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
-      <HubLights />
+      <EnvironmentAtmosphere variant="interaction" />
+      <HubLights variant="interaction" />
       <Suspense fallback={null}>
         <HubBackground />
         <EnvironmentVegetation />
@@ -76,6 +79,7 @@ function InteractionScene({
           </group>
         )}
       </Suspense>
+      <EnvironmentComposer variant="interaction" />
     </Canvas>
   );
 }

@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { Vector3 } from 'three';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
 import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '../../constants/hub-scene';
@@ -13,6 +12,8 @@ import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
 import { EnvironmentVegetation } from '../common/EnvironmentVegetation';
 import { HubCharacterGroup } from './HubCharacterGroup';
+import { EnvironmentAtmosphere } from '../common/EnvironmentAtmosphere';
+import { EnvironmentComposer } from '../common/EnvironmentComposer';
 
 const COMPANION_ROW_GAP = 1.5;
 
@@ -49,7 +50,8 @@ function HubCanvasContents({
 
   return (
     <>
-      <HubLights />
+      <EnvironmentAtmosphere variant="hub" />
+      <HubLights variant="hub" />
 
       <Suspense fallback={null}>
         <HubBackground totalEffortScore={totalEffortScore} />
@@ -72,13 +74,7 @@ function HubCanvasContents({
         />
       ))}
 
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.35}
-          luminanceSmoothing={0.85}
-          intensity={1.15}
-        />
-      </EffectComposer>
+      <EnvironmentComposer variant="hub" />
     </>
   );
 }
