@@ -36,16 +36,23 @@ export function HubBackground({
   const terrainWorldWidth = useEnvironmentTerrainWorldWidth(true);
   const { scene } = useGLTF(HUB_GLTF_URL);
   const { position, scale } = HUB_ENVIRONMENT_TRANSFORM;
-  const [sandColor, sandNormal, sandHeight, grassColor, grassNormal, dirtColor, dirtNormal] =
-    useLoader(TextureLoader, [
-      veg.GROUND_SAND_COLOR_URL,
-      veg.GROUND_SAND_NORMAL_URL,
-      veg.GROUND_SAND_HEIGHT_URL,
-      veg.GROUND_GRASS_COLOR_URL,
-      veg.GROUND_GRASS_NORMAL_URL,
-      veg.GROUND_DIRT_COLOR_URL,
-      veg.GROUND_DIRT_NORMAL_URL,
-    ]);
+  const [
+    sandColor,
+    sandNormal,
+    sandHeight,
+    grassColor,
+    grassNormal,
+    dirtColor,
+    dirtNormal,
+  ] = useLoader(TextureLoader, [
+    veg.GROUND_SAND_COLOR_URL,
+    veg.GROUND_SAND_NORMAL_URL,
+    veg.GROUND_SAND_HEIGHT_URL,
+    veg.GROUND_GRASS_COLOR_URL,
+    veg.GROUND_GRASS_NORMAL_URL,
+    veg.GROUND_DIRT_COLOR_URL,
+    veg.GROUND_DIRT_NORMAL_URL,
+  ]);
 
   const celScene = useMemo(() => {
     const cloned = scene.clone(true);

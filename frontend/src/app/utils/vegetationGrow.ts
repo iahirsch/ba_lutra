@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { Box3, Mesh, Object3D, Vector3 } from 'three';
@@ -113,14 +113,6 @@ export function useVegetationGrow({
   const [anchorX, anchorZ] = useVegetationGrowAnchor(applyEnvironmentTransform);
   const growRadiusRef = useRef(0);
   const fadeWidth = vegetationGrowFadeWidth(terrainWorldWidth);
-
-  useEffect(() => {
-    growRadiusRef.current = effortTotalToGrowRadius(
-      totalEffortScore,
-      terrainWorldWidth,
-      growRadiusRatio,
-    );
-  }, [totalEffortScore, terrainWorldWidth, growRadiusRatio]);
 
   useFrame((_state, delta) => {
     const target = effortTotalToGrowRadius(

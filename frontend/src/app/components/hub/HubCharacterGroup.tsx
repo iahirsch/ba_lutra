@@ -27,7 +27,7 @@ export function HubCharacterGroup({
   effortScore,
 }: HubCharacterGroupProps) {
   const bodyMorphs = companion.bodyMorphs ?? {};
-  const conduitGlow = effortToConduitGlow(effortScore ?? 0);
+  const conduitGlow = effortToConduitGlow(effortScore ?? 0.1);
   const { groupRef, activeClip } = useCompanionHubBehavior({
     companionId: companion.id,
     walkTerrain,

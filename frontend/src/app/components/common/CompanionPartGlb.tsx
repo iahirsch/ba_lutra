@@ -68,7 +68,7 @@ export function CompanionPartGlb({
 
   useLayoutEffect(() => {
     if (!bodyScene || category !== 'backpack') return;
-    setConduitGlow(bodyScene, conduitGlow ?? 0);
+    setConduitGlow(bodyScene, conduitGlow ?? 0.1);
   }, [bodyScene, category, conduitGlow]);
 
   return null;

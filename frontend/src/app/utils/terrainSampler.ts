@@ -3,8 +3,10 @@ import {
   BufferAttribute,
   BufferGeometry,
   Color,
+  Matrix4,
   Mesh,
   Raycaster,
+  Triangle,
   Vector3,
 } from 'three';
 
@@ -12,6 +14,10 @@ const WEIGHT_BUFFER = 'terrainSampleWeight';
 const _rayOrigin = new Vector3();
 const _rayDirection = new Vector3(0, -1, 0);
 const _raycaster = new Raycaster();
+const _inverseWorldMatrix = new Matrix4();
+const _localHitPoint = new Vector3();
+const _triangle = new Triangle();
+const _barycoord = new Vector3();
 
 function getVertexColorLuminance(
   colorAttribute: {
@@ -129,4 +135,119 @@ export function getTerrainWorldHeightAt(
   _raycaster.set(_rayOrigin, _rayDirection);
   const hits = _raycaster.intersectObject(terrainMesh, false);
   return hits[0]?.point.y ?? null;
+}
+
+function getFaceVertexIndices(
+  geometry: BufferGeometry,
+  faceIndex: number,
+): [number, number, number] {
+  const index = geometry.index;
+  if (index) {
+    return [
+      index.getX(faceIndex * 3),
+      index.getX(faceIndex * 3 + 1),
+      index.getX(faceIndex * 3 + 2),
+    ];
+  }
+  const base = faceIndex * 3;
+  return [base, base + 1, base + 2];
+}
+
+function interpolateTerrainMaskWeightAtHit(
+  hit: {
+    point: Vector3;
+    faceIndex?: number | null;
+    barycoord?: Vector3 | null;
+  },
+  terrainMesh: Mesh,
+  maskAttributeName: string,
+): number | null {
+  if (hit.faceIndex === undefined || hit.faceIndex === null) {
+    return null;
+  }
+
+  const geometry = terrainMesh.geometry;
+  const maskAttribute = resolveMaskAttribute(geometry, maskAttributeName);
+  const [ia, ib, ic] = getFaceVertexIndices(geometry, hit.faceIndex);
+  const wa = getVertexColorLuminance(maskAttribute, ia);
+  const wb = getVertexColorLuminance(maskAttribute, ib);
+  const wc = getVertexColorLuminance(maskAttribute, ic);
+
+  if (hit.barycoord) {
+    return wa * hit.barycoord.x + wb * hit.barycoord.y + wc * hit.barycoord.z;
+  }
+
+  const positionAttribute = geometry.getAttribute('position');
+  _triangle.a.fromBufferAttribute(positionAttribute, ia);
+  _triangle.b.fromBufferAttribute(positionAttribute, ib);
+  _triangle.c.fromBufferAttribute(positionAttribute, ic);
+  _inverseWorldMatrix.copy(terrainMesh.matrixWorld).invert();
+  _localHitPoint.copy(hit.point).applyMatrix4(_inverseWorldMatrix);
+  _triangle.getBarycoord(_localHitPoint, _barycoord);
+  return wa * _barycoord.x + wb * _barycoord.y + wc * _barycoord.z;
+}
+
+export function getTerrainWalkWeightAt(
+  worldX: number,
+  worldZ: number,
+  terrainMesh: Mesh,
+  maskAttributeName: string,
+): number | null {
+  terrainMesh.updateWorldMatrix(true, false);
+  _rayOrigin.set(worldX, 1e4, worldZ);
+  _raycaster.set(_rayOrigin, _rayDirection);
+  const hits = _raycaster.intersectObject(terrainMesh, false);
+  const hit = hits[0];
+  if (!hit) {
+    return null;
+  }
+  return interpolateTerrainMaskWeightAtHit(hit, terrainMesh, maskAttributeName);
+}
+
+export function isTerrainWalkableAt(
+  worldX: number,
+  worldZ: number,
+  terrainMesh: Mesh,
+  maskAttributeName: string,
+  minWeight: number,
+): boolean {
+  const weight = getTerrainWalkWeightAt(
+    worldX,
+    worldZ,
+    terrainMesh,
+    maskAttributeName,
+  );
+  return weight !== null && weight >= minWeight;
+}
+
+export function constrainTerrainWalkPosition(
+  x: number,
+  z: number,
+  prevX: number,
+  prevZ: number,
+  terrainMesh: Mesh,
+  maskAttributeName: string,
+  minWeight: number,
+): { x: number; z: number; blocked: boolean } {
+  const isWalkable = (nextX: number, nextZ: number) =>
+    isTerrainWalkableAt(
+      nextX,
+      nextZ,
+      terrainMesh,
+      maskAttributeName,
+      minWeight,
+    );
+
+  if (isWalkable(x, z)) {
+    return { x, z, blocked: false };
+  }
+  if (x !== prevX && isWalkable(x, prevZ)) {
+    return { x, z: prevZ, blocked: false };
+  }
+  if (z !== prevZ && isWalkable(prevX, z)) {
+    return { x: prevX, z, blocked: false };
+  }
+
+  const triedToMove = x !== prevX || z !== prevZ;
+  return { x: prevX, z: prevZ, blocked: triedToMove };
 }

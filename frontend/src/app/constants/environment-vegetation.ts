@@ -12,8 +12,8 @@ export const TREE_SPAWN_PREFIX = 'EMPTY_Tree';
 
 export const BUSHES_URL = '/assets/environment/bushes/';
 export const BUSH_LEAVES_ALPHA_TEXTURE_URL = BUSHES_URL + 'leaves.png';
-export const BUSH_DEFAULT_GLB = BUSHES_URL + 'bush.glb';
-export const BUSH_SPAWN_PREFIX = 'EMPTY_Bush.';
+export const BUSH_DEFAULT_GLB = BUSHES_URL + 'bush01.glb';
+export const BUSH_SPAWN_PREFIX = 'EMPTY_Bush';
 
 export const FLOWERS_URL = '/assets/environment/flowers/';
 export const FLOWER_ALPHA_TEXTURE_URL = FLOWERS_URL + 'flowers.png';
@@ -26,9 +26,9 @@ export const FLOWER_GLBS = [
   `${FLOWERS_URL}flower06.glb`,
   `${FLOWERS_URL}flower07.glb`,
 ] as const;
-export const FLOWER_COUNT = 2000;
+export const FLOWER_COUNT = 1500;
 /** Max sampler attempts per flower before skipping that slot. */
-export const FLOWER_SPAWN_MAX_ATTEMPTS = 3000;
+export const FLOWER_SPAWN_MAX_ATTEMPTS = 2000;
 
 export interface LeavesMaterialConfig {
   baseColor: string;
@@ -42,9 +42,9 @@ export interface LeavesMaterialConfig {
 }
 
 export const TREE_LEAVES_MATERIAL_CONFIG: LeavesMaterialConfig = {
-  baseColor: '#313F1B',
-  tipColor1: '#B7E882',
-  tipColor2: '#608A53',
+  baseColor: '#184225',
+  tipColor1: '#A7D66B',
+  tipColor2: '#5DA660',
   windScale: 4,
   lightIntensity: 1,
   colorVariationNoiseScale: 2.5,

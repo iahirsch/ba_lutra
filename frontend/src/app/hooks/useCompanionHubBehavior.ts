@@ -161,7 +161,13 @@ export function useCompanionHubBehavior({
       isGather: config.type === 'multi',
     };
 
-    return resolvePoiTargetPosition(poi.name, poi.position, slot);
+    const target = resolvePoiTargetPosition(poi.name, poi.position, slot);
+    if (!walkTerrain.isWalkableAt(target.x, target.z)) {
+      clearActiveVisit();
+      return null;
+    }
+
+    return target;
   };
 
   const pickNextTarget = (from: Vector3): Vector3 | null => {
@@ -173,10 +179,17 @@ export function useCompanionHubBehavior({
         return poiTarget;
       }
     }
-    return walkTerrain.sampleRoamWorldPosition(
-      companionId,
-      HUB_COMPANION_MIN_SEPARATION,
-    );
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const roamTarget = walkTerrain.sampleRoamWorldPosition(
+        companionId,
+        HUB_COMPANION_MIN_SEPARATION,
+      );
+      if (roamTarget) {
+        return roamTarget;
+      }
+    }
+    return null;
   };
 
   useFrame((_state, delta) => {
@@ -216,7 +229,6 @@ export function useCompanionHubBehavior({
       const distance = Math.hypot(dx, dz);
 
       if (distance <= HUB_COMPANION_ARRIVAL_DISTANCE) {
-        position.copy(targetRef.current);
         phaseRef.current = 'idle';
         setActiveClip('idle');
         idleTimerRef.current = randomRange(
@@ -227,6 +239,8 @@ export function useCompanionHubBehavior({
         return;
       }
 
+      const prevX = position.x;
+      const prevZ = position.z;
       const step = Math.min(HUB_COMPANION_WALK_SPEED * delta, distance);
       position.x += (dx / distance) * step;
       position.z += (dz / distance) * step;
@@ -240,8 +254,27 @@ export function useCompanionHubBehavior({
         delta,
         shareGatherPoi,
       );
-      position.x = separated.x;
-      position.z = separated.z;
+      const constrained = walkTerrain.constrainWalkPosition(
+        separated.x,
+        separated.z,
+        prevX,
+        prevZ,
+      );
+      position.x = constrained.x;
+      position.z = constrained.z;
+
+      if (constrained.blocked) {
+        phaseRef.current = 'idle';
+        setActiveClip('idle');
+        clearActiveVisit();
+        idleTimerRef.current = randomRange(
+          HUB_COMPANION_IDLE_MIN,
+          HUB_COMPANION_IDLE_MAX,
+        );
+        syncGroup(group);
+        return;
+      }
+
       group.rotation.y = Math.atan2(dx, dz);
       syncGroup(group);
     }

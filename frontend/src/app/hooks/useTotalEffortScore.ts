@@ -6,7 +6,7 @@ export function useTotalEffortScore(): number {
   const latestActivitiesByCompanion = useLatestActivitiesByCompanion([]);
 
   return useMemo(() => {
-    let total = 0;
+    let total = 0.15;
     for (const activity of latestActivitiesByCompanion.values()) {
       total += activity.effortScore;
     }

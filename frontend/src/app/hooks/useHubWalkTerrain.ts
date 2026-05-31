@@ -12,7 +12,9 @@ import { collectHubSceneMarkers } from '../utils/environmentSpawn';
 import { isTooCloseToOtherCompanions } from '../utils/hubCompanionRegistry';
 import {
   createTerrainWeightedSampler,
+  constrainTerrainWalkPosition,
   getTerrainWorldHeightAt,
+  isTerrainWalkableAt,
   sampleTerrainLocalPoint,
   terrainLocalToHubWorld,
 } from '../utils/terrainSampler';
@@ -29,6 +31,13 @@ export interface HubWalkTerrain {
     minSeparation: number,
   ) => Vector3 | null;
   getGroundHeight: (worldX: number, worldZ: number) => number | null;
+  isWalkableAt: (worldX: number, worldZ: number) => boolean;
+  constrainWalkPosition: (
+    x: number,
+    z: number,
+    prevX: number,
+    prevZ: number,
+  ) => { x: number; z: number; blocked: boolean };
 }
 
 export function useHubWalkTerrain(): HubWalkTerrain {
@@ -59,6 +68,17 @@ export function useHubWalkTerrain(): HubWalkTerrain {
             new Vector3(localX, 0, localZ),
             terrainMesh,
           );
+          if (
+            !isTerrainWalkableAt(
+              world.x,
+              world.z,
+              terrainMesh,
+              HUB_WALK_MASK_ATTRIBUTE,
+              HUB_WALK_MIN_SAMPLE_WEIGHT,
+            )
+          ) {
+            return true;
+          }
           return isTooCloseToOtherCompanions(
             world.x,
             world.z,
@@ -79,6 +99,29 @@ export function useHubWalkTerrain(): HubWalkTerrain {
       sampleRoamWorldPosition,
       getGroundHeight: (worldX: number, worldZ: number) =>
         getTerrainWorldHeightAt(worldX, worldZ, terrainMesh),
+      isWalkableAt: (worldX: number, worldZ: number) =>
+        isTerrainWalkableAt(
+          worldX,
+          worldZ,
+          terrainMesh,
+          HUB_WALK_MASK_ATTRIBUTE,
+          HUB_WALK_MIN_SAMPLE_WEIGHT,
+        ),
+      constrainWalkPosition: (
+        x: number,
+        z: number,
+        prevX: number,
+        prevZ: number,
+      ) =>
+        constrainTerrainWalkPosition(
+          x,
+          z,
+          prevX,
+          prevZ,
+          terrainMesh,
+          HUB_WALK_MASK_ATTRIBUTE,
+          HUB_WALK_MIN_SAMPLE_WEIGHT,
+        ),
       samplingGeometry,
     };
   }, [scene]);
