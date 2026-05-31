@@ -4,22 +4,19 @@ interface HubLightsProps {
   variant?: HubLightsVariant;
 }
 
+const DEFAULT_LIGHT_PRESETS = {
+  ambient: 0.58,
+  key: 1.35,
+  fill: 0.3,
+  rim: 0.22,
+};
+
 const LIGHT_PRESETS: Record<
   HubLightsVariant,
   { ambient: number; key: number; fill: number; rim: number }
 > = {
-  hub: {
-    ambient: 0.58,
-    key: 1.35,
-    fill: 0.3,
-    rim: 0.22,
-  },
-  interaction: {
-    ambient: 0.52,
-    key: 1.45,
-    fill: 0.24,
-    rim: 0.28,
-  },
+  hub: DEFAULT_LIGHT_PRESETS,
+  interaction: DEFAULT_LIGHT_PRESETS,
 };
 
 export function HubLights({ variant = 'hub' }: HubLightsProps) {
