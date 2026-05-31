@@ -62,21 +62,26 @@ export function useCompanionHubBehavior({
   const [activeClip, setActiveClip] = useState<CompanionBodyClip>('idle');
   const spawnPositionRef = useRef(initialPosition.clone());
   const positionRef = useRef(spawnPositionRef.current.clone());
+  // Cache the last XZ at which ground-height was sampled so the raycaster
+  // is skipped on frames where the companion hasn't moved.
+  const lastSyncedXRef = useRef<number | null>(null);
+  const lastSyncedZRef = useRef<number | null>(null);
 
   const syncGroup = (group: Group, faceCenter = false) => {
-    const groundY = walkTerrain.getGroundHeight(
-      positionRef.current.x,
-      positionRef.current.z,
-    );
-    if (groundY !== null) {
-      positionRef.current.y = groundY + HUB_COMPANION_GROUND_OFFSET;
+    const px = positionRef.current.x;
+    const pz = positionRef.current.z;
+    // Only re-cast against the terrain when XZ actually changed — the terrain
+    // is static, so the result is identical every frame while idle.
+    if (px !== lastSyncedXRef.current || pz !== lastSyncedZRef.current) {
+      const groundY = walkTerrain.getGroundHeight(px, pz);
+      if (groundY !== null) {
+        positionRef.current.y = groundY + HUB_COMPANION_GROUND_OFFSET;
+      }
+      lastSyncedXRef.current = px;
+      lastSyncedZRef.current = pz;
+      setCompanionHubPosition(companionId, px, pz);
     }
     group.position.copy(positionRef.current);
-    setCompanionHubPosition(
-      companionId,
-      positionRef.current.x,
-      positionRef.current.z,
-    );
 
     const visit = activeVisitRef.current;
     if (faceCenter && visit) {
@@ -100,6 +105,8 @@ export function useCompanionHubBehavior({
     setActiveClip('idle');
     activeVisitRef.current = null;
     idleTimerRef.current = randomRange(0.5, 2);
+    lastSyncedXRef.current = null;
+    lastSyncedZRef.current = null;
     setCompanionHubPosition(companionId, spawn.x, spawn.z);
 
     if (groupRef.current) {

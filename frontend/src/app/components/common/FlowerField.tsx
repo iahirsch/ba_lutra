@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useLoader } from '@react-three/fiber';
+import { createRef, useMemo } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { Mesh, TextureLoader, Vector3 } from 'three';
 import {
@@ -19,8 +19,13 @@ import {
   prepareFlowerPropModel,
   useLeavesMaterial,
 } from '../../utils/leavesMaterial';
-import { useEnvironmentTerrainWorldWidth } from '../../utils/vegetationGrow';
-import { VegetationProp } from './VegetationProp';
+import {
+  computeGrowReveal,
+  distanceFromGrowAnchorXZ,
+  useEnvironmentTerrainWorldWidth,
+  useVegetationGrow,
+} from '../../utils/vegetationGrow';
+import { VegetationProp, type VegetationPropHandle } from './VegetationProp';
 
 useGLTF.preload(HUB_GLTF_URL);
 for (const url of veg.FLOWER_GLBS) {
@@ -102,19 +107,44 @@ export function FlowerField({
     return placements;
   }, [hubScene, applyEnvironmentTransform]);
 
+  const propRefs = useMemo(
+    () => flowerPlacements.map(() => createRef<VegetationPropHandle>()),
+    [flowerPlacements],
+  );
+
+  const { anchorX, anchorZ, growRadiusRef, fadeWidth } = useVegetationGrow({
+    applyEnvironmentTransform,
+    totalEffortScore,
+    terrainWorldWidth,
+  });
+
+  useFrame(() => {
+    const growRadius = growRadiusRef.current;
+    for (let i = 0; i < propRefs.length; i++) {
+      const handle = propRefs[i].current;
+      const group = handle?.group;
+      if (!group) continue;
+      const [px, , pz] = flowerPlacements[i].position;
+      const dist = distanceFromGrowAnchorXZ(px, pz, anchorX, anchorZ);
+      const revealRadius = Math.max(0, growRadius - handle.footprintRadius);
+      const reveal = computeGrowReveal(dist, revealRadius, fadeWidth);
+      group.visible = reveal > 0.001;
+      const s = Math.max(0.001, reveal);
+      group.scale.set(s, s, s);
+    }
+  });
+
   if (flowerPlacements.length === 0) return null;
 
   return (
     <>
-      {flowerPlacements.map((flower) => (
+      {flowerPlacements.map((flower, i) => (
         <VegetationProp
           key={flower.id}
+          ref={propRefs[i]}
           glbUrl={flower.glbUrl}
           position={flower.position}
           rotation={flower.rotation}
-          applyEnvironmentTransform={applyEnvironmentTransform}
-          totalEffortScore={totalEffortScore}
-          terrainWorldWidth={terrainWorldWidth}
           leavesMaterialState={flowerMaterialState}
           prepareModel={prepareFlowerPropModel}
         />

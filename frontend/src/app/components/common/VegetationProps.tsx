@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useLoader } from '@react-three/fiber';
+import { createRef, useMemo } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { TextureLoader } from 'three';
 import { HUB_GLTF_URL } from '../../constants/hub-scene';
@@ -11,8 +11,13 @@ import {
   getOrCreateTreeLeavesMaterial,
   useLeavesMaterial,
 } from '../../utils/leavesMaterial';
-import { useEnvironmentTerrainWorldWidth } from '../../utils/vegetationGrow';
-import { VegetationProp } from './VegetationProp';
+import {
+  computeGrowReveal,
+  distanceFromGrowAnchorXZ,
+  useEnvironmentTerrainWorldWidth,
+  useVegetationGrow,
+} from '../../utils/vegetationGrow';
+import { VegetationProp, type VegetationPropHandle } from './VegetationProp';
 
 useGLTF.preload(HUB_GLTF_URL);
 useGLTF.preload(veg.TREE_DEFAULT_GLB);
@@ -100,31 +105,83 @@ export function VegetationProps({
     });
   }, [scene, applyEnvironmentTransform]);
 
+  // One stable ref per tree/bush — recreated only when placements change.
+  const treePropRefs = useMemo(
+    () => treePlacements.map(() => createRef<VegetationPropHandle>()),
+    [treePlacements],
+  );
+  const bushPropRefs = useMemo(
+    () => bushPlacements.map(() => createRef<VegetationPropHandle>()),
+    [bushPlacements],
+  );
+
+  // Grow params computed once for all trees and bushes.
+  const { anchorX, anchorZ, growRadiusRef, fadeWidth } = useVegetationGrow({
+    applyEnvironmentTransform,
+    totalEffortScore,
+    terrainWorldWidth,
+  });
+
+  // Single useFrame drives all tree + bush scale/visibility updates.
+  useFrame(() => {
+    const growRadius = growRadiusRef.current;
+
+    for (let i = 0; i < treePropRefs.length; i++) {
+      const handle = treePropRefs[i].current;
+      const group = handle?.group;
+      if (!group) continue;
+      const entry = treePlacements[i];
+      const dist = distanceFromGrowAnchorXZ(
+        entry.position[0],
+        entry.position[2],
+        anchorX,
+        anchorZ,
+      );
+      const revealRadius = Math.max(0, growRadius - handle.footprintRadius);
+      const reveal = computeGrowReveal(dist, revealRadius, fadeWidth);
+      group.visible = reveal > 0.001;
+      const s = Math.max(0.001, reveal) * entry.scale;
+      group.scale.set(s, s, s);
+    }
+
+    for (let i = 0; i < bushPropRefs.length; i++) {
+      const handle = bushPropRefs[i].current;
+      const group = handle?.group;
+      if (!group) continue;
+      const entry = bushPlacements[i];
+      const dist = distanceFromGrowAnchorXZ(
+        entry.position[0],
+        entry.position[2],
+        anchorX,
+        anchorZ,
+      );
+      const revealRadius = Math.max(0, growRadius - handle.footprintRadius);
+      const reveal = computeGrowReveal(dist, revealRadius, fadeWidth);
+      group.visible = reveal > 0.001;
+      const s = Math.max(0.001, reveal) * entry.scale;
+      group.scale.set(s, s, s);
+    }
+  });
+
   if (treePlacements.length === 0 && bushPlacements.length === 0) return null;
 
   return (
     <>
-      {treePlacements.map((entry) => (
+      {treePlacements.map((entry, i) => (
         <VegetationProp
           key={entry.id}
+          ref={treePropRefs[i]}
           glbUrl={entry.glbUrl}
           position={entry.position}
-          scale={entry.scale}
-          applyEnvironmentTransform={applyEnvironmentTransform}
-          totalEffortScore={totalEffortScore}
-          terrainWorldWidth={terrainWorldWidth}
           leavesMaterialState={treeMaterialState}
         />
       ))}
-      {bushPlacements.map((entry) => (
+      {bushPlacements.map((entry, i) => (
         <VegetationProp
           key={entry.id}
+          ref={bushPropRefs[i]}
           glbUrl={entry.glbUrl}
           position={entry.position}
-          scale={entry.scale}
-          applyEnvironmentTransform={applyEnvironmentTransform}
-          totalEffortScore={totalEffortScore}
-          terrainWorldWidth={terrainWorldWidth}
           leavesMaterialState={bushMaterialState}
         />
       ))}

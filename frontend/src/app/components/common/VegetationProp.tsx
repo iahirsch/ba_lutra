@@ -1,49 +1,46 @@
-import { useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { Group, Object3D } from 'three';
 import {
   prepareVegetationPropModel,
   type TreeLeavesMaterialState,
 } from '../../utils/leavesMaterial';
-import {
-  computeGrowReveal,
-  computeHorizontalFootprintRadius,
-  distanceFromGrowAnchorXZ,
-  useVegetationGrow,
-} from '../../utils/vegetationGrow';
+import { computeHorizontalFootprintRadius } from '../../utils/vegetationGrow';
+
+export interface VegetationPropHandle {
+  /** The mounted Three.js group, or null before mount. */
+  readonly group: Group | null;
+  /** Half the horizontal bounding extent — used for grow-ring reveal offset. */
+  readonly footprintRadius: number;
+}
 
 interface VegetationPropProps {
   glbUrl: string;
   position: [number, number, number];
   rotation?: [number, number, number];
-  scale?: number;
-  applyEnvironmentTransform?: boolean;
-  totalEffortScore: number;
-  terrainWorldWidth: number;
   leavesMaterialState: TreeLeavesMaterialState;
   prepareModel?: (root: Object3D, state: TreeLeavesMaterialState) => void;
 }
 
-/** Whole-object vegetation that scales in when the grow ring reaches it. */
-export function VegetationProp({
-  glbUrl,
-  position,
-  rotation,
-  scale = 1,
-  applyEnvironmentTransform = true,
-  totalEffortScore,
-  terrainWorldWidth,
-  leavesMaterialState,
-  prepareModel = prepareVegetationPropModel,
-}: VegetationPropProps) {
+/**
+ * Vegetation prop that renders a model but performs no per-frame updates itself.
+ * Scale and visibility are driven by the parent's batched `useFrame`.
+ */
+export const VegetationProp = forwardRef<
+  VegetationPropHandle,
+  VegetationPropProps
+>(function VegetationProp(
+  {
+    glbUrl,
+    position,
+    rotation,
+    leavesMaterialState,
+    prepareModel = prepareVegetationPropModel,
+  },
+  ref,
+) {
   const { scene } = useGLTF(glbUrl);
   const groupRef = useRef<Group>(null);
-  const { anchorX, anchorZ, growRadiusRef, fadeWidth } = useVegetationGrow({
-    applyEnvironmentTransform,
-    totalEffortScore,
-    terrainWorldWidth,
-  });
 
   const model = useMemo(() => {
     const cloned = scene.clone(true);
@@ -56,28 +53,25 @@ export function VegetationProp({
     [model],
   );
 
-  useFrame(() => {
-    const group = groupRef.current;
-    if (!group) return;
-
-    const growRadius = growRadiusRef.current;
-    const dist = distanceFromGrowAnchorXZ(
-      position[0],
-      position[2],
-      anchorX,
-      anchorZ,
-    );
-    const revealRadius = Math.max(0, growRadius - footprintRadius);
-    const reveal = computeGrowReveal(dist, revealRadius, fadeWidth);
-
-    group.visible = reveal > 0.001;
-    const revealScale = Math.max(0.001, reveal) * scale;
-    group.scale.set(revealScale, revealScale, revealScale);
-  });
+  useImperativeHandle(
+    ref,
+    () => ({
+      get group() {
+        return groupRef.current;
+      },
+      footprintRadius,
+    }),
+    [footprintRadius],
+  );
 
   return (
-    <group ref={groupRef} position={position} rotation={rotation}>
+    <group
+      ref={groupRef}
+      position={position}
+      rotation={rotation}
+      visible={false}
+    >
       <primitive object={model} />
     </group>
   );
-}
+});

@@ -64,21 +64,13 @@ export function useHubWalkTerrain(): HubWalkTerrain {
         HUB_WALK_MIN_SAMPLE_WEIGHT,
         HUB_WALK_SAMPLE_MAX_ATTEMPTS,
         (localX, localZ) => {
+          // sampleTerrainLocalPoint already rejects points below
+          // HUB_WALK_MIN_SAMPLE_WEIGHT, so no redundant walkability
+          // raycast is needed here — only check separation.
           const world = terrainLocalToHubWorld(
             new Vector3(localX, 0, localZ),
             terrainMesh,
           );
-          if (
-            !isTerrainWalkableAt(
-              world.x,
-              world.z,
-              terrainMesh,
-              HUB_WALK_MASK_ATTRIBUTE,
-              HUB_WALK_MIN_SAMPLE_WEIGHT,
-            )
-          ) {
-            return true;
-          }
           return isTooCloseToOtherCompanions(
             world.x,
             world.z,

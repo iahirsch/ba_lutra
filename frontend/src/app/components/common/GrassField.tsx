@@ -330,20 +330,21 @@ function horizontalDistanceToChunk(
   return Math.hypot(dx, dz);
 }
 
+// Reused scratch vector — avoids a per-frame allocation in updateChunkLods.
+const _chunkWorldCenter = new Vector3();
+
 function updateChunkLods(
   chunks: GrassChunk[],
   cameraPosition: Vector3,
   terrainMatrixWorld: Matrix4,
   lodDistances: LodDistances,
 ): void {
-  const worldCenter = new Vector3();
-
   for (const chunk of chunks) {
     const distance = horizontalDistanceToChunk(
       cameraPosition,
       chunk.localCenter,
       terrainMatrixWorld,
-      worldCenter,
+      _chunkWorldCenter,
     );
 
     if (distance >= lodDistances.cull) {

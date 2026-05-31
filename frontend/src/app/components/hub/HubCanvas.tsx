@@ -77,7 +77,6 @@ function HubCanvasContents({
           luminanceThreshold={0.35}
           luminanceSmoothing={0.85}
           intensity={1.15}
-          mipmapBlur
         />
       </EffectComposer>
     </>
@@ -99,6 +98,7 @@ export function HubCanvas({
     <Canvas
       camera={HUB_VIEW_CAMERA}
       gl={{ alpha: false }}
+      dpr={[1, 1.5]}
       style={{ width: '100%', height: '100%' }}
     >
       <HubCanvasContents
