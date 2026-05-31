@@ -19,6 +19,7 @@ import {
   addSpawnOffset,
   useEnvironmentSpawn,
 } from '../../utils/environmentSpawn';
+import { Perf } from 'r3f-perf';
 
 function EditorCameraRig({ spawn }: { spawn: [number, number, number] }) {
   const { camera } = useThree();
@@ -115,6 +116,7 @@ export function EditorCanvas({ children }: { children?: React.ReactNode }) {
         <BrightnessContrast brightness={0.055} contrast={0.11} />
         <Vignette offset={0.42} darkness={0.22} />
       </EffectComposer>
+      <Perf position="top-left" />
     </Canvas>
   );
 }

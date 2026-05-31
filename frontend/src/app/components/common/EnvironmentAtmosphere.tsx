@@ -2,10 +2,10 @@ import { Color } from 'three';
 
 type EnvironmentVariant = 'hub' | 'interaction';
 const DEFAULT_ATMOSPHERE_PRESET = {
-  background: '#bfd5e7',
-  fog: '#d7e4f2',
-  near: 20,
-  far: 1000,
+  background: '#cfe3ef',
+  fog: '#e9f1f6',
+  near: 28,
+  far: 860,
 };
 
 const ATMOSPHERE_PRESETS: Record<

@@ -44,7 +44,8 @@ export function Hub() {
           />
           {companions.length > 0 && (
             <span className={styles.count}>
-              {companions.length} companion{companions.length !== 1 ? 's' : ''}
+              {companions.length} companion
+              {companions.length !== 1 ? 's' : ''}
             </span>
           )}
         </div>
