@@ -2,12 +2,6 @@ import { useRef, useLayoutEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import {
-  EffectComposer,
-  DepthOfField,
-  BrightnessContrast,
-  Vignette,
-} from '@react-three/postprocessing';
 import { Vector3, MathUtils, Spherical } from 'three';
 import { ENVIRONMENT_SPAWN, HUB_CAMERA } from '../../constants/hub-scene';
 import { useCompanionStore } from '../../store/companionStore';
@@ -20,6 +14,7 @@ import {
   useEnvironmentSpawn,
 } from '../../utils/environmentSpawn';
 import { Perf } from 'r3f-perf';
+import { EditorComposer } from './EditorComposer';
 
 function EditorCameraRig({ spawn }: { spawn: [number, number, number] }) {
   const { camera } = useThree();
@@ -91,6 +86,7 @@ function EditorCameraRig({ spawn }: { spawn: [number, number, number] }) {
 export function EditorCanvas({ children }: { children?: React.ReactNode }) {
   const spawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.editor, false);
   const activeCategory = useCompanionStore((s) => s.activeCategory);
+  const target = addSpawnOffset(CAMERA_PRESETS[activeCategory].target, spawn);
 
   return (
     <Canvas
@@ -107,15 +103,7 @@ export function EditorCanvas({ children }: { children?: React.ReactNode }) {
       <ambientLight intensity={0.75} />
       <directionalLight position={[5, 8, 7]} intensity={1.7} />
       {children}
-      <EffectComposer depthBuffer multisampling={4}>
-        <DepthOfField
-          target={addSpawnOffset(CAMERA_PRESETS[activeCategory].target, spawn)}
-          bokehScale={20}
-          focusRange={40}
-        />
-        <BrightnessContrast brightness={0.055} contrast={0.11} />
-        <Vignette offset={0.42} darkness={0.22} />
-      </EffectComposer>
+      <EditorComposer target={target} />
       <Perf position="top-left" />
     </Canvas>
   );

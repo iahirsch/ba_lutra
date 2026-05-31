@@ -1,6 +1,8 @@
 import {
   Bloom,
+  BrightnessContrast,
   EffectComposer,
+  HueSaturation,
   ToneMapping,
 } from '@react-three/postprocessing';
 import { ToneMappingMode } from 'postprocessing';
@@ -10,6 +12,9 @@ const DEFAULT_COMPOSER_PRESET = {
   bloomThreshold: 0.5,
   bloomSmoothing: 0.5,
   bloomIntensity: 1.25,
+  brightness: 0.02,
+  contrast: -0.05,
+  saturation: -0.1,
 };
 
 const COMPOSER_PRESETS: Record<
@@ -18,6 +23,9 @@ const COMPOSER_PRESETS: Record<
     bloomThreshold: number;
     bloomSmoothing: number;
     bloomIntensity: number;
+    brightness: number;
+    contrast: number;
+    saturation: number;
   }
 > = {
   hub: DEFAULT_COMPOSER_PRESET,
@@ -40,6 +48,11 @@ export function EnvironmentComposer({
         luminanceSmoothing={preset.bloomSmoothing}
         intensity={preset.bloomIntensity}
       />
+      <BrightnessContrast
+        brightness={preset.brightness}
+        contrast={preset.contrast}
+      />
+      <HueSaturation saturation={preset.saturation} />
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
     </EffectComposer>
   );
