@@ -1,0 +1,21 @@
+export const HUB_WALK_MASK_ATTRIBUTE = 'color_2';
+
+export const HUB_POI_NAME_PREFIX = 'EMPTY_POI_';
+
+export const HUB_WALK_MIN_SAMPLE_WEIGHT = 0.08;
+export const HUB_WALK_SAMPLE_MAX_ATTEMPTS = 48;
+
+export const HUB_COMPANION_WALK_SPEED = 1.4;
+export const HUB_COMPANION_ARRIVAL_DISTANCE = 0.28;
+export const HUB_COMPANION_MIN_SEPARATION = 1.5;
+export const HUB_COMPANION_SEPARATION_STRENGTH = 2.5;
+
+export const HUB_COMPANION_IDLE_MIN = 2;
+export const HUB_COMPANION_IDLE_MAX = 5;
+export const HUB_POI_IDLE_MIN = 20;
+export const HUB_POI_IDLE_MAX = 45;
+
+export const HUB_POI_DETECT_RADIUS = 10;
+export const HUB_POI_VISIT_CHANCE = 0.5;
+
+export const HUB_COMPANION_GROUND_OFFSET = 0.1;

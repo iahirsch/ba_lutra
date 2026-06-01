@@ -4,13 +4,15 @@ import type {
   CompanionConfig,
   RenderedCompanionPart,
 } from '@ba-praktisch/shared-types';
-import {
-  INTERACTION_CAMERA,
-  RENDERED_COMPANION_PARTS,
-} from '@ba-praktisch/shared-types';
+import { RENDERED_COMPANION_PARTS } from '@ba-praktisch/shared-types';
+import { ENVIRONMENT_SPAWN, INTERACTION_CAMERA } from '../constants/hub-scene';
+import { useEnvironmentSpawn } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
+import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import { HubLights } from '../components/hub/HubLights';
+import { EnvironmentAtmosphere } from '../components/common/EnvironmentAtmosphere';
+import { EnvironmentComposer } from '../components/common/EnvironmentComposer';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
 import {
@@ -33,17 +35,21 @@ function InteractionScene({
   stepId,
   onExitAnimationComplete,
 }: InteractionSceneProps) {
+  const interactSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+
   return (
     <Canvas
       camera={INTERACTION_CAMERA}
       gl={{ alpha: false }}
       style={{ width: '100%', height: '100%' }}
     >
-      <HubLights />
+      <EnvironmentAtmosphere variant="interaction" />
+      <HubLights variant="interaction" />
       <Suspense fallback={null}>
         <HubBackground />
+        <EnvironmentVegetation />
         {companionConfig && (
-          <group position={[0, 0.4, 8.5]}>
+          <group position={interactSpawn}>
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}
@@ -73,6 +79,7 @@ function InteractionScene({
           </group>
         )}
       </Suspense>
+      <EnvironmentComposer variant="interaction" />
     </Canvas>
   );
 }

@@ -19,6 +19,7 @@
   right: 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: s.$space-lg s.$space-2xl;
   background: linear-gradient(to bottom, s.$color-black-500, transparent);
   pointer-events: none;

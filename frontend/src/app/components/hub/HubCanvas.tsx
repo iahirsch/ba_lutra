@@ -1,60 +1,82 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { Vector3 } from 'three';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
-import { HUB_VIEW_CAMERA } from '@ba-praktisch/shared-types';
+import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '../../constants/hub-scene';
+import {
+  addSpawnOffset,
+  useEnvironmentSpawn,
+} from '../../utils/environmentSpawn';
+import { useHubWalkTerrain } from '../../hooks/useHubWalkTerrain';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
+import { EnvironmentVegetation } from '../common/EnvironmentVegetation';
 import { HubCharacterGroup } from './HubCharacterGroup';
+import { EnvironmentAtmosphere } from '../common/EnvironmentAtmosphere';
+import { EnvironmentComposer } from '../common/EnvironmentComposer';
+import { Perf } from 'r3f-perf';
 
 const COMPANION_ROW_GAP = 1.5;
 
-function getCompanionRowPosition(
+function getCompanionSpawnPosition(
+  hubSpawn: [number, number, number],
   index: number,
   total: number,
-): [number, number, number] {
-  if (total <= 0) return [0, 0, 0];
-  if (total === 1) return [0, 0, 0];
+): Vector3 {
+  if (total <= 1) {
+    return new Vector3(...hubSpawn);
+  }
   const startX = (-(total - 1) * COMPANION_ROW_GAP) / 2;
-  return [startX + index * COMPANION_ROW_GAP, 0, 0];
+  const [x, y, z] = addSpawnOffset(hubSpawn, [
+    startX + index * COMPANION_ROW_GAP,
+    0,
+    0,
+  ]);
+  return new Vector3(x, y, z);
 }
 
 interface HubCanvasContentsProps {
   companions: SavedCompanion[];
   latestActivitiesByCompanion: Map<string, Activity>;
+  totalEffortScore: number;
 }
 
 function HubCanvasContents({
   companions,
   latestActivitiesByCompanion,
+  totalEffortScore,
 }: HubCanvasContentsProps) {
+  const walkTerrain = useHubWalkTerrain();
+  const hubSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.hub);
+
   return (
     <>
-      <HubLights />
+      <EnvironmentAtmosphere variant="hub" />
+      <HubLights variant="hub" />
 
       <Suspense fallback={null}>
-        <HubBackground />
+        <HubBackground totalEffortScore={totalEffortScore} />
+        <EnvironmentVegetation totalEffortScore={totalEffortScore} />
       </Suspense>
 
       {companions.map((companion, index) => (
         <HubCharacterGroup
           key={companion.id}
           companion={companion}
-          position={getCompanionRowPosition(index, companions.length)}
+          walkTerrain={walkTerrain}
+          initialPosition={getCompanionSpawnPosition(
+            hubSpawn,
+            index,
+            companions.length,
+          )}
           effortScore={
             latestActivitiesByCompanion.get(companion.id)?.effortScore
           }
         />
       ))}
 
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.35}
-          luminanceSmoothing={0.85}
-          intensity={1.15}
-          mipmapBlur
-        />
-      </EffectComposer>
+      <EnvironmentComposer variant="hub" />
+      <Perf position="top-left" />
     </>
   );
 }
@@ -62,21 +84,25 @@ function HubCanvasContents({
 interface HubCanvasProps {
   companions: SavedCompanion[];
   latestActivitiesByCompanion: Map<string, Activity>;
+  totalEffortScore: number;
 }
 
 export function HubCanvas({
   companions,
   latestActivitiesByCompanion,
+  totalEffortScore,
 }: HubCanvasProps) {
   return (
     <Canvas
       camera={HUB_VIEW_CAMERA}
       gl={{ alpha: false }}
+      dpr={[1, 1.5]}
       style={{ width: '100%', height: '100%' }}
     >
       <HubCanvasContents
         companions={companions}
         latestActivitiesByCompanion={latestActivitiesByCompanion}
+        totalEffortScore={totalEffortScore}
       />
     </Canvas>
   );
