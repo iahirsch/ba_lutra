@@ -1,5 +1,11 @@
 /** Clip names from companion body GLB. */
-export const COMPANION_BODY_CLIPS = ['idle', 'wave'] as const;
+export const COMPANION_BODY_CLIPS = [
+  'idle',
+  'wave',
+  'walking',
+  'running',
+  'win',
+] as const;
 
 export type CompanionBodyClip = (typeof COMPANION_BODY_CLIPS)[number];
 
@@ -11,6 +17,9 @@ export const COMPANION_BODY_CLIP_PLAYBACK: Record<
 > = {
   idle: { once: false },
   wave: { once: true },
+  walking: { once: false },
+  running: { once: false },
+  win: { once: true },
 };
 
 /* Used by the controller to ignore unknown clips */

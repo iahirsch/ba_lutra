@@ -1,22 +1,35 @@
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
+import type { Object3D } from 'three';
+import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { COMPANION_GLB_BASE } from '@ba-praktisch/shared-types';
-import { COMPANION_ATTACH_BONES } from '../../constants/companion-attach-bones';
 import { useCompanionBodyScene } from './companionBodySceneContext';
 import type { PartCategory } from '../../store/companionStore';
 import { applyCelShading, setConduitGlow } from '../../utils/celShading';
 import { applyBodyMorphsToObject } from '../../utils/applyBodyMorphs';
-import { attachPartToBone, detachPart } from '../../utils/attachPartToBone';
+import {
+  mergePartIntoBody,
+  removeMergedParts,
+} from '../../utils/mergePartIntoBody';
 
 export interface CompanionPartGlbProps {
   category: PartCategory;
   variantId: string;
   bodyMorphs: Record<string, number>;
-  /** Emissive intensity for the backpack `conduit` mesh (hub effort glow). */
+  /** Emissive intensity for the backpack `conduit` mesh */
   conduitGlow?: number;
 }
 
-/** Single companion body-part GLB: clone, morphs, cel shading. */
+function applyMorphsToMerged(
+  merged: Object3D[],
+  bodyMorphs: Record<string, number>,
+): void {
+  for (const part of merged) {
+    applyBodyMorphsToObject(part, bodyMorphs);
+  }
+}
+
+/** Loads a part GLB and merges its skinned meshes into the active body rig. */
 export function CompanionPartGlb({
   category,
   variantId,
@@ -26,37 +39,37 @@ export function CompanionPartGlb({
   const url = `${COMPANION_GLB_BASE}/${category}/${variantId}.glb`;
   const gltf = useGLTF(url);
   const bodyScene = useCompanionBodyScene();
-  const attachBoneName =
-    category === 'backpack' ? COMPANION_ATTACH_BONES.backpack : null;
+  const mergedRef = useRef<Object3D[]>([]);
+  const bodyMorphsRef = useRef(bodyMorphs);
+  bodyMorphsRef.current = bodyMorphs;
 
-  const morphKey = JSON.stringify(bodyMorphs);
-
-  const scene = useMemo(() => {
-    const cloned = gltf.scene.clone(true);
-    applyBodyMorphsToObject(
-      cloned,
-      JSON.parse(morphKey) as Record<string, number>,
-    );
+  const partScene = useMemo(() => {
+    const cloned = cloneSkinned(gltf.scene);
     applyCelShading(cloned);
     return cloned;
-  }, [gltf.scene, morphKey]);
+  }, [gltf.scene]);
 
   useLayoutEffect(() => {
-    if (!attachBoneName || !bodyScene) return;
+    if (!bodyScene) return;
 
-    attachPartToBone(bodyScene, scene, attachBoneName);
+    removeMergedParts(mergedRef.current);
+    mergedRef.current = mergePartIntoBody(bodyScene, partScene);
+    applyMorphsToMerged(mergedRef.current, bodyMorphsRef.current);
 
     return () => {
-      detachPart(scene);
+      removeMergedParts(mergedRef.current);
+      mergedRef.current = [];
     };
-  }, [attachBoneName, bodyScene, scene]);
+  }, [bodyScene, partScene]);
 
   useLayoutEffect(() => {
-    if (category !== 'backpack') return;
-    setConduitGlow(scene, conduitGlow ?? 0);
-  }, [category, scene, conduitGlow]);
+    applyMorphsToMerged(mergedRef.current, bodyMorphs);
+  }, [bodyMorphs]);
 
-  if (attachBoneName) return null;
+  useLayoutEffect(() => {
+    if (!bodyScene || category !== 'backpack') return;
+    setConduitGlow(bodyScene, conduitGlow ?? 0.1);
+  }, [bodyScene, category, conduitGlow]);
 
-  return <primitive object={scene} />;
+  return null;
 }

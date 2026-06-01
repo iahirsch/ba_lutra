@@ -3,7 +3,7 @@ import type { Object3D } from 'three';
 
 /**
  * Shares the cloned body `Object3D` with part components rendered as children of
- * `CompanionBody`, so attachable parts (e.g. backpack) can parent to body bones.
+ * `CompanionBody`, so interchangeable GLBs can merge skinned meshes into the rig.
  */
 const CompanionBodySceneContext = createContext<Object3D | null>(null);
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import {
   Color,
@@ -15,7 +15,15 @@ import { EditorFlowPanel } from '../components/editor/EditorFlowPanel';
 import '../constants/companion-part-variants';
 import { useCompanionStore, DEFAULT_CONFIG } from '../store/companionStore';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
-import { HUB_GLTF_URL, type FlowStateUpdate } from '@ba-praktisch/shared-types';
+import type { FlowStateUpdate } from '@ba-praktisch/shared-types';
+import {
+  ENVIRONMENT_SPAWN,
+  HUB_GLTF_URL,
+  HUB_TERRAIN_MESH_NAME,
+} from '../constants/hub-scene';
+import { applyHubTerrainMaterial } from '../utils/celShading';
+import { useEnvironmentSpawn } from '../utils/environmentSpawn';
+import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import styles from './Editor.module.scss';
 
 useGLTF.preload(HUB_GLTF_URL);
@@ -25,8 +33,10 @@ function EditorBackgroundMesh() {
 
   const dimmedScene = useMemo(() => {
     const root = scene.clone(true);
+    applyHubTerrainMaterial(root);
     root.traverse((node) => {
       if (!(node instanceof Mesh) || !node.material) return;
+      if (node.name === HUB_TERRAIN_MESH_NAME) return;
 
       const tintMaterial = (mat: Material) => {
         const m = mat.clone();
@@ -54,16 +64,20 @@ function EditorBackgroundMesh() {
 
 function EditorSceneParts() {
   const { clothingTop, clothingBottom, backpack } = useCompanionStore();
+  const editorSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.editor, false);
+
   return (
-    <EditorBody>
-      {clothingTop && (
-        <EditorGlbPart category="clothingTop" variantId={clothingTop} />
-      )}
-      {clothingBottom && (
-        <EditorGlbPart category="clothingBottom" variantId={clothingBottom} />
-      )}
-      {backpack && <EditorGlbPart category="backpack" variantId={backpack} />}
-    </EditorBody>
+    <group position={editorSpawn}>
+      <EditorBody>
+        {clothingTop && (
+          <EditorGlbPart category="clothingTop" variantId={clothingTop} />
+        )}
+        {clothingBottom && (
+          <EditorGlbPart category="clothingBottom" variantId={clothingBottom} />
+        )}
+        {backpack && <EditorGlbPart category="backpack" variantId={backpack} />}
+      </EditorBody>
+    </group>
   );
 }
 
@@ -114,7 +128,10 @@ export function Editor() {
       <div className={styles.header}>Lutra erstellen</div>
       <div className={styles.canvasZone}>
         <EditorCanvas>
-          <EditorBackgroundMesh />
+          <Suspense fallback={null}>
+            <EditorBackgroundMesh />
+            <EnvironmentVegetation applyEnvironmentTransform={false} />
+          </Suspense>
           <EditorSceneParts />
         </EditorCanvas>
       </div>

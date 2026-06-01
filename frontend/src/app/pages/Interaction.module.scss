@@ -6,15 +6,6 @@
   height: 100dvh;
   overflow: hidden;
   background: s.$color-slate-950;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -1.25rem;
-    background: url('/assets/backgrounds/desert.png') center / cover no-repeat;
-    filter: blur(s.$blur-md);
-    z-index: 0;
-  }
 }
 
 .canvas {
