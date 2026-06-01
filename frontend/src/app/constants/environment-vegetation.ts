@@ -26,9 +26,8 @@ export const FLOWER_GLBS = [
   `${FLOWERS_URL}flower06.glb`,
   `${FLOWERS_URL}flower07.glb`,
 ] as const;
-export const FLOWER_COUNT = 1500;
-/** Max sampler attempts per flower before skipping that slot. */
-export const FLOWER_SPAWN_MAX_ATTEMPTS = 2000;
+export const FLOWER_COUNT = 2000;
+export const FLOWER_SPAWN_MAX_ATTEMPTS = 3000;
 
 export interface LeavesMaterialConfig {
   baseColor: string;
@@ -90,7 +89,32 @@ export const ENVIRONMENT_VEGETATION: EnvironmentVegetationEntry[] = [
 /**
  * Overrides for bush spawn defaults
  */
-export const ENVIRONMENT_BUSHES: EnvironmentVegetationEntry[] = [];
+export const ENVIRONMENT_BUSHES: EnvironmentVegetationEntry[] = [
+  {
+    id: 'bush-1',
+    glbUrl: BUSHES_URL + 'bush01.glb',
+    spawn: 'EMPTY_Bush001',
+    scale: 0.6,
+  },
+  {
+    id: 'bush-2',
+    glbUrl: BUSHES_URL + 'bush01.glb',
+    spawn: 'EMPTY_Bush002',
+    scale: 1,
+  },
+  {
+    id: 'bush-3',
+    glbUrl: BUSHES_URL + 'bush01.glb',
+    spawn: 'EMPTY_Bush003',
+    scale: 0.75,
+  },
+  {
+    id: 'bush-4',
+    glbUrl: BUSHES_URL + 'bush01.glb',
+    spawn: 'EMPTY_Bush004',
+    scale: 0.7,
+  },
+];
 
 export const GRASS_LODS_URL = '/assets/environment/grassLODs.glb';
 export const GRASS_ALPHA_TEXTURE_URL = '/assets/environment/grass.jpeg';
@@ -124,7 +148,7 @@ export const GRASS_TIP_COLOR_2 = '#608A53';
 export const GRASS_COLOR_VARIATION_NOISE_SCALE = 1.25;
 export const GRASS_COLOR_VARIATION_STRENGTH = 2.5;
 export const GRASS_COLOR_VARIATION_TERRAIN_SIZE = 125;
-export const GRASS_LIGHT_INTENSITY = 1;
+export const GRASS_LIGHT_INTENSITY = 0.9;
 
 export const GRASS_CHUNK_GRID = 8;
 
@@ -147,9 +171,9 @@ export const GROUND_NORMAL_SCALE = 1;
 /** Total companion effort at which grass reaches full spread. */
 export const GRASS_GROW_EFFORT_REF = 3;
 /** Max grow radius as a fraction of terrain world width at {@link GRASS_GROW_EFFORT_REF}. */
-export const GRASS_GROW_RADIUS_RATIO = 0.55;
+export const GRASS_GROW_RADIUS_RATIO = 0.6;
 export const GROUND_GROW_RADIUS_RATIO = 0.75;
-export const VEGETATION_GROW_FADE_RATIO = 0.14;
+export const VEGETATION_GROW_FADE_RATIO = 0.05;
 
 export function effortTotalToGrowRadius(
   totalEffort: number,
