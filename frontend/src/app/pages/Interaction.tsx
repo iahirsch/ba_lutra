@@ -15,6 +15,7 @@ import { EnvironmentAtmosphere } from '../components/common/EnvironmentAtmospher
 import { EnvironmentComposer } from '../components/common/EnvironmentComposer';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
+import { effortToConduitGlow } from '../utils/celShading';
 import {
   isInteractionExitStep,
   resolveInteractionBodyClip,
@@ -27,15 +28,22 @@ const EXIT_ANIMATION_FALLBACK_MS = 8_000;
 interface InteractionSceneProps {
   companionConfig: CompanionConfig | null;
   stepId: string;
+  activityEffortScore?: number | null;
   onExitAnimationComplete?: () => void;
 }
 
 function InteractionScene({
   companionConfig,
   stepId,
+  activityEffortScore,
   onExitAnimationComplete,
 }: InteractionSceneProps) {
   const interactSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+  const showConduitGlow =
+    activityEffortScore !== null && activityEffortScore !== undefined;
+  const conduitGlow = showConduitGlow
+    ? effortToConduitGlow(activityEffortScore)
+    : undefined;
 
   return (
     <Canvas
@@ -72,6 +80,7 @@ function InteractionScene({
                     category={part}
                     variantId={variantId}
                     bodyMorphs={companionConfig.bodyMorphs ?? {}}
+                    conduitGlow={part === 'backpack' ? conduitGlow : undefined}
                   />
                 );
               })}
@@ -119,6 +128,7 @@ export function Interaction() {
         <InteractionScene
           companionConfig={flowState?.companionConfig ?? null}
           stepId={flowState?.stepId ?? ''}
+          activityEffortScore={flowState?.activityEffortScore}
           onExitAnimationComplete={notifyExitComplete}
         />
       </div>

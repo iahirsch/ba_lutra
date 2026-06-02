@@ -47,6 +47,7 @@ export interface FlowStateUpdate {
   companionName: string | null;
   companionDialogue: string;
   creatorView: EditorViewConfig;
+  activityEffortScore?: number | null;
 }
 
 export interface RegisterScreenPayload {

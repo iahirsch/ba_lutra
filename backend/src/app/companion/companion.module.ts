@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Companion } from './companion.entity';
+import { Activity } from '../activity/activity.entity';
 import { CompanionService } from './companion.service';
 import { CompanionController } from './companion.controller';
 import { CompanionGateway } from './companion.gateway';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Companion])],
+  imports: [TypeOrmModule.forFeature([Companion, Activity])],
   controllers: [CompanionController],
   providers: [CompanionService, CompanionGateway],
   exports: [CompanionService, CompanionGateway],
