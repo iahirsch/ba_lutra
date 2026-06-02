@@ -108,9 +108,24 @@ export function Editor() {
     prevFlowRef.current = flowState;
   }, [flowState]);
 
-  if (flowState) {
-    return (
-      <div className={styles.page}>
+  return (
+    <div className={styles.page}>
+      {!flowState && <div className={styles.header}>Lutra erstellen</div>}
+      <div className={styles.canvasZone}>
+        <EditorCanvas>
+          <Suspense fallback={null}>
+            <EditorBackgroundMesh />
+            <EnvironmentVegetation applyEnvironmentTransform={false} />
+          </Suspense>
+          {!flowState && <EditorSceneParts />}
+        </EditorCanvas>
+      </div>
+      {!flowState && (
+        <div className={styles.panelZone}>
+          <EditorPanel />
+        </div>
+      )}
+      {flowState && (
         <EditorFlowPanel
           flowState={flowState}
           onSubmitName={submitName}
@@ -119,27 +134,7 @@ export function Editor() {
           onResetFlow={resetFlow}
           onExitComplete={notifyExitComplete}
         />
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.page}>
-      <div className={styles.header}>Lutra erstellen</div>
-      <div className={styles.canvasZone}>
-        <EditorCanvas>
-          <Suspense fallback={null}>
-            <EditorBackgroundMesh />
-            <EnvironmentVegetation applyEnvironmentTransform={false} />
-          </Suspense>
-          <EditorSceneParts />
-        </EditorCanvas>
-      </div>
-      {
-        <div className={styles.panelZone}>
-          <EditorPanel />
-        </div>
-      }
+      )}
     </div>
   );
 }
