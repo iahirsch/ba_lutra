@@ -21,6 +21,7 @@ export const FLOW_EVENTS = {
   // Server → Client
   STATE_UPDATE: 'flow:state-update',
   COMPANION_ENTERED_HUB: 'companion:entered-hub',
+  ACTIVITY_UPDATED: 'flow:activity-updated',
 
   EXIT_COMPLETE: 'flow:exit-complete',
 } as const;
@@ -61,4 +62,8 @@ export interface NameSubmittedPayload {
 
 export interface ChoiceSelectedPayload {
   choiceId: string;
+}
+
+export interface ActivityUpdatedPayload {
+  companionId: string;
 }

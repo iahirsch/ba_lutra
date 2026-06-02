@@ -458,7 +458,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'activity_finished',
     companionDialogue:
-      'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 100 Energie gesammelt. Du hast eine Distanz von [activityDistance] innerhalb von [activityDuration] zurückgelegt. Was für eine tolle Leistung! Schau mal auf die Leinwand, wie sich die Welt durch dich verändert hat. Weiter so, du bist mein Held!',
+      'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt. Was für eine tolle Leistung! Schau mal auf die Leinwand, wie sich die Welt durch dich verändert hat.',
     creatorView: {
       type: 'choices',
       prompt: ['Schau dir das Ergebnis deiner Power auf der Leinwand an!'],

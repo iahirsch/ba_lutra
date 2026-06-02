@@ -11,11 +11,13 @@ import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import styles from './Hub.module.scss';
 
 export function Hub() {
-  const { companions, connected, error } = useCompanionSocket();
+  const { companions, connected, error, activityRefreshToken } =
+    useCompanionSocket();
   const latestActivitiesByCompanion = useLatestActivitiesByCompanion(
     companions.map((c) => c.id),
+    activityRefreshToken,
   );
-  const liveEffort = useTotalEffortScore();
+  const liveEffort = useTotalEffortScore(activityRefreshToken);
   const [totalEffortScore, setTotalEffortScore] = useState(0);
 
   useEffect(() => {

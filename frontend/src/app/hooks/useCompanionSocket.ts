@@ -13,6 +13,7 @@ export function useCompanionSocket() {
   const [companions, setCompanions] = useState<SavedCompanion[]>([]);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activityRefreshToken, setActivityRefreshToken] = useState(0);
 
   useEffect(() => {
     const socket: Socket = createMainSocket();
@@ -41,10 +42,14 @@ export function useCompanionSocket() {
       setCompanions((prev) => prev.filter((c) => c.id !== id));
     });
 
+    socket.on(FLOW_EVENTS.ACTIVITY_UPDATED, () => {
+      setActivityRefreshToken((prev) => prev + 1);
+    });
+
     return () => {
       socket.disconnect();
     };
   }, []);
 
-  return { companions, connected, error };
+  return { companions, connected, error, activityRefreshToken };
 }

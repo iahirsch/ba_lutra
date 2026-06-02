@@ -2,8 +2,11 @@ import { useMemo } from 'react';
 import { useLatestActivitiesByCompanion } from './useLatestActivitiesByCompanion';
 
 /** Sum of effortScore across all companions with linked activities. */
-export function useTotalEffortScore(): number {
-  const latestActivitiesByCompanion = useLatestActivitiesByCompanion([]);
+export function useTotalEffortScore(refreshToken?: number): number {
+  const latestActivitiesByCompanion = useLatestActivitiesByCompanion(
+    [],
+    refreshToken,
+  );
 
   return useMemo(() => {
     let total = 0.15;

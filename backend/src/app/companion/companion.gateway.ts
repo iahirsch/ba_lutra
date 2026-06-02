@@ -142,6 +142,9 @@ export class CompanionGateway
       payload.choiceId === 'activity_finished'
     ) {
       await this.refreshActivityEffortScore();
+      this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {
+        companionId: this.session.companionId,
+      });
     }
     const next = this.resolveTransition(
       FLOW_EVENTS.CHOICE_SELECTED,
@@ -285,7 +288,7 @@ export class CompanionGateway
 
   private formatEffortScore(): string {
     if (!this.session?.activityEffortScore) return '0';
-    return Math.round(this.session.activityEffortScore * 100).toString();
+    return Math.round(this.session.activityEffortScore * 1000).toString();
   }
 
   private formatActivityDistance(): string {
