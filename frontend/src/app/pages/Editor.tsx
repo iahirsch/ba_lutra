@@ -1,10 +1,12 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
+import { useFrame, useLoader } from '@react-three/fiber';
 import {
   Color,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
+  TextureLoader,
   type Material,
 } from 'three';
 import { EditorCanvas } from '../components/editor/EditorCanvas';
@@ -21,19 +23,55 @@ import {
   HUB_GLTF_URL,
   HUB_TERRAIN_MESH_NAME,
 } from '../constants/hub-scene';
-import { applyHubTerrainMaterial } from '../utils/celShading';
+import { applyCelShading, applyHubTerrainMaterial } from '../utils/celShading';
+import {
+  attachTerrainGrowShader,
+  setTerrainGrowReveal,
+} from '../utils/terrainMaterial';
+import * as veg from '../constants/environment-vegetation';
 import { useEnvironmentSpawn } from '../utils/environmentSpawn';
-import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import styles from './Editor.module.scss';
 
 useGLTF.preload(HUB_GLTF_URL);
 
 function EditorBackgroundMesh() {
   const { scene } = useGLTF(HUB_GLTF_URL);
+  const [
+    sandColor,
+    sandNormal,
+    sandHeight,
+    grassColor,
+    grassNormal,
+    dirtColor,
+    dirtNormal,
+  ] = useLoader(TextureLoader, [
+    veg.GROUND_SAND_COLOR_URL,
+    veg.GROUND_SAND_NORMAL_URL,
+    veg.GROUND_SAND_HEIGHT_URL,
+    veg.GROUND_GRASS_COLOR_URL,
+    veg.GROUND_GRASS_NORMAL_URL,
+    veg.GROUND_DIRT_COLOR_URL,
+    veg.GROUND_DIRT_NORMAL_URL,
+  ]);
 
   const dimmedScene = useMemo(() => {
     const root = scene.clone(true);
     applyHubTerrainMaterial(root);
+
+    // Convert terrain to MeshToonMaterial so the texture pipeline works
+    const terrainNode = root.getObjectByName(HUB_TERRAIN_MESH_NAME);
+    if (terrainNode) applyCelShading(terrainNode);
+
+    attachTerrainGrowShader(root, {
+      sandColor,
+      sandNormal,
+      sandHeight,
+      grassColor,
+      grassNormal,
+      dirtColor,
+      dirtNormal,
+    });
+
     root.traverse((node) => {
       if (!(node instanceof Mesh) || !node.material) return;
       if (node.name === HUB_TERRAIN_MESH_NAME) return;
@@ -57,7 +95,21 @@ function EditorBackgroundMesh() {
         : tintMaterial(node.material);
     });
     return root;
-  }, [scene]);
+  }, [
+    scene,
+    sandColor,
+    sandNormal,
+    sandHeight,
+    grassColor,
+    grassNormal,
+    dirtColor,
+    dirtNormal,
+  ]);
+
+  // No grow animation in Editor — hold terrain at fully revealed state
+  useFrame(() => {
+    setTerrainGrowReveal(0, 0, 0, 0);
+  });
 
   return <primitive object={dimmedScene} />;
 }
@@ -115,7 +167,6 @@ export function Editor() {
         <EditorCanvas>
           <Suspense fallback={null}>
             <EditorBackgroundMesh />
-            <EnvironmentVegetation applyEnvironmentTransform={false} />
           </Suspense>
           {!flowState && <EditorSceneParts />}
         </EditorCanvas>

@@ -133,7 +133,7 @@ export function Interaction() {
         />
       </div>
 
-      {flowState && (
+      {flowState && flowState.companionDialogue && (
         <div className={styles.dialogueOverlay}>
           <DialogueBubble
             companionName={flowState.companionName}
