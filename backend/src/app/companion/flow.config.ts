@@ -458,10 +458,86 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'activity_finished',
     companionDialogue:
-      'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt. Was für eine tolle Leistung! Schau mal auf die Leinwand, wie sich die Welt durch dich verändert hat.',
+      'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.',
     creatorView: {
       type: 'choices',
-      prompt: ['Schau dir das Ergebnis deiner Power auf der Leinwand an!'],
+      prompt: [
+        'Speichere deine Energie im Conduit und setzte sie in der Welt frei!',
+      ],
+      choices: [
+        { id: 'store_energy', label: 'Energie speichern', variant: 'primary' },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        store_energy: 'store_energy',
+      },
+    },
+  },
+  {
+    id: 'store_energy',
+    companionDialogue:
+      'Schau dir den Conduit an! Deine Energie wartet darauf, gespeichert zu werden. Tippe, wenn du bereit bist!',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [
+        {
+          id: 'store_energy_1',
+          label: 'Energie speichern!',
+          variant: 'primary',
+        },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        store_energy_1: 'store_energy_1',
+      },
+    },
+  },
+  {
+    id: 'store_energy_1',
+    companionDialogue:
+      'Ja! Ich spüre es! Die erste Welle Energie fliesst in meine Welt!',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [
+        { id: 'store_energy_2', label: 'Noch mehr!', variant: 'primary' },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        store_energy_2: 'store_energy_2',
+      },
+    },
+  },
+  {
+    id: 'store_energy_2',
+    companionDialogue:
+      'Unglaublich! Der Conduit leuchtet immer heller! Noch ein letzter Schub!',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [
+        { id: 'store_energy_3', label: 'Das letzte Mal!', variant: 'primary' },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        store_energy_3: 'store_energy_3',
+      },
+    },
+  },
+  {
+    id: 'store_energy_3',
+    companionDialogue:
+      'PERFEKT! Der Conduit ist aufgeladen! Deine Energie hat sich in Form von diverser Vegetation in der Welt freigesetzt. Kannst du es sehen?',
+    creatorView: {
+      type: 'choices',
+      prompt: [
+        'Schau dir an, wie deine Energie die Welt zum Blühen gebracht hat.',
+      ],
       choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -519,68 +595,6 @@ export const FLOW_STEPS: FlowStep[] = [
       [FLOW_EVENTS.EXIT_COMPLETE]: null,
     },
   },
-
-  //   {
-  //     id: 'activity_question',
-  //     companionDialogue:
-  //       '[name]!? Oh, das klingt fantastisch! Wollen wir direkt loslegen und die erste Stelle auf der Karte durch physische Aktivität vom Ödland befreien und wieder zum Blühen bringen?',
-  //     creatorView: {
-  //       type: 'choices',
-  //       prompt: [],
-  //       choices: [
-  //         { id: 'active', label: 'Jaaa, packen wir es an! 🌿' },
-  //         { id: 'passive', label: 'Vielleicht später...' },
-  //       ],
-  //     },
-  //     transitions: {
-  //       [FLOW_EVENTS.CHOICE_SELECTED]: {
-  //         active: 'active_reaction',
-  //         passive: 'passive_reaction',
-  //       },
-  //     },
-  //   },
-
-  //   {
-  //     id: 'active_reaction',
-  //     companionDialogue:
-  //       'Otter-stark! ⚡️ Ich halte hier die Stellung und bereite alles vor, während du Energie durch deine reale physische Aktivität sammelst.',
-  //     creatorView: {
-  //       type: 'confirm',
-  //       prompt:
-  //         ["Mach 10 Hampelmänner und tippe auf 'Fertig', wenn du dein Training beendet hast."],
-  //       confirmLabel: 'Fertig!',
-  //     },
-  //     transitions: {
-  //       [FLOW_EVENTS.ACTION_CONFIRMED]: 'active_exit',
-  //     },
-  //   },
-
-  //   {
-  //     id: 'passive_reaction',
-  //     companionDialogue:
-  //       'Alles klar, kein Stress! 🔋 Auch ein Otter braucht mal eine Pause. Melde dich einfach, wenn du bereit bist.',
-  //     creatorView: {
-  //       type: 'confirm',
-  //       prompt: [],
-  //       confirmLabel: 'Okay, ich komme wieder auf dich zu!',
-  //     },
-  //     transitions: {
-  //       [FLOW_EVENTS.ACTION_CONFIRMED]: 'passive_exit',
-  //     },
-  //   },
-  //   {
-  //     id: 'passive_exit',
-  //     companionDialogue:
-  //       'Ich mach es mir im Zeltlager gemütlich. Wir sehen uns später! Adeeee! ✨',
-  //     creatorView: {
-  //       type: 'transition',
-  //       prompt: ['Dein Buddy zieht sich ins Zeltlager zurück…'],
-  //     },
-  //     transitions: {
-  //       [FLOW_EVENTS.EXIT_COMPLETE]: null,
-  //     },
-  //   },
-  //
 ];
 export const FLOW_STEP_MAP = new Map<string, FlowStep>(
   FLOW_STEPS.map((step) => [step.id, step]),
