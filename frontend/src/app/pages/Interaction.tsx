@@ -280,7 +280,11 @@ function InteractionScene({
                     key={part}
                     category={part}
                     variantId={variantId}
-                    bodyMorphs={companionConfig.bodyMorphs ?? {}}
+                    bodyMorphs={
+                      part === 'backpack'
+                        ? { ...(companionConfig.bodyMorphs ?? {}), cloth_on: companionConfig.clothingTop ? 1 : 0 }
+                        : (companionConfig.bodyMorphs ?? {})
+                    }
                     conduitGlow={part === 'backpack' ? conduitGlow : undefined}
                     conduitFlashTrigger={
                       part === 'backpack' ? conduitFlashTrigger : undefined

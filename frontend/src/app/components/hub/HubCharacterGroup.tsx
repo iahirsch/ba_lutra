@@ -53,7 +53,11 @@ export function HubCharacterGroup({
                 key={`${companion.id}-${category}`}
                 category={category}
                 variantId={variantId}
-                bodyMorphs={bodyMorphs}
+                bodyMorphs={
+                  category === 'backpack'
+                    ? { ...bodyMorphs, cloth_on: companion.clothingTop ? 1 : 0 }
+                    : bodyMorphs
+                }
                 conduitGlow={category === 'backpack' ? conduitGlow : undefined}
               />
             );
