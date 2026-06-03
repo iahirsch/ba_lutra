@@ -21,5 +21,6 @@ export function createIdleFlowStateUpdate(): FlowStateUpdate {
     companionName: null,
     companionDialogue: '',
     creatorView: { type: 'idle' },
+    activityEffortScore: null,
   };
 }

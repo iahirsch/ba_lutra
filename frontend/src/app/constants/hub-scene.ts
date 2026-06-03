@@ -19,7 +19,7 @@ export const ENVIRONMENT_SPAWN = {
 } as const;
 
 export const HUB_CAMERA = {
-  position: [0, 2, 8] as [number, number, number],
+  position: [0, 1.6, 8] as [number, number, number],
   fov: 40,
   near: 0.1,
   far: 1500,

@@ -11,11 +11,16 @@ export function EditorGlbPart({
   variantId: string;
 }) {
   const bodyMorphs = useCompanionStore((s) => s.bodyMorphs);
+  const clothingTop = useCompanionStore((s) => s.clothingTop);
   return (
     <CompanionPartGlb
       category={category}
       variantId={variantId}
-      bodyMorphs={bodyMorphs}
+      bodyMorphs={
+        category === 'backpack'
+          ? { ...bodyMorphs, cloth_on: clothingTop ? 1 : 0 }
+          : bodyMorphs
+      }
     />
   );
 }

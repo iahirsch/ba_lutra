@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Server, Socket } from 'socket.io';
 import { Companion } from './companion.entity';
+import { Activity } from '../activity/activity.entity';
 import { FLOW_STEP_MAP, FIRST_STEP_ID } from './flow.config';
 import {
   FLOW_EVENTS,
@@ -33,6 +34,9 @@ interface FlowSession {
   companionCreatedAt: string;
   currentStepId: string;
   moreInfoVisited: boolean;
+  activityEffortScore?: number | null;
+  activityDistanceMeters?: number | null;
+  activityDurationSeconds?: number | null;
 }
 
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -47,6 +51,8 @@ export class CompanionGateway
   constructor(
     @InjectRepository(Companion)
     private readonly companionRepository: Repository<Companion>,
+    @InjectRepository(Activity)
+    private readonly activityRepository: Repository<Activity>,
   ) {}
 
   private readonly screenRegistry = new Map<string, ScreenId>();
@@ -87,6 +93,9 @@ export class CompanionGateway
       companionCreatedAt: companion.createdAt.toISOString(),
       currentStepId: FIRST_STEP_ID,
       moreInfoVisited: false,
+      activityEffortScore: null,
+      activityDistanceMeters: null,
+      activityDurationSeconds: null,
     };
     this.broadcastFlowState();
     this.startResetTimer();
@@ -124,8 +133,24 @@ export class CompanionGateway
   }
 
   @SubscribeMessage(FLOW_EVENTS.CHOICE_SELECTED)
-  handleChoiceSelected(@MessageBody() payload: ChoiceSelectedPayload): void {
+  async handleChoiceSelected(
+    @MessageBody() payload: ChoiceSelectedPayload,
+  ): Promise<void> {
     if (!this.session) return;
+    if (
+      this.session.currentStepId === 'activity_started' &&
+      payload.choiceId === 'activity_finished'
+    ) {
+      await this.refreshActivityEffortScore();
+    }
+    if (
+      this.session.currentStepId === 'store_energy_2' &&
+      payload.choiceId === 'store_energy_3'
+    ) {
+      this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {
+        companionId: this.session.companionId,
+      });
+    }
     const next = this.resolveTransition(
       FLOW_EVENTS.CHOICE_SELECTED,
       payload.choiceId,
@@ -222,8 +247,11 @@ export class CompanionGateway
 
     const replace = (text: string) =>
       text
-        .replace(/\[companionName\]/g, this.session!.companionName ?? '')
-        .replace(/\[userName\]/g, this.session!.userName ?? '');
+        .replace(/\[companionName\]/g, this.session?.companionName ?? '')
+        .replace(/\[userName\]/g, this.session?.userName ?? '')
+        .replace(/\[effortScore\]/g, this.formatEffortScore())
+        .replace(/\[activityDistance\]/g, this.formatActivityDistance())
+        .replace(/\[activityDuration\]/g, this.formatActivityDuration());
 
     const rawDialogue =
       step.id === 'moreInfo' && this.session.moreInfoVisited
@@ -248,7 +276,46 @@ export class CompanionGateway
       companionName: this.session.companionName,
       companionDialogue: dialogue,
       creatorView,
+      activityEffortScore: this.session.activityEffortScore ?? null,
     };
+  }
+
+  private async refreshActivityEffortScore(): Promise<void> {
+    if (!this.session) return;
+    const latest = await this.activityRepository.findOne({
+      where: { companion: { id: this.session.companionId } },
+      order: { startedAt: 'DESC' },
+    });
+    this.session.activityEffortScore = latest?.effortScore ?? null;
+    this.session.activityDistanceMeters = latest?.distanceMeters ?? null;
+    this.session.activityDurationSeconds = latest?.durationSeconds ?? null;
+  }
+
+  private formatEffortScore(): string {
+    if (!this.session?.activityEffortScore) return '0';
+    return Math.round(this.session.activityEffortScore * 1000).toString();
+  }
+
+  private formatActivityDistance(): string {
+    const meters = this.session?.activityDistanceMeters;
+    if (!meters || meters <= 0) return '0 km';
+    const km = meters / 1000;
+    const rounded = km >= 10 ? km.toFixed(0) : km.toFixed(1);
+    return `${rounded.replace('.', ',')} km`;
+  }
+
+  private formatActivityDuration(): string {
+    const seconds = this.session?.activityDurationSeconds;
+    if (!seconds || seconds <= 0) return '0 min';
+    const totalSeconds = Math.max(0, Math.round(seconds));
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const remainingSeconds = totalSeconds % 60;
+    if (hours > 0) return `${hours} h ${minutes} min`;
+    if (remainingSeconds === 0) return `${totalMinutes} min`;
+    if (totalMinutes === 0) return `${remainingSeconds} s`;
+    return `${totalMinutes} min ${remainingSeconds} s`;
   }
 
   private resolveTransition(

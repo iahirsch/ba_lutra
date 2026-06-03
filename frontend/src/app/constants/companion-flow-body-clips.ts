@@ -2,8 +2,9 @@ import type { CompanionBodyClip } from './companion-body-clips';
 
 /** Interaction flow steps that play a one-shot wave (re-triggers when `stepId` changes). */
 const INTERACTION_WAVE_STEP_IDS = new Set(['firstLook']);
-
 const INTERACTION_EXIT_STEP_IDS = new Set(['hub_transition']);
+const INTERACTION_WIN_STEP_IDS = new Set(['store_energy_3']);
+const INTERACTION_RUN_STEP_IDS = new Set(['activity_started']);
 
 export function resolveInteractionBodyClip(stepId: string): CompanionBodyClip {
   if (
@@ -12,6 +13,13 @@ export function resolveInteractionBodyClip(stepId: string): CompanionBodyClip {
   ) {
     return 'wave';
   }
+  if (INTERACTION_WIN_STEP_IDS.has(stepId)) {
+    return 'win';
+  }
+  if (INTERACTION_RUN_STEP_IDS) {
+    return 'running';
+  }
+
   return 'idle';
 }
 

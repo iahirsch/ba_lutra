@@ -83,7 +83,13 @@ function EditorCameraRig({ spawn }: { spawn: [number, number, number] }) {
   );
 }
 
-export function EditorCanvas({ children }: { children?: React.ReactNode }) {
+export function EditorCanvas({
+  children,
+  disableDOF = false,
+}: {
+  children?: React.ReactNode;
+  disableDOF?: boolean;
+}) {
   const spawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.editor, false);
   const activeCategory = useCompanionStore((s) => s.activeCategory);
   const target = addSpawnOffset(CAMERA_PRESETS[activeCategory].target, spawn);
@@ -103,7 +109,7 @@ export function EditorCanvas({ children }: { children?: React.ReactNode }) {
       <ambientLight intensity={0.75} />
       <directionalLight position={[5, 8, 7]} intensity={1.7} />
       {children}
-      <EditorComposer target={target} />
+      <EditorComposer target={target} disableDOF={disableDOF} />
       <Perf position="top-left" />
     </Canvas>
   );

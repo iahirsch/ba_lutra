@@ -10,12 +10,15 @@ function companionIdsKey(ids: readonly string[]): string {
  * Latest linked activity per companion; shared by admin and hub.
  * Refetches when `companionIds` changes (e.g. a companion enters the hub).
  */
-export function useLatestActivitiesByCompanion(companionIds: readonly string[]) {
+export function useLatestActivitiesByCompanion(
+  companionIds: readonly string[],
+  refreshToken?: number,
+) {
   const [byCompanion, setByCompanion] = useState<Map<string, Activity>>(
     () => new Map(),
   );
 
-  const key = companionIdsKey(companionIds);
+  const key = `${companionIdsKey(companionIds)}:${refreshToken ?? 0}`;
 
   useEffect(() => {
     let cancelled = false;
