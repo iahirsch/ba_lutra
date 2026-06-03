@@ -92,7 +92,7 @@ export function EditorCanvas({ children }: { children?: React.ReactNode }) {
     <Canvas
       camera={{
         position: addSpawnOffset([0, 2.0, 4.5], spawn),
-        fov: 40,
+        fov: 50,
         near: HUB_CAMERA.near,
         far: HUB_CAMERA.far,
       }}
