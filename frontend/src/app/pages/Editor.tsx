@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import {
@@ -14,6 +14,7 @@ import { EditorBody } from '../components/editor/EditorBody';
 import { EditorGlbPart } from '../components/editor/EditorGlbPart';
 import { EditorPanel } from '../components/editor/EditorPanel';
 import { EditorFlowPanel } from '../components/editor/EditorFlowPanel';
+import { CompanionParticleDissolve } from '../components/common/CompanionParticleDissolve';
 import '../constants/companion-part-variants';
 import { useCompanionStore, DEFAULT_CONFIG } from '../store/companionStore';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
@@ -144,6 +145,8 @@ export function Editor() {
   } = useFlowSocket(SCREENS.EDITOR);
 
   const prevFlowRef = useRef<FlowStateUpdate | null>(null);
+  const prevStepRef = useRef<string | null>(null);
+  const [showVFX, setShowVFX] = useState(false);
 
   useEffect(() => {
     const wasInFlow = prevFlowRef.current !== null;
@@ -155,20 +158,43 @@ export function Editor() {
         activeSection: 'lutra',
         activeCategory: 'body',
       });
+      setShowVFX(false);
     }
 
     prevFlowRef.current = flowState;
   }, [flowState]);
 
+  useEffect(() => {
+    const prev = prevStepRef.current;
+    const curr = flowState?.stepId ?? null;
+    prevStepRef.current = curr;
+
+    if (curr === 'nameInput') {
+      // Move camera to a comfortable full-body view for name input
+      useCompanionStore.setState({ activeCategory: 'fur' });
+    }
+
+    if (prev === 'nameInput' && curr === 'firstLook') {
+      setShowVFX(true);
+    }
+  }, [flowState?.stepId]);
+
+  const handleVFXComplete = useCallback(() => setShowVFX(false), []);
+
+  const isNameInput = flowState?.creatorView.type === 'name-input';
+  // Companion stays visible during nameInput (behind the blur panel) and during VFX
+  const showCompanion = !flowState || isNameInput;
+
   return (
     <div className={styles.page}>
       {!flowState && <div className={styles.header}>Lutra erstellen</div>}
       <div className={styles.canvasZone}>
-        <EditorCanvas>
+        <EditorCanvas disableDOF={showVFX}>
           <Suspense fallback={null}>
             <EditorBackgroundMesh />
           </Suspense>
-          {!flowState && <EditorSceneParts />}
+          {showCompanion && !showVFX && <EditorSceneParts />}
+          {showVFX && <CompanionParticleDissolve onComplete={handleVFXComplete} />}
         </EditorCanvas>
       </div>
       {!flowState && (
@@ -176,7 +202,7 @@ export function Editor() {
           <EditorPanel />
         </div>
       )}
-      {flowState && (
+      {flowState && !showVFX && (
         <EditorFlowPanel
           flowState={flowState}
           onSubmitName={submitName}

@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import type {
   CompanionConfig,
@@ -15,6 +15,7 @@ import { EnvironmentAtmosphere } from '../components/common/EnvironmentAtmospher
 import { EnvironmentComposer } from '../components/common/EnvironmentComposer';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
+import { CompanionParticleReform } from '../components/common/CompanionParticleReform';
 import { effortToConduitGlow } from '../utils/celShading';
 import {
   isInteractionExitStep,
@@ -30,6 +31,12 @@ interface InteractionSceneProps {
   stepId: string;
   activityEffortScore?: number | null;
   onExitAnimationComplete?: () => void;
+  showReform?: boolean;
+  /** Mount the companion in the scene (allows animation to warm up). */
+  showCompanion?: boolean;
+  /** Three.js group visibility — false keeps the group ticking but invisible. */
+  companionVisible?: boolean;
+  onReformComplete?: () => void;
 }
 
 function InteractionScene({
@@ -37,6 +44,10 @@ function InteractionScene({
   stepId,
   activityEffortScore,
   onExitAnimationComplete,
+  showReform = false,
+  showCompanion = true,
+  companionVisible = true,
+  onReformComplete,
 }: InteractionSceneProps) {
   const interactSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
   const showConduitGlow =
@@ -56,15 +67,18 @@ function InteractionScene({
       <Suspense fallback={null}>
         <HubBackground />
         <EnvironmentVegetation />
-        {companionConfig && (
-          <group position={interactSpawn}>
+        {showReform && onReformComplete && (
+          <CompanionParticleReform onComplete={onReformComplete} />
+        )}
+        {showCompanion && companionConfig && (
+          <group position={interactSpawn} visible={companionVisible}>
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}
               eyeColor={companionConfig.eyeColor}
               noseColor={companionConfig.noseColor}
               activeClip={resolveInteractionBodyClip(stepId)}
-              activeClipKey={stepId}
+              activeClipKey={companionVisible ? stepId : `${stepId}-hidden`}
               onRestoredToIdle={
                 isInteractionExitStep(stepId)
                   ? onExitAnimationComplete
@@ -112,6 +126,9 @@ function DialogueBubble({ companionName, text, stepId }: DialogueBubbleProps) {
   );
 }
 
+/** Delay before reform particles appear — gives the Editor dissolve+fly time to finish. */
+const REFORM_DELAY_MS = 3500;
+
 export function Interaction() {
   const { flowState, notifyExitComplete } = useFlowSocket(SCREENS.INTERACTION);
 
@@ -122,6 +139,37 @@ export function Interaction() {
     return () => clearTimeout(timer);
   }, [flowState, notifyExitComplete]);
 
+  // Reform state: tracks the particle rebuild animation on first companion appearance
+  const prevStepRef = useRef<string | null>(null);
+  const [reformState, setReformState] = useState<'idle' | 'reforming' | 'done'>('idle');
+
+  useEffect(() => {
+    const prev = prevStepRef.current;
+    const curr = flowState?.stepId ?? null;
+    prevStepRef.current = curr;
+
+    if (prev === 'nameInput' && curr === 'firstLook') {
+      const timer = setTimeout(() => setReformState('reforming'), REFORM_DELAY_MS);
+      return () => clearTimeout(timer);
+    }
+
+    if (curr === null) {
+      setReformState('idle');
+    }
+  }, [flowState?.stepId]);
+
+  const handleReformComplete = useCallback(() => setReformState('done'), []);
+
+  const isFirstLook = flowState?.stepId === 'firstLook';
+  const isNameInput = flowState?.stepId === 'nameInput';
+  const showReform = isFirstLook && reformState === 'reforming';
+  // Mount companion during reform so the animation mixer warms up (avoids T-pose on reveal).
+  // Keep it hidden until reform completes; never mount during nameInput (companion not yet born).
+  const showCompanion = !isNameInput;
+  const companionVisible = !isFirstLook || reformState === 'done';
+  const showDialogue =
+    !!flowState?.companionDialogue && (!isFirstLook || reformState === 'done');
+
   return (
     <div className={styles.page}>
       <div className={styles.canvas}>
@@ -130,15 +178,19 @@ export function Interaction() {
           stepId={flowState?.stepId ?? ''}
           activityEffortScore={flowState?.activityEffortScore}
           onExitAnimationComplete={notifyExitComplete}
+          showReform={showReform}
+          showCompanion={showCompanion}
+          companionVisible={companionVisible}
+          onReformComplete={handleReformComplete}
         />
       </div>
 
-      {flowState && flowState.companionDialogue && (
+      {showDialogue && (
         <div className={styles.dialogueOverlay}>
           <DialogueBubble
-            companionName={flowState.companionName}
-            text={flowState.companionDialogue}
-            stepId={flowState.stepId}
+            companionName={flowState!.companionName}
+            text={flowState!.companionDialogue!}
+            stepId={flowState!.stepId}
           />
         </div>
       )}
