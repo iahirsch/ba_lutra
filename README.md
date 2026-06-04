@@ -1,96 +1,94 @@
-# BaPraktisch
+# Lutra - train.grow.connect
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+An interactive exhibit installation where visitors create and customise a personal otter companion ("Lutra"), complete a treadmill workout tracked via Strava, and watch their physical effort restore a 3D virtual world.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## How it works
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+A visitor sits at a tablet (the **creator view**) and is guided through a dialogue flow with their Lutra. In parallel, the companion is rendered on a large display (the **hub view**). After customising their companion and completing a treadmill session, the effort score from Strava is converted into in-world energy that triggers the vegetation growth.
 
-## Run tasks
+## Architecture
 
-To run tasks with Nx use:
+| Layer    | Technology                                                              |
+| -------- | ----------------------------------------------------------------------- |
+| Frontend | React 19, Three.js / React Three Fiber, Zustand, Vite, Socket.io client |
+| Backend  | NestJS 11, TypeORM, PostgreSQL, Socket.io (WebSockets), Swagger         |
+| Monorepo | Nx 22                                                                   |
 
-```sh
-npx nx <target> <project-name>
-```
+**Pages**
 
-For example:
+- `/editor` — 3D companion customisation (fur colour, eye colour, nose colour, body morphs, clothing, backpack)
+- `/hub` — multi-companion 3D scene showing all saved Lutras
+- `/interaction` — guided dialogue flow between the tablet (editor) and the big screen (companion), including Strava activity start/finish
+- `/admin` — activity summaries and list of saved companions
 
-```sh
-npx nx build myproject
-```
+**Backend modules**
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+- `companion` — CRUD for companions, WebSocket gateway for the real-time flow
+- `activity` — stores Strava activities, computes effort scores
+- `strava` — OAuth callback and webhook receiver
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Prerequisites
 
-## Add new projects
+- Docker and Docker Compose (for the dev container and PostgreSQL)
+- A Strava API application (client ID, client secret, access/refresh tokens)
+- Node.js 24 (handled automatically inside the dev container)
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+## Setup
 
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
-```
+### 1. Start the program
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
-
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
-
-# Generate a library
-npx nx g @nx/react:lib some-lib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
+Open the project in a Code Editor and reopen in container, or start the services manually:
 
 ```sh
-npx nx connect
+docker compose -f .devcontainer/docker-compose.yml up -d //If one wants to use the devcontainer
+npm install
+npx nx serve backend
+npx nx serve frontend
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+### .env File
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Variable                      | Description                                                               |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| `DATABASE_HOST`               | PostgreSQL host (default: `localhost`)                                    |
+| `DATABASE_PORT`               | PostgreSQL port (default: `5432`)                                         |
+| `DATABASE_USER`               | PostgreSQL user                                                           |
+| `DATABASE_PASSWORD`           | PostgreSQL password (see `.devcontainer/postgres_password.txt`)           |
+| `DATABASE_NAME`               | Database name (default: `lutra_db`)                                       |
+| `DATABASE_SSL`                | Enable SSL (`true` / `false`)                                             |
+| `STRAVA_CLIENT_ID`            | Strava app client ID                                                      |
+| `STRAVA_CLIENT_SECRET`        | Strava app client secret                                                  |
+| `STRAVA_ACCESS_TOKEN`         | Strava access token                                                       |
+| `STRAVA_REFRESH_TOKEN`        | Strava refresh token                                                      |
+| `STRAVA_REDIRECT_URI`         | OAuth callback URL (default: `http://localhost:3000/api/strava/callback`) |
+| `STRAVA_WEBHOOK_VERIFY_TOKEN` | Random secret string for Strava webhook verification                      |
+| `FRONTEND_URL`                | Frontend origin for CORS (default: `http://localhost:4200`)               |
 
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
+### 3. Run database migrations
 
 ```sh
-npx nx g ci-workflow
+npm run migration:run
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Running locally
 
-## Install Nx Console
+Start both applications in separate terminals:
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+```sh
+# Backend — http://localhost:3000
+npx nx serve backend
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Frontend — http://localhost:4200
+npx nx serve frontend
+```
 
-## Useful links
+Swagger API docs are available at `http://localhost:3000/api`.
 
-Learn more:
+## Database migrations
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Command                      | Description                                  |
+| ---------------------------- | -------------------------------------------- |
+| `npm run migration:run`      | Apply all pending migrations                 |
+| `npm run migration:revert`   | Revert the last migration                    |
+| `npm run migration:show`     | List applied and pending migrations          |
+| `npm run migration:generate` | Generate a new migration from entity changes |
