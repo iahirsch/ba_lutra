@@ -130,13 +130,19 @@ function buildTposeOrigins(glbScene: Object3D, count: number): Float32Array {
 
 interface CompanionParticleReformProps {
   onComplete: () => void;
+  /** When rendered inside a companion group already at world position P, pass P here.
+   *  Particles will be sampled and rendered in the group's local space instead of
+   *  being positioned at the interact spawn. */
+  parentWorldPosition?: [number, number, number];
 }
 
 export function CompanionParticleReform({
   onComplete,
+  parentWorldPosition,
 }: CompanionParticleReformProps) {
   const { scene: threeScene } = useThree();
-  const spawnPos = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+  const interactSpawnPos = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+  const spawnPos = parentWorldPosition ?? interactSpawnPos;
   const { scene: glbScene } = useGLTF(COMPANION_BODY_GLB_URL);
 
   const elapsedRef = useRef(0);
@@ -204,8 +210,12 @@ export function CompanionParticleReform({
     }
   });
 
+  const renderPosition = parentWorldPosition
+    ? ([0, 0, 0] as [number, number, number])
+    : interactSpawnPos;
+
   return (
-    <group position={spawnPos}>
+    <group position={renderPosition}>
       <points geometry={geometry}>
         <pointsMaterial
           color={CONDUIT_COLOR}

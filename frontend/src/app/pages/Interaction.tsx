@@ -29,6 +29,7 @@ import { EnvironmentComposer } from '../components/common/EnvironmentComposer';
 import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
 import { CompanionParticleReform } from '../components/common/CompanionParticleReform';
+import { CompanionParticleDissolve } from '../components/common/CompanionParticleDissolve';
 import { effortToConduitGlow } from '../utils/celShading';
 import {
   isInteractionExitStep,
@@ -194,9 +195,11 @@ interface InteractionSceneProps {
   activityEffortScore?: number | null;
   onExitAnimationComplete?: () => void;
   showReform?: boolean;
+  showDissolve?: boolean;
   showCompanion?: boolean;
   companionVisible?: boolean;
   onReformComplete?: () => void;
+  onDissolveComplete?: () => void;
   conduitFlashTrigger?: number;
 }
 
@@ -206,9 +209,11 @@ function InteractionScene({
   activityEffortScore,
   onExitAnimationComplete,
   showReform = false,
+  showDissolve = false,
   showCompanion = true,
   companionVisible = true,
   onReformComplete,
+  onDissolveComplete,
   conduitFlashTrigger,
 }: InteractionSceneProps) {
   const interactSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
@@ -256,6 +261,9 @@ function InteractionScene({
         <EnvironmentVegetation />
         {showReform && onReformComplete && (
           <CompanionParticleReform onComplete={onReformComplete} />
+        )}
+        {showDissolve && onDissolveComplete && (
+          <CompanionParticleDissolve onComplete={onDissolveComplete} />
         )}
         {showCompanion && companionConfig && (
           <group position={interactSpawn} visible={companionVisible}>
@@ -342,6 +350,7 @@ export function Interaction() {
   const [reformState, setReformState] = useState<'idle' | 'reforming' | 'done'>(
     'idle',
   );
+  const [dissolveActive, setDissolveActive] = useState(false);
 
   const [flashTrigger, setFlashTrigger] = useState(0);
   const prevStepForFlashRef = useRef('');
@@ -361,6 +370,7 @@ export function Interaction() {
 
     if (curr === null) {
       setReformState('idle');
+      setDissolveActive(false);
     }
   }, [flowState?.stepId]);
 
@@ -373,12 +383,17 @@ export function Interaction() {
   }, [flowState?.stepId]);
 
   const handleReformComplete = useCallback(() => setReformState('done'), []);
+  const startDissolve = useCallback(() => setDissolveActive(true), []);
+  const handleDissolveComplete = useCallback(
+    () => notifyExitComplete(),
+    [notifyExitComplete],
+  );
 
   const isFirstLook = flowState?.stepId === 'firstLook';
   const isNameInput = flowState?.stepId === 'nameInput';
   const showReform = isFirstLook && reformState === 'reforming';
   const showCompanion = !isNameInput;
-  const companionVisible = !isFirstLook || reformState === 'done';
+  const companionVisible = (!isFirstLook || reformState === 'done') && !dissolveActive;
   const showDialogue =
     !!flowState?.companionDialogue && (!isFirstLook || reformState === 'done');
 
@@ -389,11 +404,13 @@ export function Interaction() {
           companionConfig={flowState?.companionConfig ?? null}
           stepId={flowState?.stepId ?? ''}
           activityEffortScore={flowState?.activityEffortScore}
-          onExitAnimationComplete={notifyExitComplete}
+          onExitAnimationComplete={startDissolve}
           showReform={showReform}
+          showDissolve={dissolveActive}
           showCompanion={showCompanion}
           companionVisible={companionVisible}
           onReformComplete={handleReformComplete}
+          onDissolveComplete={handleDissolveComplete}
           conduitFlashTrigger={flashTrigger}
         />
       </div>

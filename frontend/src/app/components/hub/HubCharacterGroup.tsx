@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Html } from '@react-three/drei';
 import {
   RENDERED_COMPANION_PARTS,
@@ -9,6 +9,7 @@ import { CompanionBody } from '../common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../common/CompanionPartGlb';
 import { effortToConduitGlow } from '../../utils/celShading';
 import { useCompanionHubBehavior } from '../../hooks/useCompanionHubBehavior';
+import { CompanionParticleReform } from '../common/CompanionParticleReform';
 import type { HubWalkTerrain } from '../../hooks/useHubWalkTerrain';
 import type { Vector3 } from 'three';
 
@@ -28,6 +29,7 @@ export function HubCharacterGroup({
 }: HubCharacterGroupProps) {
   const bodyMorphs = companion.bodyMorphs ?? {};
   const conduitGlow = effortToConduitGlow(effortScore ?? 0.1);
+  const [reformDone, setReformDone] = useState(false);
   const { groupRef, activeClip } = useCompanionHubBehavior({
     companionId: companion.id,
     walkTerrain,
@@ -36,7 +38,14 @@ export function HubCharacterGroup({
 
   return (
     <group ref={groupRef}>
+      {!reformDone && (
+        <CompanionParticleReform
+          onComplete={() => setReformDone(true)}
+          parentWorldPosition={[initialPosition.x, initialPosition.y, initialPosition.z]}
+        />
+      )}
       <Suspense fallback={null}>
+        <group visible={reformDone}>
         <CompanionBody
           bodyMorphs={bodyMorphs}
           furColor={companion.furColor}
@@ -63,6 +72,7 @@ export function HubCharacterGroup({
             );
           })}
         </CompanionBody>
+        </group>
       </Suspense>
 
       <Html
