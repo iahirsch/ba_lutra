@@ -35,13 +35,15 @@ A visitor sits at a tablet (the **creator view**) and is guided through a dialog
 
 ## Setup
 
-### 1. Start the dev container
+### 1. Start the program
 
 Open the project in a Code Editor and reopen in container, or start the services manually:
 
 ```sh
-docker compose -f .devcontainer/docker-compose.yml up -d
+docker compose -f .devcontainer/docker-compose.yml up -d //If one wants to use the devcontainer
 npm install
+npx nx serve backend
+npx nx serve frontend
 ```
 
 ### .env File
