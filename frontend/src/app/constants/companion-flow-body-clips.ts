@@ -16,7 +16,7 @@ export function resolveInteractionBodyClip(stepId: string): CompanionBodyClip {
   if (INTERACTION_WIN_STEP_IDS.has(stepId)) {
     return 'win';
   }
-  if (INTERACTION_RUN_STEP_IDS) {
+  if (INTERACTION_RUN_STEP_IDS.has(stepId)) {
     return 'running';
   }
 
