@@ -36,6 +36,7 @@ export class CompanionService {
   async findAll(): Promise<Companion[]> {
     return this.companionRepository.find({
       order: { createdAt: 'DESC' },
+      take: 10,
     });
   }
 

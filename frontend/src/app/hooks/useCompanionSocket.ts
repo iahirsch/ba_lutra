@@ -34,7 +34,7 @@ export function useCompanionSocket() {
     socket.on(
       FLOW_EVENTS.COMPANION_ENTERED_HUB,
       (newCompanion: SavedCompanion) => {
-        setCompanions((prev) => [newCompanion, ...prev]);
+        setCompanions((prev) => [newCompanion, ...prev].slice(0, 10));
       },
     );
 
