@@ -152,20 +152,7 @@ function ConfirmView({
   );
 }
 
-function TransitionView({
-  prompt,
-  onExitComplete,
-}: {
-  prompt?: string[];
-  onExitComplete: () => void;
-}) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onExitComplete();
-    }, 3000); // 3 Sekunden anzeigen, dann weiter
-    return () => clearTimeout(timer);
-  }, [onExitComplete]);
-
+function TransitionView({ prompt }: { prompt?: string[] }) {
   return (
     <div className={styles.view}>
       {prompt && <p className={styles.prompt}>{prompt.join(' ')}</p>}
@@ -242,7 +229,7 @@ export function EditorFlowPanel({
           )}
 
           {type === 'transition' && (
-            <TransitionView prompt={prompt} onExitComplete={onExitComplete} />
+            <TransitionView prompt={prompt} />
           )}
         </div>
       </div>

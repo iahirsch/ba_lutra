@@ -130,13 +130,16 @@ function buildTposeOrigins(glbScene: Object3D, count: number): Float32Array {
 
 interface CompanionParticleReformProps {
   onComplete: () => void;
+  parentWorldPosition?: [number, number, number];
 }
 
 export function CompanionParticleReform({
   onComplete,
+  parentWorldPosition,
 }: CompanionParticleReformProps) {
   const { scene: threeScene } = useThree();
-  const spawnPos = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+  const envSpawnPos = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+  const spawnPos = parentWorldPosition ?? envSpawnPos;
   const { scene: glbScene } = useGLTF(COMPANION_BODY_GLB_URL);
 
   const elapsedRef = useRef(0);
@@ -165,8 +168,10 @@ export function CompanionParticleReform({
       sampledRef.current = true;
 
       const origins =
-        sampleIdlePoseOrigins(threeScene, PARTICLE_COUNT, spawnPos) ??
-        buildTposeOrigins(glbScene, PARTICLE_COUNT);
+        parentWorldPosition === undefined
+          ? (sampleIdlePoseOrigins(threeScene, PARTICLE_COUNT, spawnPos) ??
+             buildTposeOrigins(glbScene, PARTICLE_COUNT))
+          : buildTposeOrigins(glbScene, PARTICLE_COUNT);
 
       const scatter = computeScatter(origins, PARTICLE_COUNT);
       originsRef.current = origins as Float32Array<ArrayBuffer>;
@@ -215,6 +220,7 @@ export function CompanionParticleReform({
           opacity={0.95}
           blending={AdditiveBlending}
           depthWrite={false}
+          depthTest={false}
         />
       </points>
     </group>

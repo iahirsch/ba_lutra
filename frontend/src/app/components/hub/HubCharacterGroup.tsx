@@ -37,59 +37,70 @@ export function HubCharacterGroup({
   });
 
   return (
-    <group ref={groupRef}>
+    <>
       {!reformDone && (
         <CompanionParticleReform
           onComplete={() => setReformDone(true)}
-          parentWorldPosition={[initialPosition.x, initialPosition.y, initialPosition.z]}
+          parentWorldPosition={[
+            initialPosition.x,
+            initialPosition.y,
+            initialPosition.z,
+          ]}
         />
       )}
-      <Suspense fallback={null}>
-        <group visible={reformDone}>
-        <CompanionBody
-          bodyMorphs={bodyMorphs}
-          furColor={companion.furColor}
-          eyeColor={companion.eyeColor}
-          noseColor={companion.noseColor}
-          activeClip={activeClip}
-          activeClipKey={activeClip}
-        >
-          {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
-            const variantId = companion[category];
-            if (!variantId) return null;
-            return (
-              <CompanionPartGlb
-                key={`${companion.id}-${category}`}
-                category={category}
-                variantId={variantId}
-                bodyMorphs={
-                  category === 'backpack'
-                    ? { ...bodyMorphs, cloth_on: companion.clothingTop ? 1 : 0 }
-                    : bodyMorphs
-                }
-                conduitGlow={category === 'backpack' ? conduitGlow : undefined}
-              />
-            );
-          })}
-        </CompanionBody>
-        </group>
-      </Suspense>
+      <group ref={groupRef}>
+        <Suspense fallback={null}>
+          <group visible={reformDone}>
+            <CompanionBody
+              bodyMorphs={bodyMorphs}
+              furColor={companion.furColor}
+              eyeColor={companion.eyeColor}
+              noseColor={companion.noseColor}
+              activeClip={activeClip}
+              activeClipKey={activeClip}
+            >
+              {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
+                const variantId = companion[category];
+                if (!variantId) return null;
+                return (
+                  <CompanionPartGlb
+                    key={`${companion.id}-${category}`}
+                    category={category}
+                    variantId={variantId}
+                    bodyMorphs={
+                      category === 'backpack'
+                        ? {
+                            ...bodyMorphs,
+                            cloth_on: companion.clothingTop ? 1 : 0,
+                          }
+                        : bodyMorphs
+                    }
+                    conduitGlow={
+                      category === 'backpack' ? conduitGlow : undefined
+                    }
+                  />
+                );
+              })}
+            </CompanionBody>
+          </group>
+        </Suspense>
 
-      <Html
-        position={[0, 2.2, 0]}
-        center
-        distanceFactor={10}
-        pointerEvents="none"
-        style={{
-          color: '#ffffff',
-          fontSize: '16px',
-          fontWeight: 600,
-          whiteSpace: 'nowrap',
-          userSelect: 'none',
-        }}
-      >
-        {companion.name}
-      </Html>
-    </group>
+        <Html
+          position={[0, 2.2, 0]}
+          center
+          distanceFactor={10}
+          pointerEvents="none"
+          style={{
+            color: '#ffffff',
+            fontSize: '16px',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            userSelect: 'none',
+          }}
+        >
+          {companion.name}
+        </Html>
+      </group>
+    </>
   );
 }

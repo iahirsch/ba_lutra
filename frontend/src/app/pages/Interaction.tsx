@@ -263,7 +263,10 @@ function InteractionScene({
           <CompanionParticleReform onComplete={onReformComplete} />
         )}
         {showDissolve && onDissolveComplete && (
-          <CompanionParticleDissolve onComplete={onDissolveComplete} />
+          <CompanionParticleDissolve
+            onComplete={onDissolveComplete}
+            parentWorldPosition={interactSpawn}
+          />
         )}
         {showCompanion && companionConfig && (
           <group position={interactSpawn} visible={companionVisible}>
