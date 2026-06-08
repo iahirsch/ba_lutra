@@ -14,7 +14,7 @@ import { EnvironmentVegetation } from '../common/EnvironmentVegetation';
 import { HubCharacterGroup } from './HubCharacterGroup';
 import { EnvironmentAtmosphere } from '../common/EnvironmentAtmosphere';
 import { EnvironmentComposer } from '../common/EnvironmentComposer';
-import { Perf } from 'r3f-perf';
+// import { Perf } from 'r3f-perf';
 
 const COMPANION_ROW_GAP = 1.5;
 
@@ -76,7 +76,7 @@ function HubCanvasContents({
       ))}
 
       <EnvironmentComposer variant="hub" />
-      <Perf position="top-left" />
+      {/*<Perf position="top-left" />*/}
     </>
   );
 }

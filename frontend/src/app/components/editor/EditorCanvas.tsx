@@ -13,7 +13,7 @@ import {
   addSpawnOffset,
   useEnvironmentSpawn,
 } from '../../utils/environmentSpawn';
-import { Perf } from 'r3f-perf';
+// import { Perf } from 'r3f-perf';
 import { EditorComposer } from './EditorComposer';
 
 function EditorCameraRig({ spawn }: { spawn: [number, number, number] }) {
@@ -110,7 +110,7 @@ export function EditorCanvas({
       <directionalLight position={[5, 8, 7]} intensity={1.7} />
       {children}
       <EditorComposer target={target} disableDOF={disableDOF} />
-      <Perf position="top-left" />
+      {/*<Perf position="top-left" />*/}
     </Canvas>
   );
 }

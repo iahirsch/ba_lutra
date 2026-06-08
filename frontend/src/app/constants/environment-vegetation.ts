@@ -135,7 +135,7 @@ export const GRASS_LOD_MESH_NAMES = [
   GRASS_LOD2_MESH_NAME,
 ] as const;
 
-export const GRASS_DEBUG_SLIDER = true;
+export const GRASS_DEBUG_SLIDER = false;
 
 export const GRASS_INSTANCE_COUNT = 25000;
 export const GRASS_BLADE_WIDTH = 4.75;

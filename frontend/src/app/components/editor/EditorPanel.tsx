@@ -421,7 +421,7 @@ export function EditorPanel() {
         disabled={saving}
         aria-busy={saving}
       >
-        {saving ? 'Saving…' : saved ? 'Saved!' : 'Weiter'}
+        {saving ? 'Wird erstellt...' : saved ? 'Erstellt!' : 'Erstellen'}
       </button>
       {/* <div className={styles.footer}>
       </div> */}

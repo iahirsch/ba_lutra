@@ -228,9 +228,7 @@ export function EditorFlowPanel({
             />
           )}
 
-          {type === 'transition' && (
-            <TransitionView prompt={prompt} />
-          )}
+          {type === 'transition' && <TransitionView prompt={prompt} />}
         </div>
       </div>
 
@@ -241,7 +239,7 @@ export function EditorFlowPanel({
           className={styles.actionButton}
           disabled={!isNameInputValid}
         >
-          Erstellen
+          Weiter
         </button>
       )}
     </div>
