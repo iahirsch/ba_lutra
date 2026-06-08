@@ -19,7 +19,7 @@ import {
   INTERACTION_CAMERA,
   HUB_CAMERA,
 } from '../constants/hub-scene';
-import { useEnvironmentSpawn } from '../utils/environmentSpawn';
+import { useEnvironmentSpawnTransform } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { HubBackground } from '../components/hub/HubBackground';
 import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
@@ -216,7 +216,8 @@ function InteractionScene({
   onDissolveComplete,
   conduitFlashTrigger,
 }: InteractionSceneProps) {
-  const interactSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.interact);
+  const { position: interactSpawn, rotationY: interactRotationY } =
+    useEnvironmentSpawnTransform(ENVIRONMENT_SPAWN.interact);
 
   const showConduitGlow =
     activityEffortScore != null && stepId !== 'activity_finished';
@@ -269,7 +270,11 @@ function InteractionScene({
           />
         )}
         {showCompanion && companionConfig && (
-          <group position={interactSpawn} visible={companionVisible}>
+          <group
+            position={interactSpawn}
+            rotation={[0, interactRotationY, 0]}
+            visible={companionVisible}
+          >
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}

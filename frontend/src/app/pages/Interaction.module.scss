@@ -30,6 +30,7 @@
   background: s.$color-neutral-0;
   border-radius: s.$radius-3xl;
   padding: s.$space-3xl;
+  margin-left: s.$space-3xl;
   max-width: 40rem;
   width: 100%;
   box-shadow: s.$shadow-soft;
@@ -38,8 +39,7 @@
     content: '';
     position: absolute;
     bottom: calc(-1 * s.$space-xl);
-    left: 50%;
-    transform: translateX(-50%);
+    right: s.$space-3xl;
     border-left: s.$space-xl solid transparent;
     border-right: s.$space-xl solid transparent;
     border-top: s.$space-xl solid s.$color-neutral-0;
