@@ -9,7 +9,7 @@ export function useTotalEffortScore(refreshToken?: number): number {
   );
 
   return useMemo(() => {
-    let total = 0.15;
+    let total = 0;
     for (const activity of latestActivitiesByCompanion.values()) {
       total += activity.effortScore;
     }

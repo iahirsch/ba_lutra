@@ -124,6 +124,7 @@ export function applyCelShading(root: Object3D): void {
 }
 
 export const BACKPACK_CONDUIT_MESH_NAME = 'conduit';
+export const ANCHOR_CONDUIT_MESH_NAME = 'Anchor_Conduit';
 
 const CONDUIT_GLOW_COLOR = new Color(0x7cfdfd);
 
@@ -131,13 +132,17 @@ const CONDUIT_GLOW_COLOR = new Color(0x7cfdfd);
 export function effortToConduitGlow(effort: number): number {
   const e = Math.min(1, Math.max(0, effort));
   if (e <= 0) return 0;
-  return 0.35 + e * 2.65;
+  return 0.1 + e * 1;
 }
 
 /** Sets emissive glow on the conduit mesh after cel shading. */
-export function setConduitGlow(root: Object3D, intensity: number): void {
+export function setConduitGlow(
+  root: Object3D,
+  intensity: number,
+  meshName: string = BACKPACK_CONDUIT_MESH_NAME,
+): void {
   root.traverse((node) => {
-    if (!(node instanceof Mesh) || node.name !== BACKPACK_CONDUIT_MESH_NAME) {
+    if (!(node instanceof Mesh) || node.name !== meshName) {
       return;
     }
     const materials = Array.isArray(node.material)

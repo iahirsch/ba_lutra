@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { TextureLoader } from 'three';
@@ -8,8 +8,11 @@ import {
 } from '../../constants/hub-scene';
 import * as veg from '../../constants/environment-vegetation';
 import {
+  ANCHOR_CONDUIT_MESH_NAME,
   applyCelShading,
   applyHubTerrainMaterial,
+  effortToConduitGlow,
+  setConduitGlow,
 } from '../../utils/celShading';
 import {
   attachTerrainGrowShader,
@@ -78,6 +81,14 @@ export function HubBackground({
     dirtColor,
     dirtNormal,
   ]);
+
+  const anchorConduitGlow = effortToConduitGlow(
+    totalEffortScore / veg.GRASS_GROW_EFFORT_REF,
+  );
+
+  useEffect(() => {
+    setConduitGlow(celScene, anchorConduitGlow, ANCHOR_CONDUIT_MESH_NAME);
+  }, [celScene, anchorConduitGlow]);
 
   const { anchorX, anchorZ, growRadiusRef, fadeWidth } = useVegetationGrow({
     applyEnvironmentTransform: true,

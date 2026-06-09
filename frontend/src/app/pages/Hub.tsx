@@ -36,8 +36,8 @@ export function Hub() {
         />
       </div>
 
-      {/*<header className={styles.overlay}>*/}
-      {/*<div className={styles.left}>
+      {/*<header className={styles.overlay}>
+        <div className={styles.left}>
           <span className={styles.title}>Companion Hub</span>
           <ConnectionBadge
             connected={connected}
