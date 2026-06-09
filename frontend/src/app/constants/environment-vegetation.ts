@@ -8,6 +8,12 @@ export interface EnvironmentVegetationEntry {
 export const TREES_URL = '/assets/environment/trees/';
 export const TREE_LEAVES_ALPHA_TEXTURE_URL = TREES_URL + 'leaves.png';
 export const TREE_DEFAULT_GLB = TREES_URL + 'tree01.glb';
+export const TREE_GLBS = [
+  TREES_URL + 'tree01.glb',
+  TREES_URL + 'tree02.glb',
+  TREES_URL + 'tree03.glb',
+  TREES_URL + 'tree04.glb',
+] as const;
 export const TREE_SPAWN_PREFIX = 'EMPTY_Tree';
 
 export const BUSHES_URL = '/assets/environment/bushes/';

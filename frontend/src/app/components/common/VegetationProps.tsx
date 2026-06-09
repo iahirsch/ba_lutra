@@ -20,7 +20,9 @@ import {
 import { VegetationProp, type VegetationPropHandle } from './VegetationProp';
 
 useGLTF.preload(HUB_GLTF_URL);
-useGLTF.preload(veg.TREE_DEFAULT_GLB);
+for (const url of veg.TREE_GLBS) {
+  useGLTF.preload(url);
+}
 useGLTF.preload(veg.BUSH_DEFAULT_GLB);
 for (const entry of veg.ENVIRONMENT_VEGETATION) {
   useGLTF.preload(entry.glbUrl);
@@ -71,13 +73,18 @@ export function VegetationProps({
       );
       return {
         id: marker.name,
-        glbUrl: override?.glbUrl ?? veg.TREE_DEFAULT_GLB,
+        glbUrl:
+          override?.glbUrl ??
+          veg.TREE_GLBS[Math.floor(Math.random() * veg.TREE_GLBS.length)],
         position: [marker.position.x, marker.position.y, marker.position.z] as [
           number,
           number,
           number,
         ],
-        scale: override?.scale ?? 1,
+        scale: override?.scale ?? 0.6 + Math.random() * 0.6,
+        rotation: override
+          ? undefined
+          : ([0, Math.random() * Math.PI * 2, 0] as [number, number, number]),
       };
     });
   }, [scene, applyEnvironmentTransform]);
@@ -173,6 +180,7 @@ export function VegetationProps({
           ref={treePropRefs[i]}
           glbUrl={entry.glbUrl}
           position={entry.position}
+          rotation={entry.rotation}
           leavesMaterialState={treeMaterialState}
         />
       ))}

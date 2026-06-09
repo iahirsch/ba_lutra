@@ -7,7 +7,7 @@ import { useCompanionSocket } from '../hooks/useCompanionSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
 import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import { HubCanvas } from '../components/hub/HubCanvas';
-import { ConnectionBadge } from '../components/common/ConnectionBadge';
+// import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import styles from './Hub.module.scss';
 
 export function Hub() {
