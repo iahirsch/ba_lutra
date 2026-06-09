@@ -15,7 +15,7 @@ import {
 } from '../constants/environment-vegetation';
 import { resolveEnvironmentSpawn } from './environmentSpawn';
 
-const GROW_RADIUS_LERP = 1;
+const GROW_RADIUS_LERP = 0.2;
 
 export function distanceFromGrowAnchorXZ(
   x: number,
