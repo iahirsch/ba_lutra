@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import { Html } from '@react-three/drei';
 import {
   RENDERED_COMPANION_PARTS,
@@ -30,11 +30,19 @@ export function HubCharacterGroup({
   const bodyMorphs = companion.bodyMorphs ?? {};
   const conduitGlow = effortToConduitGlow(effortScore ?? 0.1);
   const [reformDone, setReformDone] = useState(false);
+  const [entryWaveDone, setEntryWaveDone] = useState(false);
+  const playingEntryWave = reformDone && !entryWaveDone;
+
   const { groupRef, activeClip } = useCompanionHubBehavior({
     companionId: companion.id,
     walkTerrain,
     initialPosition,
+    frozen: !entryWaveDone,
   });
+
+  const displayClip = playingEntryWave ? 'wave' : activeClip;
+  const displayClipKey = playingEntryWave ? 'entry-wave' : activeClip;
+  const onEntryWaveComplete = useCallback(() => setEntryWaveDone(true), []);
 
   return (
     <>
@@ -56,8 +64,9 @@ export function HubCharacterGroup({
               furColor={companion.furColor}
               eyeColor={companion.eyeColor}
               noseColor={companion.noseColor}
-              activeClip={activeClip}
-              activeClipKey={activeClip}
+              activeClip={displayClip}
+              activeClipKey={displayClipKey}
+              onRestoredToIdle={playingEntryWave ? onEntryWaveComplete : undefined}
             >
               {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
                 const variantId = companion[category];

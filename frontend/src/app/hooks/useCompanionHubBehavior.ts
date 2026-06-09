@@ -47,14 +47,18 @@ interface UseCompanionHubBehaviorOptions {
   companionId: string;
   walkTerrain: HubWalkTerrain;
   initialPosition: Vector3;
+  frozen?: boolean;
 }
 
 export function useCompanionHubBehavior({
   companionId,
   walkTerrain,
   initialPosition,
+  frozen = false,
 }: UseCompanionHubBehaviorOptions) {
   const groupRef = useRef<Group>(null);
+  const frozenRef = useRef(frozen);
+  frozenRef.current = frozen;
   const phaseRef = useRef<BehaviorPhase>('idle');
   const idleTimerRef = useRef(randomRange(0.5, 2));
   const targetRef = useRef(new Vector3());
@@ -202,6 +206,11 @@ export function useCompanionHubBehavior({
   useFrame((_state, delta) => {
     const group = groupRef.current;
     if (!group) return;
+
+    if (frozenRef.current) {
+      syncGroup(group);
+      return;
+    }
 
     const position = positionRef.current;
     const visit = activeVisitRef.current;
