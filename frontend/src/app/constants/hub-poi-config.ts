@@ -2,11 +2,15 @@ import type { Vector3 } from 'three';
 
 export type HubPoiConfig =
   | { type: 'single'; idleMin?: number; idleMax?: number }
-  | { type: 'multi'; capacity: number; radius: number; idleMin?: number; idleMax?: number };
+  | {
+      type: 'multi';
+      capacity: number;
+      radius: number;
+      idleMin?: number;
+      idleMax?: number;
+    };
 
-export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {
-  EMPTY_POI_Fire: { type: 'multi', capacity: 6, radius: 2.2 },
-};
+export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {};
 
 export function getHubPoiConfig(poiName: string): HubPoiConfig {
   return HUB_POI_CONFIG[poiName] ?? { type: 'single' };

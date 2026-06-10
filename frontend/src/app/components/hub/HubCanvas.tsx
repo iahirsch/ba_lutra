@@ -3,10 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import type { Activity, SavedCompanion } from '@ba-praktisch/shared-types';
 import { ENVIRONMENT_SPAWN, HUB_VIEW_CAMERA } from '../../constants/hub-scene';
-import {
-  addSpawnOffset,
-  useEnvironmentSpawn,
-} from '../../utils/environmentSpawn';
+import { useEnvironmentSpawn } from '../../utils/environmentSpawn';
 import { useHubWalkTerrain } from '../../hooks/useHubWalkTerrain';
 import { HubLights } from './HubLights';
 import { HubBackground } from './HubBackground';
@@ -16,24 +13,6 @@ import { EnvironmentAtmosphere } from '../common/EnvironmentAtmosphere';
 import { EnvironmentComposer } from '../common/EnvironmentComposer';
 // import { Perf } from 'r3f-perf';
 
-const COMPANION_ROW_GAP = 1.5;
-
-function getCompanionSpawnPosition(
-  hubSpawn: [number, number, number],
-  index: number,
-  total: number,
-): Vector3 {
-  if (total <= 1) {
-    return new Vector3(...hubSpawn);
-  }
-  const startX = (-(total - 1) * COMPANION_ROW_GAP) / 2;
-  const [x, y, z] = addSpawnOffset(hubSpawn, [
-    startX + index * COMPANION_ROW_GAP,
-    0,
-    0,
-  ]);
-  return new Vector3(x, y, z);
-}
 
 interface HubCanvasContentsProps {
   companions: SavedCompanion[];
@@ -59,16 +38,12 @@ function HubCanvasContents({
         <EnvironmentVegetation totalEffortScore={totalEffortScore} />
       </Suspense>
 
-      {companions.map((companion, index) => (
+      {companions.map((companion) => (
         <HubCharacterGroup
           key={companion.id}
           companion={companion}
           walkTerrain={walkTerrain}
-          initialPosition={getCompanionSpawnPosition(
-            hubSpawn,
-            index,
-            companions.length,
-          )}
+          initialPosition={new Vector3(...hubSpawn)}
           effortScore={
             latestActivitiesByCompanion.get(companion.id)?.effortScore
           }
