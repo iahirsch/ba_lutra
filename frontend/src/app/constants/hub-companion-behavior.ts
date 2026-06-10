@@ -19,3 +19,6 @@ export const HUB_POI_DETECT_RADIUS = 10;
 export const HUB_POI_VISIT_CHANCE = 0.5;
 
 export const HUB_COMPANION_GROUND_OFFSET = 0.1;
+
+export const HUB_COMPANION_STUCK_CHECK_DELAY = 2;
+export const HUB_COMPANION_STUCK_MIN_PROGRESS = 0.5;

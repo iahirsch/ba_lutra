@@ -14,6 +14,8 @@ import {
   HUB_COMPANION_IDLE_MIN,
   HUB_COMPANION_MIN_SEPARATION,
   HUB_COMPANION_SEPARATION_STRENGTH,
+  HUB_COMPANION_STUCK_CHECK_DELAY,
+  HUB_COMPANION_STUCK_MIN_PROGRESS,
   HUB_COMPANION_WALK_SPEED,
   HUB_POI_DETECT_RADIUS,
   HUB_POI_IDLE_MAX,
@@ -70,6 +72,9 @@ export function useCompanionHubBehavior({
   // is skipped on frames where the companion hasn't moved.
   const lastSyncedXRef = useRef<number | null>(null);
   const lastSyncedZRef = useRef<number | null>(null);
+  const walkStartXRef = useRef(0);
+  const walkStartZRef = useRef(0);
+  const walkTimeRef = useRef(0);
 
   const syncGroup = (group: Group, faceCenter = false) => {
     const px = positionRef.current.x;
@@ -235,6 +240,9 @@ export function useCompanionHubBehavior({
       }
 
       targetRef.current.copy(nextTarget);
+      walkStartXRef.current = position.x;
+      walkStartZRef.current = position.z;
+      walkTimeRef.current = 0;
       phaseRef.current = 'walking';
       setActiveClip('walking');
     }
@@ -280,15 +288,51 @@ export function useCompanionHubBehavior({
       position.z = constrained.z;
 
       if (constrained.blocked) {
-        phaseRef.current = 'idle';
-        setActiveClip('idle');
-        clearActiveVisit();
-        idleTimerRef.current = randomRange(
-          HUB_COMPANION_IDLE_MIN,
-          HUB_COMPANION_IDLE_MAX,
+        const ndx = dx / distance;
+        const ndz = dz / distance;
+        const cwX = prevX + ndz * step;
+        const cwZ = prevZ - ndx * step;
+        const ccwX = prevX - ndz * step;
+        const ccwZ = prevZ + ndx * step;
+        if (walkTerrain.isWalkableAt(cwX, cwZ)) {
+          position.x = cwX;
+          position.z = cwZ;
+        } else if (walkTerrain.isWalkableAt(ccwX, ccwZ)) {
+          position.x = ccwX;
+          position.z = ccwZ;
+        } else {
+          phaseRef.current = 'idle';
+          setActiveClip('idle');
+          clearActiveVisit();
+          idleTimerRef.current = randomRange(
+            HUB_COMPANION_IDLE_MIN,
+            HUB_COMPANION_IDLE_MAX,
+          );
+          syncGroup(group);
+          return;
+        }
+      }
+
+      walkTimeRef.current += delta;
+      if (walkTimeRef.current >= HUB_COMPANION_STUCK_CHECK_DELAY) {
+        const moved = Math.hypot(
+          position.x - walkStartXRef.current,
+          position.z - walkStartZRef.current,
         );
-        syncGroup(group);
-        return;
+        if (moved < HUB_COMPANION_STUCK_MIN_PROGRESS) {
+          phaseRef.current = 'idle';
+          setActiveClip('idle');
+          clearActiveVisit();
+          idleTimerRef.current = randomRange(
+            HUB_COMPANION_IDLE_MIN,
+            HUB_COMPANION_IDLE_MAX,
+          );
+          syncGroup(group);
+          return;
+        }
+        walkStartXRef.current = position.x;
+        walkStartZRef.current = position.z;
+        walkTimeRef.current = 0;
       }
 
       group.rotation.y = Math.atan2(dx, dz);
