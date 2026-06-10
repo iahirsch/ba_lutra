@@ -1,16 +1,25 @@
 import type { Vector3 } from 'three';
 
 export type HubPoiConfig =
-  | { type: 'single'; idleMin?: number; idleMax?: number }
+  | { type?: 'single'; weight?: number; idleMin?: number; idleMax?: number }
   | {
-      type: 'multi';
+      type?: 'multi';
       capacity: number;
       radius: number;
+      weight?: number;
       idleMin?: number;
       idleMax?: number;
     };
 
-export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {};
+export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {
+  EMPTY_POI_Fire01: { weight: 3 },
+  EMPTY_POI_Fire02: { weight: 2 },
+  EMPTY_POI_Fire03: { weight: 2 },
+  EMPTY_POI_Tent01: { weight: 1.5 },
+  EMPTY_POI_Tent02: { weight: 2 },
+  EMPTY_POI_Board01: { weight: 1.5 },
+  EMPTY_POI_Board02: { weight: 2 },
+};
 
 export function getHubPoiConfig(poiName: string): HubPoiConfig {
   return HUB_POI_CONFIG[poiName] ?? { type: 'single' };

@@ -160,7 +160,15 @@ export function useCompanionHubBehavior({
       return null;
     }
 
-    const poi = nearbyPois[Math.floor(Math.random() * nearbyPois.length)];
+    const totalWeight = nearbyPois.reduce(
+      (sum, p) => sum + (getHubPoiConfig(p.name).weight ?? 1),
+      0,
+    );
+    let pick = Math.random() * totalWeight;
+    const poi = nearbyPois.find((p) => {
+      pick -= getHubPoiConfig(p.name).weight ?? 1;
+      return pick <= 0;
+    }) ?? nearbyPois[nearbyPois.length - 1];
     const config = getHubPoiConfig(poi.name);
     const capacity = getHubPoiCapacity(config);
     const slot = claimHubPoiSlot(poi.name, capacity, companionId);
