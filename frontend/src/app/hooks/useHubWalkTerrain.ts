@@ -22,6 +22,7 @@ import {
 export interface HubPoi {
   name: string;
   position: Vector3;
+  rotationY: number;
 }
 
 export interface HubWalkTerrain {

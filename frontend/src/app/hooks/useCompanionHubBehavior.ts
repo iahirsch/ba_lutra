@@ -39,6 +39,7 @@ interface ActivePoiVisit {
   center: Vector3;
   slot: number;
   isGather: boolean;
+  rotationY: number;
 }
 
 function randomRange(min: number, max: number): number {
@@ -76,7 +77,7 @@ export function useCompanionHubBehavior({
   const walkStartZRef = useRef(0);
   const walkTimeRef = useRef(0);
 
-  const syncGroup = (group: Group, faceCenter = false) => {
+  const syncGroup = (group: Group, facePoi = false) => {
     const px = positionRef.current.x;
     const pz = positionRef.current.z;
     // Only re-cast against the terrain when XZ actually changed — the terrain
@@ -93,12 +94,8 @@ export function useCompanionHubBehavior({
     group.position.copy(positionRef.current);
 
     const visit = activeVisitRef.current;
-    if (faceCenter && visit) {
-      const position = positionRef.current;
-      group.rotation.y = Math.atan2(
-        visit.center.x - position.x,
-        visit.center.z - position.z,
-      );
+    if (facePoi && visit) {
+      group.rotation.y = visit.rotationY;
     }
   };
 
@@ -175,6 +172,7 @@ export function useCompanionHubBehavior({
       center: poi.position.clone(),
       slot,
       isGather: config.type === 'multi',
+      rotationY: poi.rotationY,
     };
 
     const target = resolvePoiTargetPosition(poi.name, poi.position, slot);
@@ -220,12 +218,12 @@ export function useCompanionHubBehavior({
     const position = positionRef.current;
     const visit = activeVisitRef.current;
     const shareGatherPoi = visit?.isGather ? visit.poiName : undefined;
-    const faceCenter = visit?.isGather && phaseRef.current === 'idle';
+    const facePoi = visit !== null && phaseRef.current === 'idle';
 
     if (phaseRef.current === 'idle') {
       idleTimerRef.current -= delta;
       if (idleTimerRef.current > 0) {
-        syncGroup(group, faceCenter);
+        syncGroup(group, facePoi);
         return;
       }
 
@@ -235,7 +233,7 @@ export function useCompanionHubBehavior({
           HUB_COMPANION_IDLE_MIN,
           HUB_COMPANION_IDLE_MAX,
         );
-        syncGroup(group, faceCenter);
+        syncGroup(group, facePoi);
         return;
       }
 
@@ -259,7 +257,7 @@ export function useCompanionHubBehavior({
           visit ? HUB_POI_IDLE_MIN : HUB_COMPANION_IDLE_MIN,
           visit ? HUB_POI_IDLE_MAX : HUB_COMPANION_IDLE_MAX,
         );
-        syncGroup(group, visit?.isGather ?? false);
+        syncGroup(group, visit !== null);
         return;
       }
 

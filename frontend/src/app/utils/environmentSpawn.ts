@@ -79,13 +79,18 @@ export function collectHubSceneMarkers(
   scene: Object3D,
   namePrefix: string,
   applyEnvironmentTransform = true,
-): Array<{ name: string; position: Vector3 }> {
-  const markers: Array<{ name: string; position: Vector3 }> = [];
+): Array<{ name: string; position: Vector3; rotationY: number }> {
+  const markers: Array<{ name: string; position: Vector3; rotationY: number }> =
+    [];
+  const quaternion = new Quaternion();
 
+  scene.updateMatrixWorld(true);
   scene.traverse((object) => {
     if (!object.name.startsWith(namePrefix)) {
       return;
     }
+    object.getWorldQuaternion(quaternion);
+    const rotationY = new Euler().setFromQuaternion(quaternion, 'YXZ').y;
     markers.push({
       name: object.name,
       position: resolveHubScenePosition(
@@ -93,6 +98,7 @@ export function collectHubSceneMarkers(
         object.name,
         applyEnvironmentTransform,
       ),
+      rotationY,
     });
   });
 
