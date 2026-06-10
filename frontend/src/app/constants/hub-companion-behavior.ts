@@ -12,11 +12,11 @@ export const HUB_COMPANION_SEPARATION_STRENGTH = 2.5;
 
 export const HUB_COMPANION_IDLE_MIN = 2;
 export const HUB_COMPANION_IDLE_MAX = 5;
-export const HUB_POI_IDLE_MIN = 20;
-export const HUB_POI_IDLE_MAX = 45;
+export const HUB_POI_IDLE_MIN = 30;
+export const HUB_POI_IDLE_MAX = 90;
 
-export const HUB_POI_DETECT_RADIUS = 10;
-export const HUB_POI_VISIT_CHANCE = 0.5;
+export const HUB_POI_DETECT_RADIUS = 20;
+export const HUB_COMPANION_ROAM_CHANCE = 0.15;
 
 export const HUB_COMPANION_GROUND_OFFSET = 0.1;
 

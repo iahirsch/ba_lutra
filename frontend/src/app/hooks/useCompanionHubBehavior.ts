@@ -6,6 +6,7 @@ import {
   getGatherSlotXZ,
   getHubPoiCapacity,
   getHubPoiConfig,
+  getHubPoiIdleRange,
 } from '../constants/hub-poi-config';
 import {
   HUB_COMPANION_ARRIVAL_DISTANCE,
@@ -13,6 +14,7 @@ import {
   HUB_COMPANION_IDLE_MAX,
   HUB_COMPANION_IDLE_MIN,
   HUB_COMPANION_MIN_SEPARATION,
+  HUB_COMPANION_ROAM_CHANCE,
   HUB_COMPANION_SEPARATION_STRENGTH,
   HUB_COMPANION_STUCK_CHECK_DELAY,
   HUB_COMPANION_STUCK_MIN_PROGRESS,
@@ -20,7 +22,6 @@ import {
   HUB_POI_DETECT_RADIUS,
   HUB_POI_IDLE_MAX,
   HUB_POI_IDLE_MIN,
-  HUB_POI_VISIT_CHANCE,
 } from '../constants/hub-companion-behavior';
 import type { HubWalkTerrain } from './useHubWalkTerrain';
 import {
@@ -187,7 +188,7 @@ export function useCompanionHubBehavior({
   const pickNextTarget = (from: Vector3): Vector3 | null => {
     clearActiveVisit();
 
-    if (Math.random() < HUB_POI_VISIT_CHANCE) {
+    if (Math.random() >= HUB_COMPANION_ROAM_CHANCE) {
       const poiTarget = pickPoiTarget(from);
       if (poiTarget) {
         return poiTarget;
@@ -253,10 +254,19 @@ export function useCompanionHubBehavior({
       if (distance <= HUB_COMPANION_ARRIVAL_DISTANCE) {
         phaseRef.current = 'idle';
         setActiveClip('idle');
-        idleTimerRef.current = randomRange(
-          visit ? HUB_POI_IDLE_MIN : HUB_COMPANION_IDLE_MIN,
-          visit ? HUB_POI_IDLE_MAX : HUB_COMPANION_IDLE_MAX,
-        );
+        if (visit) {
+          const idleRange = getHubPoiIdleRange(
+            getHubPoiConfig(visit.poiName),
+            HUB_POI_IDLE_MIN,
+            HUB_POI_IDLE_MAX,
+          );
+          idleTimerRef.current = randomRange(idleRange.min, idleRange.max);
+        } else {
+          idleTimerRef.current = randomRange(
+            HUB_COMPANION_IDLE_MIN,
+            HUB_COMPANION_IDLE_MAX,
+          );
+        }
         syncGroup(group, visit !== null);
         return;
       }

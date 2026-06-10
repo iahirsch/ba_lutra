@@ -1,11 +1,11 @@
 import type { Vector3 } from 'three';
 
 export type HubPoiConfig =
-  | { type: 'single' }
-  | { type: 'multi'; capacity: number; radius: number };
+  | { type: 'single'; idleMin?: number; idleMax?: number }
+  | { type: 'multi'; capacity: number; radius: number; idleMin?: number; idleMax?: number };
 
 export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {
-  EMPTY_POI_Fire: { type: 'multi', capacity: 6, radius: 2 },
+  EMPTY_POI_Fire: { type: 'multi', capacity: 6, radius: 2.2 },
 };
 
 export function getHubPoiConfig(poiName: string): HubPoiConfig {
@@ -14,6 +14,17 @@ export function getHubPoiConfig(poiName: string): HubPoiConfig {
 
 export function getHubPoiCapacity(config: HubPoiConfig): number {
   return config.type === 'multi' ? config.capacity : 1;
+}
+
+export function getHubPoiIdleRange(
+  config: HubPoiConfig,
+  defaultMin: number,
+  defaultMax: number,
+): { min: number; max: number } {
+  return {
+    min: config.idleMin ?? defaultMin,
+    max: config.idleMax ?? defaultMax,
+  };
 }
 
 export function getGatherSlotXZ(
