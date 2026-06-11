@@ -1,24 +1,19 @@
 import {
+  type ReactNode,
   Suspense,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { PerspectiveCamera as DreiCamera } from '@react-three/drei';
-import { Vector3 } from 'three';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Group } from 'three';
 import type {
   CompanionConfig,
   RenderedCompanionPart,
 } from '@ba-praktisch/shared-types';
 import { RENDERED_COMPANION_PARTS } from '@ba-praktisch/shared-types';
-import {
-  ENVIRONMENT_SPAWN,
-  INTERACTION_CAMERA,
-  HUB_CAMERA,
-} from '../constants/hub-scene';
+import { ENVIRONMENT_SPAWN, INTERACTION_CAMERA } from '../constants/hub-scene';
 import { useEnvironmentSpawnTransform } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
@@ -31,6 +26,7 @@ import { CompanionBody } from '../components/common/CompanionBodyGlb';
 import { CompanionPartGlb } from '../components/common/CompanionPartGlb';
 import { CompanionParticleReform } from '../components/common/CompanionParticleReform';
 import { CompanionParticleDissolve } from '../components/common/CompanionParticleDissolve';
+import { ConduitEnergyBurst } from '../components/common/ConduitEnergyBurst';
 import { effortToConduitGlow } from '../utils/celShading';
 import {
   isInteractionExitStep,
@@ -40,24 +36,7 @@ import styles from './Interaction.module.scss';
 
 const EXIT_ANIMATION_FALLBACK_MS = 8_000;
 
-const BACKPACK_ORBIT_ANGLE = Math.PI;
-
 const BACKPACK_HEIGHT_OFFSET = 1.3;
-
-/** Camera distances from the conduit per step. */
-const VIEW_DISTANCES: Record<string, number> = {
-  store_energy: 4.2,
-  store_energy_1: 3.5,
-  store_energy_2: 2.8,
-  store_energy_3: 2.1,
-};
-
-/** Camera shake config per step. */
-const SHAKE_CONFIG: Record<string, { duration: number; strength: number }> = {
-  store_energy_1: { duration: 0.5, strength: 0.018 },
-  store_energy_2: { duration: 0.7, strength: 0.032 },
-  store_energy_3: { duration: 1.0, strength: 0.048 },
-};
 
 /** Lerp duration (seconds) for conduit glow after each flash. */
 const CONDUIT_LERP_DURATIONS: Record<string, number> = {
@@ -87,107 +66,48 @@ function getStoreEnergyGlowTarget(stepId: string, effort: number): number {
   return effortToConduitGlow(effort);
 }
 
-interface StoreEnergyCameraRigProps {
-  stepId: string;
-  spawnPos: [number, number, number];
+/** Rotation speed in radians per second — covers 180° in ~0.9 s. */
+const TURN_SPEED = 3.5;
+
+interface CompanionTurnGroupProps {
+  position: [number, number, number];
+  baseRotationY: number;
+  showBackpack: boolean;
+  visible?: boolean;
+  children: ReactNode;
 }
 
-function StoreEnergyCameraRig({ stepId, spawnPos }: StoreEnergyCameraRigProps) {
-  const { camera } = useThree();
-
-  const backpackPos = useMemo(
-    () =>
-      new Vector3(
-        spawnPos[0],
-        spawnPos[1] + BACKPACK_HEIGHT_OFFSET,
-        spawnPos[2],
-      ),
-    [spawnPos],
-  );
-
-  const targetPos = useRef(
-    new Vector3(...(HUB_CAMERA.position as [number, number, number])),
-  );
-  const targetLookAt = useRef(
-    new Vector3(spawnPos[0], spawnPos[1] + 0.8, spawnPos[2]),
-  );
-  const currentLookAt = useRef(
-    new Vector3(spawnPos[0], spawnPos[1] + 0.8, spawnPos[2]),
-  );
-  const shakeRef = useRef<{
-    elapsed: number;
-    duration: number;
-    strength: number;
-  } | null>(null);
-  const swayTimeRef = useRef(0);
-  const prevStepRef = useRef(stepId);
-
-  useEffect(() => {
-    const prev = prevStepRef.current;
-    prevStepRef.current = stepId;
-    if (prev === stepId) return;
-
-    if (!STORE_ENERGY_STEP_IDS.has(stepId)) {
-      targetPos.current.set(
-        ...(HUB_CAMERA.position as [number, number, number]),
-      );
-      targetLookAt.current.set(spawnPos[0], spawnPos[1] + 0.8, spawnPos[2]);
-      return;
-    }
-
-    const dist = VIEW_DISTANCES[stepId];
-    if (dist !== undefined) {
-      targetPos.current.set(
-        spawnPos[0] + Math.sin(BACKPACK_ORBIT_ANGLE) * dist,
-        spawnPos[1] + BACKPACK_HEIGHT_OFFSET + 0.2,
-        spawnPos[2] + Math.cos(BACKPACK_ORBIT_ANGLE) * dist,
-      );
-    }
-    targetLookAt.current.copy(backpackPos);
-
-    const shake = SHAKE_CONFIG[stepId];
-    if (shake) {
-      shakeRef.current = { elapsed: 0, ...shake };
-    }
-  }, [stepId, spawnPos, backpackPos]);
+function CompanionTurnGroup({
+  position,
+  baseRotationY,
+  showBackpack,
+  visible = true,
+  children,
+}: CompanionTurnGroupProps) {
+  const groupRef = useRef<Group>(null);
+  const turnOffsetRef = useRef(0);
 
   useFrame((_state, delta) => {
-    if (!STORE_ENERGY_STEP_IDS.has(stepId)) return;
-
-    const lerpSpeed = 2.5;
-    const t = Math.min(delta * lerpSpeed, 1);
-
-    camera.position.lerp(targetPos.current, t);
-    currentLookAt.current.lerp(targetLookAt.current, t);
-
-    // Gentle sway while waiting for first tap
-    if (stepId === 'store_energy') {
-      swayTimeRef.current += delta;
-      const sway = Math.sin(swayTimeRef.current * Math.PI * 2 * 0.3) * 0.01;
-      camera.position.x += sway;
-    } else {
-      swayTimeRef.current = 0;
+    const target = showBackpack ? Math.PI : 0;
+    const diff = target - turnOffsetRef.current;
+    if (Math.abs(diff) < 0.001) return;
+    turnOffsetRef.current +=
+      Math.sign(diff) * Math.min(Math.abs(diff), TURN_SPEED * delta);
+    if (groupRef.current) {
+      groupRef.current.rotation.y = baseRotationY + turnOffsetRef.current;
     }
-
-    // Decaying shake on step entry
-    const shake = shakeRef.current;
-    if (shake) {
-      shake.elapsed += delta;
-      if (shake.elapsed < shake.duration) {
-        const decay = 1 - shake.elapsed / shake.duration;
-        camera.position.x += (Math.random() - 0.5) * shake.strength * decay;
-        camera.position.y += (Math.random() - 0.5) * shake.strength * decay;
-        camera.position.z +=
-          (Math.random() - 0.5) * shake.strength * 0.5 * decay;
-      } else {
-        shakeRef.current = null;
-      }
-    }
-
-    camera.lookAt(currentLookAt.current);
   });
 
-  return null;
+  return (
+    <group
+      ref={groupRef}
+      position={position}
+      rotation={[0, baseRotationY, 0]}
+      visible={visible}
+    >
+      {children}
+    </group>
+  );
 }
 
 interface InteractionSceneProps {
@@ -227,6 +147,15 @@ function InteractionScene({
 
   const isStoreEnergyStep = STORE_ENERGY_STEP_IDS.has(stepId);
 
+  const [showBackpack, setShowBackpack] = useState(false);
+  useEffect(() => {
+    setShowBackpack(isStoreEnergyStep);
+  }, [isStoreEnergyStep]);
+  const handleBackpackWinComplete = useCallback(
+    () => setShowBackpack(false),
+    [],
+  );
+
   const conduitGlow = showConduitGlow
     ? isStoreEnergyStep
       ? getStoreEnergyGlowTarget(stepId, activityEffortScore ?? 0)
@@ -247,22 +176,18 @@ function InteractionScene({
     >
       <EnvironmentAtmosphere variant="interaction" />
       <HubLights variant="interaction" />
-      {/* Standalone free camera replaces the view-offset INTERACTION_CAMERA during the
-          store_energy sequence. Drei restores INTERACTION_CAMERA on unmount, repairing
-          the dual-screen panoramic seam automatically. */}
-      {isStoreEnergyStep && (
-        <DreiCamera
-          makeDefault
-          fov={HUB_CAMERA.fov}
-          near={HUB_CAMERA.near}
-          far={HUB_CAMERA.far}
-          position={HUB_CAMERA.position}
-        />
-      )}
-      <StoreEnergyCameraRig stepId={stepId} spawnPos={interactSpawn} />
       <Suspense fallback={null}>
         <HubBackground />
         <EnvironmentVegetation totalEffortScore={totalEffortScore} />
+        <ConduitEnergyBurst
+          position={[
+            interactSpawn[0],
+            interactSpawn[1] + BACKPACK_HEIGHT_OFFSET,
+            interactSpawn[2],
+          ]}
+          trigger={conduitFlashTrigger ?? 0}
+          stepId={stepId}
+        />
         {showReform && onReformComplete && (
           <CompanionParticleReform onComplete={onReformComplete} />
         )}
@@ -273,9 +198,10 @@ function InteractionScene({
           />
         )}
         {showCompanion && companionConfig && (
-          <group
+          <CompanionTurnGroup
             position={interactSpawn}
-            rotation={[0, interactRotationY, 0]}
+            baseRotationY={interactRotationY}
+            showBackpack={showBackpack}
             visible={companionVisible}
           >
             <CompanionBody
@@ -288,7 +214,9 @@ function InteractionScene({
               onRestoredToIdle={
                 isInteractionExitStep(stepId)
                   ? onExitAnimationComplete
-                  : undefined
+                  : stepId === 'store_energy_3'
+                    ? handleBackpackWinComplete
+                    : undefined
               }
             >
               {RENDERED_COMPANION_PARTS.map((part: RenderedCompanionPart) => {
@@ -301,7 +229,10 @@ function InteractionScene({
                     variantId={variantId}
                     bodyMorphs={
                       part === 'backpack'
-                        ? { ...(companionConfig.bodyMorphs ?? {}), cloth_on: companionConfig.clothingTop ? 1 : 0 }
+                        ? {
+                            ...(companionConfig.bodyMorphs ?? {}),
+                            cloth_on: companionConfig.clothingTop ? 1 : 0,
+                          }
                         : (companionConfig.bodyMorphs ?? {})
                     }
                     conduitGlow={part === 'backpack' ? conduitGlow : undefined}
@@ -318,7 +249,7 @@ function InteractionScene({
                 );
               })}
             </CompanionBody>
-          </group>
+          </CompanionTurnGroup>
         )}
       </Suspense>
       <EnvironmentComposer variant="interaction" />
@@ -348,7 +279,9 @@ function DialogueBubble({ companionName, text, stepId }: DialogueBubbleProps) {
 const REFORM_DELAY_MS = 3500;
 
 export function Interaction() {
-  const { flowState, notifyExitComplete, activityRefreshToken } = useFlowSocket(SCREENS.INTERACTION);
+  const { flowState, notifyExitComplete, activityRefreshToken } = useFlowSocket(
+    SCREENS.INTERACTION,
+  );
   const totalEffortScore = useTotalEffortScore(activityRefreshToken);
 
   useEffect(() => {
@@ -405,7 +338,8 @@ export function Interaction() {
   const isNameInput = flowState?.stepId === 'nameInput';
   const showReform = isFirstLook && reformState === 'reforming';
   const showCompanion = !isNameInput;
-  const companionVisible = (!isFirstLook || reformState === 'done') && !dissolveActive;
+  const companionVisible =
+    (!isFirstLook || reformState === 'done') && !dissolveActive;
   const showDialogue =
     !!flowState?.companionDialogue && (!isFirstLook || reformState === 'done');
 
