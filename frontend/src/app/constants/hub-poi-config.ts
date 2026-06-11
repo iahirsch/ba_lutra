@@ -12,13 +12,14 @@ export type HubPoiConfig =
     };
 
 export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {
-  EMPTY_POI_Fire01: { weight: 3 },
-  EMPTY_POI_Fire02: { weight: 2 },
-  EMPTY_POI_Fire03: { weight: 2 },
+  EMPTY_POI_Fire01: { weight: 3, idleMin: 45, idleMax: 120 },
+  EMPTY_POI_Fire02: { weight: 2, idleMin: 45, idleMax: 120 },
+  EMPTY_POI_Fire03: { weight: 2, idleMin: 45, idleMax: 120 },
   EMPTY_POI_Tent01: { weight: 1.5 },
   EMPTY_POI_Tent02: { weight: 2 },
-  EMPTY_POI_Board01: { weight: 1.5 },
-  EMPTY_POI_Board02: { weight: 2 },
+  EMPTY_POI_Board01: { weight: 1.5, idleMin: 10, idleMax: 45 },
+  EMPTY_POI_Board02: { weight: 2, idleMin: 10, idleMax: 45 },
+  EMPTY_POI_User: { idleMin: 15, idleMax: 30 },
 };
 
 export function getHubPoiConfig(poiName: string): HubPoiConfig {

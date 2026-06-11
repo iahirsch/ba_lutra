@@ -17,7 +17,13 @@ export function setCompanionHubPosition(
   x: number,
   z: number,
 ): void {
-  positions.set(companionId, { x, z });
+  const existing = positions.get(companionId);
+  if (existing) {
+    existing.x = x;
+    existing.z = z;
+  } else {
+    positions.set(companionId, { x, z });
+  }
 }
 
 export function removeCompanionHubPosition(companionId: string): void {
@@ -42,6 +48,8 @@ export function isTooCloseToOtherCompanions(
   }
   return false;
 }
+
+const _separationResult = { x: 0, z: 0 };
 
 export function applyCompanionSeparation(
   x: number,
@@ -74,7 +82,9 @@ export function applyCompanionSeparation(
     nextZ += (sepDz / sepDist) * push;
   }
 
-  return { x: nextX, z: nextZ };
+  _separationResult.x = nextX;
+  _separationResult.z = nextZ;
+  return _separationResult;
 }
 
 export function hasFreeHubPoiSlot(

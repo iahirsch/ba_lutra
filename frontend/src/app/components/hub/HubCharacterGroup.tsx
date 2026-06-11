@@ -102,7 +102,6 @@ export function HubCharacterGroup({
           position={[0, 2.2, 0]}
           center
           distanceFactor={10}
-          occlude
           pointerEvents="none"
           style={{
             color: '#ffffff',
