@@ -6,6 +6,7 @@ import {
   getGatherSlotXZ,
   getHubPoiCapacity,
   getHubPoiConfig,
+  getHubPoiIdleRange,
 } from '../constants/hub-poi-config';
 import {
   HUB_COMPANION_ARRIVAL_DISTANCE,
@@ -13,12 +14,14 @@ import {
   HUB_COMPANION_IDLE_MAX,
   HUB_COMPANION_IDLE_MIN,
   HUB_COMPANION_MIN_SEPARATION,
+  HUB_COMPANION_ROAM_CHANCE,
   HUB_COMPANION_SEPARATION_STRENGTH,
+  HUB_COMPANION_STUCK_CHECK_DELAY,
+  HUB_COMPANION_STUCK_MIN_PROGRESS,
   HUB_COMPANION_WALK_SPEED,
   HUB_POI_DETECT_RADIUS,
   HUB_POI_IDLE_MAX,
   HUB_POI_IDLE_MIN,
-  HUB_POI_VISIT_CHANCE,
 } from '../constants/hub-companion-behavior';
 import type { HubWalkTerrain } from './useHubWalkTerrain';
 import {
@@ -37,6 +40,7 @@ interface ActivePoiVisit {
   center: Vector3;
   slot: number;
   isGather: boolean;
+  rotationY: number;
 }
 
 function randomRange(min: number, max: number): number {
@@ -70,8 +74,11 @@ export function useCompanionHubBehavior({
   // is skipped on frames where the companion hasn't moved.
   const lastSyncedXRef = useRef<number | null>(null);
   const lastSyncedZRef = useRef<number | null>(null);
+  const walkStartXRef = useRef(0);
+  const walkStartZRef = useRef(0);
+  const walkTimeRef = useRef(0);
 
-  const syncGroup = (group: Group, faceCenter = false) => {
+  const syncGroup = (group: Group, facePoi = false) => {
     const px = positionRef.current.x;
     const pz = positionRef.current.z;
     // Only re-cast against the terrain when XZ actually changed — the terrain
@@ -88,12 +95,8 @@ export function useCompanionHubBehavior({
     group.position.copy(positionRef.current);
 
     const visit = activeVisitRef.current;
-    if (faceCenter && visit) {
-      const position = positionRef.current;
-      group.rotation.y = Math.atan2(
-        visit.center.x - position.x,
-        visit.center.z - position.z,
-      );
+    if (facePoi && visit) {
+      group.rotation.y = visit.rotationY;
     }
   };
 
@@ -157,7 +160,15 @@ export function useCompanionHubBehavior({
       return null;
     }
 
-    const poi = nearbyPois[Math.floor(Math.random() * nearbyPois.length)];
+    const totalWeight = nearbyPois.reduce(
+      (sum, p) => sum + (getHubPoiConfig(p.name).weight ?? 1),
+      0,
+    );
+    let pick = Math.random() * totalWeight;
+    const poi = nearbyPois.find((p) => {
+      pick -= getHubPoiConfig(p.name).weight ?? 1;
+      return pick <= 0;
+    }) ?? nearbyPois[nearbyPois.length - 1];
     const config = getHubPoiConfig(poi.name);
     const capacity = getHubPoiCapacity(config);
     const slot = claimHubPoiSlot(poi.name, capacity, companionId);
@@ -170,6 +181,7 @@ export function useCompanionHubBehavior({
       center: poi.position.clone(),
       slot,
       isGather: config.type === 'multi',
+      rotationY: poi.rotationY,
     };
 
     const target = resolvePoiTargetPosition(poi.name, poi.position, slot);
@@ -184,7 +196,7 @@ export function useCompanionHubBehavior({
   const pickNextTarget = (from: Vector3): Vector3 | null => {
     clearActiveVisit();
 
-    if (Math.random() < HUB_POI_VISIT_CHANCE) {
+    if (Math.random() >= HUB_COMPANION_ROAM_CHANCE) {
       const poiTarget = pickPoiTarget(from);
       if (poiTarget) {
         return poiTarget;
@@ -215,12 +227,12 @@ export function useCompanionHubBehavior({
     const position = positionRef.current;
     const visit = activeVisitRef.current;
     const shareGatherPoi = visit?.isGather ? visit.poiName : undefined;
-    const faceCenter = visit?.isGather && phaseRef.current === 'idle';
+    const facePoi = visit !== null && phaseRef.current === 'idle';
 
     if (phaseRef.current === 'idle') {
       idleTimerRef.current -= delta;
       if (idleTimerRef.current > 0) {
-        syncGroup(group, faceCenter);
+        syncGroup(group, facePoi);
         return;
       }
 
@@ -230,11 +242,14 @@ export function useCompanionHubBehavior({
           HUB_COMPANION_IDLE_MIN,
           HUB_COMPANION_IDLE_MAX,
         );
-        syncGroup(group, faceCenter);
+        syncGroup(group, facePoi);
         return;
       }
 
       targetRef.current.copy(nextTarget);
+      walkStartXRef.current = position.x;
+      walkStartZRef.current = position.z;
+      walkTimeRef.current = 0;
       phaseRef.current = 'walking';
       setActiveClip('walking');
     }
@@ -247,11 +262,20 @@ export function useCompanionHubBehavior({
       if (distance <= HUB_COMPANION_ARRIVAL_DISTANCE) {
         phaseRef.current = 'idle';
         setActiveClip('idle');
-        idleTimerRef.current = randomRange(
-          visit ? HUB_POI_IDLE_MIN : HUB_COMPANION_IDLE_MIN,
-          visit ? HUB_POI_IDLE_MAX : HUB_COMPANION_IDLE_MAX,
-        );
-        syncGroup(group, visit?.isGather ?? false);
+        if (visit) {
+          const idleRange = getHubPoiIdleRange(
+            getHubPoiConfig(visit.poiName),
+            HUB_POI_IDLE_MIN,
+            HUB_POI_IDLE_MAX,
+          );
+          idleTimerRef.current = randomRange(idleRange.min, idleRange.max);
+        } else {
+          idleTimerRef.current = randomRange(
+            HUB_COMPANION_IDLE_MIN,
+            HUB_COMPANION_IDLE_MAX,
+          );
+        }
+        syncGroup(group, visit !== null);
         return;
       }
 
@@ -280,15 +304,51 @@ export function useCompanionHubBehavior({
       position.z = constrained.z;
 
       if (constrained.blocked) {
-        phaseRef.current = 'idle';
-        setActiveClip('idle');
-        clearActiveVisit();
-        idleTimerRef.current = randomRange(
-          HUB_COMPANION_IDLE_MIN,
-          HUB_COMPANION_IDLE_MAX,
+        const ndx = dx / distance;
+        const ndz = dz / distance;
+        const cwX = prevX + ndz * step;
+        const cwZ = prevZ - ndx * step;
+        const ccwX = prevX - ndz * step;
+        const ccwZ = prevZ + ndx * step;
+        if (walkTerrain.isWalkableAt(cwX, cwZ)) {
+          position.x = cwX;
+          position.z = cwZ;
+        } else if (walkTerrain.isWalkableAt(ccwX, ccwZ)) {
+          position.x = ccwX;
+          position.z = ccwZ;
+        } else {
+          phaseRef.current = 'idle';
+          setActiveClip('idle');
+          clearActiveVisit();
+          idleTimerRef.current = randomRange(
+            HUB_COMPANION_IDLE_MIN,
+            HUB_COMPANION_IDLE_MAX,
+          );
+          syncGroup(group);
+          return;
+        }
+      }
+
+      walkTimeRef.current += delta;
+      if (walkTimeRef.current >= HUB_COMPANION_STUCK_CHECK_DELAY) {
+        const moved = Math.hypot(
+          position.x - walkStartXRef.current,
+          position.z - walkStartZRef.current,
         );
-        syncGroup(group);
-        return;
+        if (moved < HUB_COMPANION_STUCK_MIN_PROGRESS) {
+          phaseRef.current = 'idle';
+          setActiveClip('idle');
+          clearActiveVisit();
+          idleTimerRef.current = randomRange(
+            HUB_COMPANION_IDLE_MIN,
+            HUB_COMPANION_IDLE_MAX,
+          );
+          syncGroup(group);
+          return;
+        }
+        walkStartXRef.current = position.x;
+        walkStartZRef.current = position.z;
+        walkTimeRef.current = 0;
       }
 
       group.rotation.y = Math.atan2(dx, dz);

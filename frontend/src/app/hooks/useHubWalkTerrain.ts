@@ -10,6 +10,7 @@ import {
 import { HUB_GLTF_URL, HUB_TERRAIN_MESH_NAME } from '../constants/hub-scene';
 import { collectHubSceneMarkers } from '../utils/environmentSpawn';
 import { isTooCloseToOtherCompanions } from '../utils/hubCompanionRegistry';
+import '../utils/terrainBvh';
 import {
   createTerrainWeightedSampler,
   constrainTerrainWalkPosition,
@@ -22,6 +23,7 @@ import {
 export interface HubPoi {
   name: string;
   position: Vector3;
+  rotationY: number;
 }
 
 export interface HubWalkTerrain {
@@ -53,6 +55,12 @@ export function useHubWalkTerrain(): HubWalkTerrain {
       terrainMesh,
       HUB_WALK_MASK_ATTRIBUTE,
     );
+
+    /*
+     * Build a BVH for the terrain geometry so the per-frame ground-height and walkability raycasts
+     */
+    terrainMesh.geometry.computeBoundsTree();
+
     const pois = collectHubSceneMarkers(scene, HUB_POI_NAME_PREFIX);
 
     const sampleRoamWorldPosition = (
@@ -64,9 +72,6 @@ export function useHubWalkTerrain(): HubWalkTerrain {
         HUB_WALK_MIN_SAMPLE_WEIGHT,
         HUB_WALK_SAMPLE_MAX_ATTEMPTS,
         (localX, localZ) => {
-          // sampleTerrainLocalPoint already rejects points below
-          // HUB_WALK_MIN_SAMPLE_WEIGHT, so no redundant walkability
-          // raycast is needed here — only check separation.
           const world = terrainLocalToHubWorld(
             new Vector3(localX, 0, localZ),
             terrainMesh,
@@ -115,12 +120,14 @@ export function useHubWalkTerrain(): HubWalkTerrain {
           HUB_WALK_MIN_SAMPLE_WEIGHT,
         ),
       samplingGeometry,
+      terrainGeometry: terrainMesh.geometry,
     };
   }, [scene]);
 
   useEffect(() => {
     return () => {
       walkTerrain.samplingGeometry.dispose();
+      walkTerrain.terrainGeometry.disposeBoundsTree?.();
     };
   }, [walkTerrain]);
 

@@ -66,30 +66,34 @@ export function HubCharacterGroup({
               noseColor={companion.noseColor}
               activeClip={displayClip}
               activeClipKey={displayClipKey}
-              onRestoredToIdle={playingEntryWave ? onEntryWaveComplete : undefined}
+              onRestoredToIdle={
+                playingEntryWave ? onEntryWaveComplete : undefined
+              }
             >
-              {RENDERED_COMPANION_PARTS.map((category: RenderedCompanionPart) => {
-                const variantId = companion[category];
-                if (!variantId) return null;
-                return (
-                  <CompanionPartGlb
-                    key={`${companion.id}-${category}`}
-                    category={category}
-                    variantId={variantId}
-                    bodyMorphs={
-                      category === 'backpack'
-                        ? {
-                            ...bodyMorphs,
-                            cloth_on: companion.clothingTop ? 1 : 0,
-                          }
-                        : bodyMorphs
-                    }
-                    conduitGlow={
-                      category === 'backpack' ? conduitGlow : undefined
-                    }
-                  />
-                );
-              })}
+              {RENDERED_COMPANION_PARTS.map(
+                (category: RenderedCompanionPart) => {
+                  const variantId = companion[category];
+                  if (!variantId) return null;
+                  return (
+                    <CompanionPartGlb
+                      key={`${companion.id}-${category}`}
+                      category={category}
+                      variantId={variantId}
+                      bodyMorphs={
+                        category === 'backpack'
+                          ? {
+                              ...bodyMorphs,
+                              cloth_on: companion.clothingTop ? 1 : 0,
+                            }
+                          : bodyMorphs
+                      }
+                      conduitGlow={
+                        category === 'backpack' ? conduitGlow : undefined
+                      }
+                    />
+                  );
+                },
+              )}
             </CompanionBody>
           </group>
         </Suspense>
@@ -101,8 +105,9 @@ export function HubCharacterGroup({
           pointerEvents="none"
           style={{
             color: '#ffffff',
-            fontSize: '16px',
+            fontSize: '24px',
             fontWeight: 600,
+            textShadow: '0 0 10px rgba(0, 0, 0, 0.6)',
             whiteSpace: 'nowrap',
             userSelect: 'none',
           }}

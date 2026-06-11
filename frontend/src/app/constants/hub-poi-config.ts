@@ -1,11 +1,25 @@
 import type { Vector3 } from 'three';
 
 export type HubPoiConfig =
-  | { type: 'single' }
-  | { type: 'multi'; capacity: number; radius: number };
+  | { type?: 'single'; weight?: number; idleMin?: number; idleMax?: number }
+  | {
+      type?: 'multi';
+      capacity: number;
+      radius: number;
+      weight?: number;
+      idleMin?: number;
+      idleMax?: number;
+    };
 
 export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {
-  EMPTY_POI_Fire: { type: 'multi', capacity: 6, radius: 2 },
+  EMPTY_POI_Fire01: { weight: 3, idleMin: 45, idleMax: 120 },
+  EMPTY_POI_Fire02: { weight: 2, idleMin: 45, idleMax: 120 },
+  EMPTY_POI_Fire03: { weight: 2, idleMin: 45, idleMax: 120 },
+  EMPTY_POI_Tent01: { weight: 1.5 },
+  EMPTY_POI_Tent02: { weight: 2 },
+  EMPTY_POI_Board01: { weight: 1.5, idleMin: 10, idleMax: 45 },
+  EMPTY_POI_Board02: { weight: 2, idleMin: 10, idleMax: 45 },
+  EMPTY_POI_User: { idleMin: 15, idleMax: 30 },
 };
 
 export function getHubPoiConfig(poiName: string): HubPoiConfig {
@@ -14,6 +28,17 @@ export function getHubPoiConfig(poiName: string): HubPoiConfig {
 
 export function getHubPoiCapacity(config: HubPoiConfig): number {
   return config.type === 'multi' ? config.capacity : 1;
+}
+
+export function getHubPoiIdleRange(
+  config: HubPoiConfig,
+  defaultMin: number,
+  defaultMax: number,
+): { min: number; max: number } {
+  return {
+    min: config.idleMin ?? defaultMin,
+    max: config.idleMax ?? defaultMax,
+  };
 }
 
 export function getGatherSlotXZ(

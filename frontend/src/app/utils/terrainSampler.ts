@@ -9,15 +9,41 @@ import {
   Triangle,
   Vector3,
 } from 'three';
+// Side-effect import: installs BVH-accelerated raycasting + the `firstHitOnly`
+// type augmentation on three's prototypes.
+import './terrainBvh';
 
 const WEIGHT_BUFFER = 'terrainSampleWeight';
 const _rayOrigin = new Vector3();
 const _rayDirection = new Vector3(0, -1, 0);
 const _raycaster = new Raycaster();
+// With a BVH on the terrain geometry this lets the cast bail at the closest
+// triangle instead of collecting and sorting every hit along the ray.
+_raycaster.firstHitOnly = true;
+// Reused result buffer so `intersectObject` doesn't allocate a fresh array on
+// every per-frame cast. Cleared before each use.
+const _hits: ReturnType<Raycaster['intersectObject']> = [];
 const _inverseWorldMatrix = new Matrix4();
 const _localHitPoint = new Vector3();
 const _triangle = new Triangle();
 const _barycoord = new Vector3();
+
+// The terrain never moves, so re-deriving its world matrix on every cast just
+// burns time walking the parent chain. Refresh it only when the mesh identity
+// changes (e.g. a different terrain instance is passed in).
+let _worldMatrixMesh: Mesh | null = null;
+function ensureTerrainWorldMatrix(terrainMesh: Mesh): void {
+  if (_worldMatrixMesh !== terrainMesh) {
+    terrainMesh.updateWorldMatrix(true, false);
+    _worldMatrixMesh = terrainMesh;
+  }
+}
+
+// Shared scratch for sampleTerrainLocalPoint — it runs synchronously and the
+// caller copies out the result before the next call, so reusing these is safe.
+const _samplePosition = new Vector3();
+const _sampleNormal = new Vector3();
+const _sampleColor = new Color();
 
 function getVertexColorLuminance(
   colorAttribute: {
@@ -99,19 +125,15 @@ export function sampleTerrainLocalPoint(
   maxAttempts: number,
   reject?: (localX: number, localZ: number) => boolean,
 ): Vector3 | null {
-  const position = new Vector3();
-  const normal = new Vector3();
-  const sampleColor = new Color();
-
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    sampler.sample(position, normal, sampleColor);
-    if (getSampleColorWeight(sampleColor) < minWeight) {
+    sampler.sample(_samplePosition, _sampleNormal, _sampleColor);
+    if (getSampleColorWeight(_sampleColor) < minWeight) {
       continue;
     }
-    if (reject?.(position.x, position.z)) {
+    if (reject?.(_samplePosition.x, _samplePosition.z)) {
       continue;
     }
-    return position.clone();
+    return _samplePosition.clone();
   }
 
   return null;
@@ -121,7 +143,7 @@ export function terrainLocalToHubWorld(
   localPoint: Vector3,
   terrainMesh: Mesh,
 ): Vector3 {
-  terrainMesh.updateWorldMatrix(true, false);
+  ensureTerrainWorldMatrix(terrainMesh);
   return localPoint.clone().applyMatrix4(terrainMesh.matrixWorld);
 }
 
@@ -130,11 +152,12 @@ export function getTerrainWorldHeightAt(
   worldZ: number,
   terrainMesh: Mesh,
 ): number | null {
-  terrainMesh.updateWorldMatrix(true, false);
+  ensureTerrainWorldMatrix(terrainMesh);
   _rayOrigin.set(worldX, 1e4, worldZ);
   _raycaster.set(_rayOrigin, _rayDirection);
-  const hits = _raycaster.intersectObject(terrainMesh, false);
-  return hits[0]?.point.y ?? null;
+  _hits.length = 0;
+  _raycaster.intersectObject(terrainMesh, false, _hits);
+  return _hits[0]?.point.y ?? null;
 }
 
 function getFaceVertexIndices(
@@ -193,11 +216,12 @@ export function getTerrainWalkWeightAt(
   terrainMesh: Mesh,
   maskAttributeName: string,
 ): number | null {
-  terrainMesh.updateWorldMatrix(true, false);
+  ensureTerrainWorldMatrix(terrainMesh);
   _rayOrigin.set(worldX, 1e4, worldZ);
   _raycaster.set(_rayOrigin, _rayDirection);
-  const hits = _raycaster.intersectObject(terrainMesh, false);
-  const hit = hits[0];
+  _hits.length = 0;
+  _raycaster.intersectObject(terrainMesh, false, _hits);
+  const hit = _hits[0];
   if (!hit) {
     return null;
   }
@@ -220,6 +244,11 @@ export function isTerrainWalkableAt(
   return weight !== null && weight >= minWeight;
 }
 
+// Reused out-object: this runs once per walking companion per frame, so we
+// avoid allocating a fresh result each call. The caller reads it synchronously
+// before the next invocation.
+const _constrainResult = { x: 0, z: 0, blocked: false };
+
 export function constrainTerrainWalkPosition(
   x: number,
   z: number,
@@ -239,15 +268,22 @@ export function constrainTerrainWalkPosition(
     );
 
   if (isWalkable(x, z)) {
-    return { x, z, blocked: false };
-  }
-  if (x !== prevX && isWalkable(x, prevZ)) {
-    return { x, z: prevZ, blocked: false };
-  }
-  if (z !== prevZ && isWalkable(prevX, z)) {
-    return { x: prevX, z, blocked: false };
+    _constrainResult.x = x;
+    _constrainResult.z = z;
+    _constrainResult.blocked = false;
+  } else if (x !== prevX && isWalkable(x, prevZ)) {
+    _constrainResult.x = x;
+    _constrainResult.z = prevZ;
+    _constrainResult.blocked = false;
+  } else if (z !== prevZ && isWalkable(prevX, z)) {
+    _constrainResult.x = prevX;
+    _constrainResult.z = z;
+    _constrainResult.blocked = false;
+  } else {
+    _constrainResult.x = prevX;
+    _constrainResult.z = prevZ;
+    _constrainResult.blocked = x !== prevX || z !== prevZ;
   }
 
-  const triedToMove = x !== prevX || z !== prevZ;
-  return { x: prevX, z: prevZ, blocked: triedToMove };
+  return _constrainResult;
 }

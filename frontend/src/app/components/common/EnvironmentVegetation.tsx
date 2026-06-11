@@ -1,6 +1,7 @@
 import { FlowerField } from './FlowerField';
 import { GrassField } from './GrassField';
 import { VegetationProps } from './VegetationProps';
+import { VegetationShockwave } from './VegetationShockwave';
 
 interface EnvironmentVegetationProps {
   applyEnvironmentTransform?: boolean;
@@ -23,6 +24,10 @@ export function EnvironmentVegetation({
         totalEffortScore={totalEffortScore}
       />
       <FlowerField
+        applyEnvironmentTransform={applyEnvironmentTransform}
+        totalEffortScore={totalEffortScore}
+      />
+      <VegetationShockwave
         applyEnvironmentTransform={applyEnvironmentTransform}
         totalEffortScore={totalEffortScore}
       />
