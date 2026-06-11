@@ -126,6 +126,11 @@ export class StravaController {
       const companionId = this.companionGateway.getActiveCompanionId();
       void this.activityService
         .saveStravaActivity(event.object_id, companionId)
+        .then(() => {
+          if (companionId) {
+            return this.companionGateway.refreshActivityForCompanion(companionId);
+          }
+        })
         .catch((err: unknown) =>
           this.logger.error(`Webhook activity ${event.object_id}`, err),
         );
