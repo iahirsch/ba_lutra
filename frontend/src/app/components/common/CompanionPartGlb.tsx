@@ -59,6 +59,7 @@ export function CompanionPartGlb({
   const bodyMorphsRef = useRef(bodyMorphs);
   bodyMorphsRef.current = bodyMorphs;
 
+  const prevBodyMorphsKeyRef = useRef('');
   const glowAnimRef = useRef<GlowAnim | null>(null);
   const prevFlashTriggerRef = useRef<number | undefined>(undefined);
 
@@ -82,6 +83,9 @@ export function CompanionPartGlb({
   }, [bodyScene, partScene]);
 
   useLayoutEffect(() => {
+    const key = JSON.stringify(bodyMorphs);
+    if (key === prevBodyMorphsKeyRef.current) return;
+    prevBodyMorphsKeyRef.current = key;
     applyMorphsToMerged(mergedRef.current, bodyMorphs);
   }, [bodyMorphs]);
 
