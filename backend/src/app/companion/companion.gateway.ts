@@ -147,6 +147,7 @@ export class CompanionGateway
       this.session.currentStepId === 'store_energy_2' &&
       payload.choiceId === 'store_energy_3'
     ) {
+      await this.refreshActivityEffortScore();
       this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {
         companionId: this.session.companionId,
       });

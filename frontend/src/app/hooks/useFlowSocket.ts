@@ -14,6 +14,7 @@ import {
 export interface UseFlowSocketReturn {
   flowState: FlowStateUpdate | null;
   connected: boolean;
+  activityRefreshToken: number;
   submitName: (name: string, userName: string) => void;
   selectChoice: (choiceId: string) => void;
   confirmAction: () => void;
@@ -33,6 +34,7 @@ export interface UseFlowSocketReturn {
 export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
   const [flowState, setFlowState] = useState<FlowStateUpdate | null>(null);
   const [connected, setConnected] = useState(false);
+  const [activityRefreshToken, setActivityRefreshToken] = useState(0);
 
   const socketRef = useRef<Socket | null>(null);
 
@@ -51,6 +53,10 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
 
     socket.on(FLOW_EVENTS.STATE_UPDATE, (update: FlowStateUpdate) => {
       setFlowState(update.stepId === 'idle' ? null : update);
+    });
+
+    socket.on(FLOW_EVENTS.ACTIVITY_UPDATED, () => {
+      setActivityRefreshToken((n) => n + 1);
     });
 
     return () => {
@@ -83,6 +89,7 @@ export function useFlowSocket(screenId: ScreenId): UseFlowSocketReturn {
   return {
     flowState,
     connected,
+    activityRefreshToken,
     submitName,
     selectChoice,
     confirmAction,

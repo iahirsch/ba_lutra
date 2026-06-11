@@ -21,6 +21,7 @@ import {
 } from '../constants/hub-scene';
 import { useEnvironmentSpawnTransform } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
+import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
 import { HubBackground } from '../components/hub/HubBackground';
 import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import { HubLights } from '../components/hub/HubLights';
@@ -193,6 +194,7 @@ interface InteractionSceneProps {
   companionConfig: CompanionConfig | null;
   stepId: string;
   activityEffortScore?: number | null;
+  totalEffortScore?: number;
   onExitAnimationComplete?: () => void;
   showReform?: boolean;
   showDissolve?: boolean;
@@ -207,6 +209,7 @@ function InteractionScene({
   companionConfig,
   stepId,
   activityEffortScore,
+  totalEffortScore,
   onExitAnimationComplete,
   showReform = false,
   showDissolve = false,
@@ -259,7 +262,7 @@ function InteractionScene({
       <StoreEnergyCameraRig stepId={stepId} spawnPos={interactSpawn} />
       <Suspense fallback={null}>
         <HubBackground />
-        <EnvironmentVegetation />
+        <EnvironmentVegetation totalEffortScore={totalEffortScore} />
         {showReform && onReformComplete && (
           <CompanionParticleReform onComplete={onReformComplete} />
         )}
@@ -345,7 +348,8 @@ function DialogueBubble({ companionName, text, stepId }: DialogueBubbleProps) {
 const REFORM_DELAY_MS = 3500;
 
 export function Interaction() {
-  const { flowState, notifyExitComplete } = useFlowSocket(SCREENS.INTERACTION);
+  const { flowState, notifyExitComplete, activityRefreshToken } = useFlowSocket(SCREENS.INTERACTION);
+  const totalEffortScore = useTotalEffortScore(activityRefreshToken);
 
   useEffect(() => {
     if (!flowState || flowState.creatorView.type !== 'transition') return;
@@ -412,6 +416,7 @@ export function Interaction() {
           companionConfig={flowState?.companionConfig ?? null}
           stepId={flowState?.stepId ?? ''}
           activityEffortScore={flowState?.activityEffortScore}
+          totalEffortScore={totalEffortScore}
           onExitAnimationComplete={startDissolve}
           showReform={showReform}
           showDissolve={dissolveActive}
