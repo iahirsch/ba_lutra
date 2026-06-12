@@ -7,440 +7,185 @@ export interface FlowStep {
   transitions: Record<string, string | Record<string, string> | null>;
 }
 
-// Flow definition
+// Presentation flow
 export const FLOW_STEPS: FlowStep[] = [
   {
-    id: 'nameInput',
-    creatorView: {
-      type: 'name-input',
-      title: ['Name des Lutra`s', 'Dein Name'],
-      prompt: [
-        'Wie soll dein Lutra heissen?',
-        'Wie soll dich dein Lutra nennen ? Was ist dein Spitzname ?',
-      ],
-    },
-
-    transitions: {
-      [FLOW_EVENTS.NAME_SUBMITTED]: 'firstLook',
-    },
-  },
-
-  {
-    id: 'firstLook',
+    id: 'greeting',
     companionDialogue:
-      'Hallo [userName]! Ich bin dein Lutra [companionName]. Schön, dass du da bist! Du kannst ganz einfach über die Buttons auf dem Tablet mit mir kommunizieren.',
+      'Hallo zusammen. Ich bin Lutra und begleite das Team heute durch die Präsentation, sozusagen als Co-Moderator. Schön, dass ihr alle hier seid.',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'Dein Lutra ist nun im Herzland auf der Leinwand vor dir sichtbar. Siehst du ihn?',
-      ],
-
-      choices: [{ id: 'iSee', label: 'Ja! Ich sehe ihn', variant: 'primary' }],
+      prompt: [],
+      choices: [{ id: 'team_intro', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        iSee: 'infoOrSport',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { team_intro: 'team_intro' },
     },
   },
 
   {
-    id: 'infoOrSport',
+    id: 'team_intro',
     companionDialogue:
-      'Möchtest du mehr über mich und meine Heimat erfahren? Oder willst du direkt sehen, wie deine Bewegung meine Welt beeinflussen kann?',
+      'Das Team besteht aus Laura, Marco und Marin. Die drei haben dieses Projekt entwickelt und mich dabei auch erschaffen. Ich weiss das zu schätzen. Gemeinsam stellen wir euch heute ihr Bachelorprojekt Lutra vor',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'more', label: 'Ja, erzähl mir mehr!', variant: 'primary' },
-        {
-          id: 'sport',
-          label: 'Wie kann ich die Welt beeinflussen?',
-          variant: 'secondary',
-        },
+        { id: 'worldbuilding_teaser', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        more: 'moreInfo',
-        sport: 'sport',
+        worldbuilding_teaser: 'worldbuilding_teaser',
       },
     },
   },
 
   {
-    id: 'moreInfo',
+    id: 'worldbuilding_teaser',
     companionDialogue:
-      'Ich freue mich total, dass du neugierig bist! Es gibt hier so viel zu entdecken. Worüber möchtest du zuerst mehr wissen?',
+      'Ihr seht hinter mir das Herzland, oder besser gesagt, ein Teil der davon übrig ist. Der grosse Stein dort rechts ist ein Weltenanker, einer der vielen Energiequellen dieser Welt. Gerade ist alles leblos. Das Ziel ist, das zu ändern, und zwar durch Bewegung. Mehr dazu gleich',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'handover_vision', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { handover_vision: 'handover_vision' },
+    },
+  },
+
+  {
+    id: 'handover_vision',
+    companionDialogue: 'Alles klar, dann übergebe ich an mein Team.',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'world_chapter', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { world_chapter: 'world_chapter' },
+    },
+  },
+
+  {
+    id: 'world_chapter',
+    companionDialogue:
+      'Das Herzland ist mein Zuhause. Früher war es eine lebendige Gegend voller Leben, mit Wäldern, Flüssen und allem, was dazugehört. Dann wurde das Ankernetz schwächer, bis es irgendwann ganz kollabierte. Der Urzeitanker liegt jetzt tief unter Sand begraben. Genau das soll sich ändern.',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutra', label: 'Wieso Lutra?', variant: 'secondary' },
-        { id: 'heartland', label: 'Das Herzland', variant: 'secondary' },
-        { id: 'worldanchor', label: 'Die Weltenanker', variant: 'secondary' },
-        { id: 'conduit', label: 'Der Conduit', variant: 'secondary' },
-        { id: 'sport', label: 'Welt Beeinflussen', variant: 'primary' },
+        { id: 'world_chapter_conduit', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra: 'lutraInfo1',
-        heartland: 'heartlandInfo1',
-        worldanchor: 'worldanchorInfo1',
-        conduit: 'conduitInfo1',
-        sport: 'sport',
+        world_chapter_conduit: 'world_chapter_conduit',
       },
     },
   },
 
   {
-    id: 'lutraInfo1',
+    id: 'world_chapter_conduit',
     companionDialogue:
-      'Ich bin ein Lutra – das ist Latein und bedeutet einfach „Otter“. Ich bin dein fester Begleiter und werde dich von jetzt an bei all deinen Aktivitäten unterstützen und anfeuern!',
+      'Die leuchtende Kugel auf meinem Rucksack ist übrigens mein Conduit, ein Fragment eines Weltenankers. Er überträgt eure Bewegungsenergie direkt zu mir. Ich bringe dann diese Energie zum Weltenanker um eure Energie permanent zu speichern',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'gameplay_remark', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { gameplay_remark: 'gameplay_remark' },
+    },
+  },
+
+  {
+    id: 'gameplay_remark',
+    companionDialogue:
+      'Kurze Unterbrechung von mir. Wusstet ihr, dass echte Otter zu den wenigen Tieren gehören, die Werkzeuge benutzen? Wir legen Steine auf den Bauch, um Muscheln aufzuschlagen. Entschuldige die Unterbrechung Marco.',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutraInfo2', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
+        { id: 'companion_thanks', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutraInfo2: 'lutraInfo2',
-        skip: 'moreInfo',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { companion_thanks: 'companion_thanks' },
     },
   },
 
   {
-    id: 'lutraInfo2',
+    id: 'companion_thanks',
+    // TODO: Replace placeholder with the name of the team member who designed the companion
     companionDialogue:
-      'Wir Lutras haben erstaunlich viel mit euch Menschen gemeinsam. Genau wie ihr sind wir alle ganz verschieden. Und wir lieben es, uns in den unterschiedlichsten Terrains zu bewegen.',
+      'Danke Marco, dass du mein Aussehen entwickelt hast, vom Designkonzept bis zur 3D-Modellierung. Das war viel Arbeit. Ich bin sehr zufrieden mit mir',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'app_features', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { app_features: 'app_features' },
+    },
+  },
+
+  {
+    id: 'app_features',
+    companionDialogue:
+      'Die Hauptfunktionen der App habt ihr zu Beginn gesehen. Es gibt noch einige weiteren Features, von denen "Person x" euch noch welche zeigt',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'funny_remark', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { funny_remark: 'funny_remark' },
+    },
+  },
+
+  {
+    id: 'funny_remark',
+    companionDialogue: '[Funny remark]',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'lutraInfo3', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
+        { id: 'treadmill', label: 'Weiter zur Demo', variant: 'primary' },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutraInfo3: 'lutraInfo3',
-        skip: 'moreInfo',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { treadmill: 'treadmill' },
     },
   },
 
-  {
-    id: 'lutraInfo3',
-    companionDialogue:
-      'Jeder von uns hat seine ganz eigenen Stärken. Manchmal sind wir gerne allein unterwegs, um den Kopf freizubekommen, und manchmal lieben wir das Leben in der Gruppe. Das kennst du sicher auch von dir, oder?',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'lutraInfo4', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutraInfo4: 'lutraInfo4',
-        skip: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'lutraInfo4',
-    companionDialogue:
-      'Das Wichtigste ist: Wenn du in deiner Welt aktiv bist, hilft mir das, meinen Lebensraum hier zu stabilisieren. Und das Schöne daran ist: Auch in der echten Welt brauchen wir Otter die Hilfe von aktiven Menschen, um geschützt zu werden.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        more: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'conduitInfo1',
-    companionDialogue:
-      'Siehst du die leuchtende Kristallkugel auf meinem Rucksack? Das ist der „Conduit“. Er ist ein magisches Bruchstück aus einem Weltenanker, das ich immer bei mir trage.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'conduitInfo2', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        conduitInfo2: 'conduitInfo2',
-        skip: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'conduitInfo2',
-    companionDialogue:
-      'Der Conduit ist unsere Verbindung: Er speichert deine Bewegungsenergie, wenn du dich auspowerst, und gibt sie an den nächsten Weltenanker weiter. Er ist sozusagen die Brücke zwischen dir und meiner Welt.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'conduitInfo3', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        conduitInfo3: 'conduitInfo3',
-        skip: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'conduitInfo3',
-    companionDialogue:
-      'In der echten Welt sind Otter „Schlüsselarten“: Unsere Jagd reguliert die Fischbestände, was den Flüssen, Pflanzen und der Wasserqualität guttut. Wir verbinden das Ökosystem. In unserer Spielwelt übernimmt diese wichtige Aufgabe mein Conduit!',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        more: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'worldanchorInfo1',
-    companionDialogue:
-      'Die Weltenanker sind uralte, geheimnisvolle Steinmonolithe, die unser Ökosystem überhaupt erst am Leben erhalten. Sie sind keine Maschinen und keine Götter. Niemand weiss woher sie kommen.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'worldanchorInfo2', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        worldanchorInfo2: 'worldanchorInfo2',
-        skip: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'worldanchorInfo2',
-    companionDialogue:
-      'Jeder Anker verströmt Energie in einem bestimmten Radius. Alles in seiner Nähe erwacht zum Leben! Deshalb leuchten die Anker auch so wunderschön und die Natur um sie herum blüht in den tollsten Farben.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'worldanchorInfo3', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        worldanchorInfo3: 'worldanchorInfo3',
-        skip: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'worldanchorInfo3',
-    companionDialogue:
-      'Doch mit der Zeit wurden die Menschen in der realen Welt immer träger. Dem Ankernetz fehlte die nötige Bewegungsenergie. Die Zufuhr sank immer weiter, bis sie schliesslich einen kritischen Punkt erreichte...',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'worldanchorInfo4', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        worldanchorInfo4: 'worldanchorInfo4',
-        skip: 'moreInfo',
-      },
-    },
-  },
-  {
-    id: 'worldanchorInfo4',
-    companionDialogue:
-      'Der älteste und mächtigste Anker im Zentrum – der Urzeitanker – versuchte verzweifelt, den Mangel auszugleichen, und zapfte die Nachbaranker an. Das war zu viel. Das gesamte Netz überlastete und kollabierte wie ein riesiger, durchgebrannter Stromkreis.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        more: 'moreInfo',
-      },
-    },
-  },
-  {
-    id: 'heartlandInfo1',
-    companionDialogue:
-      'Das Herzland ist mein Zuhause. Früher war es eine paradiesische Kernzone voller Leben: Durchzogen von dichten Wäldern, klaren Flüssen, bunten Wiesen und unzähligen Tieren.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'heartlandInfo2', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        heartlandInfo2: 'heartlandInfo2',
-        skip: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'heartlandInfo2',
-    companionDialogue:
-      'Unsere Welt konnte diese Lebensenergie nie von selbst erzeugen. Sie war immer auf die Weltenanker und somit auf eure menschliche Aktivität angewiesen.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'heartlandInfo3', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        heartlandInfo3: 'heartlandInfo3',
-        skip: 'moreInfo',
-      },
-    },
-  },
-  {
-    id: 'heartlandInfo3',
-    companionDialogue:
-      'Als ihr euch weniger bewegt habt, fiel die Energiequelle aus. Nach dem grossen Kollaps hat das triste Ödland mein geliebtes Herzland verschluckt. Fast alles ist grau und leblos... Der Urzeitanker liegt tief unter Sand und Asche begraben.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [
-        { id: 'heartlandInfo4', label: 'Weiter', variant: 'primary' },
-        { id: 'skip', label: 'Überspringen', variant: 'secondary' },
-      ],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        heartlandInfo4: 'heartlandInfo4',
-        skip: 'moreInfo',
-      },
-    },
-  },
-  {
-    id: 'heartlandInfo4',
-    companionDialogue:
-      'Aber jetzt bist du ja hier! Sobald du aktiv wirst, können wir Schritt für Schritt das Ödland zurückdrängen und meine Heimat wieder zum Blühen bringen.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [{ id: 'more', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        more: 'moreInfo',
-      },
-    },
-  },
-
-  {
-    id: 'sport',
-    companionDialogue:
-      'Um das Herzland zu retten, brauche ich deine Unterstützung. Mein Conduit wartet sehnsüchtig auf deine Bewegung! Ich zeige dir jetzt genau, wie du uns helfen kannst.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [{ id: 'treadmill', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        treadmill: 'treadmill',
-      },
-    },
-  },
   {
     id: 'treadmill',
-    companionDialogue:
-      'Sobald du bereit bist, lies die Instruktionen auf dem Tablet durch und befolge diese Schritt für Schritt.',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'So startest du deine Aktivität. Lies zuerst alles durch:',
-        'Schritt 1: Starte auf diesem Tablet mittels „Aktivität starten“.',
-        'Schritt 2: Geh zum Laufband und lege den Sicherheits-Clip an.',
-        'Schritt 3: Starte die Strava-App auf dem vorliegenden Tablet beim Laufband.',
-        'Schritt 4: Schalte das Laufband ein. Laufe so schnell und so lange du möchtest!',
-        'Schritt 5: Schalte das Laufband danach wieder aus.',
-        'Schritt 6: Beende den Lauf in Strava und veröffentliche ihn.',
-        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
-      ],
+      prompt: ['Weitere Schritte'],
       choices: [
         {
           id: 'activity_started',
           label: 'Aktivität starten',
           variant: 'primary',
         },
-        {
-          id: 'activity_exit',
-          label: 'Ich mag kein sport machen',
-          variant: 'secondary',
-        },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        activity_started: 'activity_started',
-        activity_exit: 'activity_exit',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { activity_started: 'activity_started' },
     },
   },
+
   {
     id: 'activity_started',
     companionDialogue:
-      'Schau mal! Der Conduit reagiert! Er leuchtet! Das hat er seit dem grossen Kollaps nicht mehr getan. Du bist einfach spitze, danke! Je mehr du dich auspowerst, desto mehr Energie fliesst in meine Welt!',
+      'Los. Der Conduit reagiert schon. Je mehr ihr euch anstrengt, desto besser für das Herzland.',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'So startest du deine Aktivität. Lies zuerst alles durch:',
-        'Schritt 1: Starte auf diesem Tablet mittels „Aktivität starten“.',
-        'Schritt 2: Geh zum Laufband und lege den Sicherheits-Clip an.',
-        'Schritt 3: Starte die Strava-App auf dem vorliegenden Tablet beim Laufband.',
-        'Schritt 4: Schalte das Laufband ein. Laufe so schnell und so lange du möchtest!',
-        'Schritt 5: Schalte das Laufband danach wieder aus.',
-        'Schritt 6: Beende den Lauf in Strava und veröffentliche ihn.',
-        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
-      ],
+      prompt: [],
       choices: [
         {
           id: 'activity_finished',
@@ -450,34 +195,29 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        activity_finished: 'activity_finished',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { activity_finished: 'activity_finished' },
     },
   },
+
   {
     id: 'activity_finished',
     companionDialogue:
-      'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.',
+      'Wow, danke Marin für deinen kurzen, eleganten Spaziergang. Du kannst sonst gleich deine gesammelte Energie in meinem Conduit speichern.',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'Speichere deine Energie im Conduit und setzte sie in der Welt frei!',
-      ],
+      prompt: [],
       choices: [
         { id: 'store_energy', label: 'Energie speichern', variant: 'primary' },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        store_energy: 'store_energy',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { store_energy: 'store_energy' },
     },
   },
+
   {
     id: 'store_energy',
-    companionDialogue:
-      'Schau dir den Conduit an! Deine Energie wartet darauf, gespeichert zu werden. Tippe, wenn du bereit bist!',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -490,15 +230,13 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        store_energy_1: 'store_energy_1',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { store_energy_1: 'store_energy_1' },
     },
   },
+
   {
     id: 'store_energy_1',
-    companionDialogue:
-      'Ja! Ich spüre es! Die erste Welle Energie fliesst in meine Welt!',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -507,15 +245,13 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        store_energy_2: 'store_energy_2',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { store_energy_2: 'store_energy_2' },
     },
   },
+
   {
     id: 'store_energy_2',
-    companionDialogue:
-      'Unglaublich! Der Conduit leuchtet immer heller! Noch ein letzter Schub!',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -524,62 +260,41 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        store_energy_3: 'store_energy_3',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { store_energy_3: 'store_energy_3' },
     },
   },
+
   {
     id: 'store_energy_3',
     companionDialogue:
-      'PERFEKT! Der Conduit ist aufgeladen! Deine Energie hat sich in Form von diverser Vegetation in der Welt freigesetzt. Kannst du es sehen?',
-    creatorView: {
-      type: 'choices',
-      prompt: [
-        'Schau dir an, wie deine Energie die Welt zum Blühen gebracht hat.',
-      ],
-      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'lutra_exit',
-      },
-    },
-  },
-  {
-    id: 'activity_exit',
-    companionDialogue:
-      'Das macht überhaupt nichts, ich verstehe dich vollkommen! Jeder hat mal einen gemütlichen Tag verdient. Heute ist auch besonders heiss. Aber kein Grund zur Sorge, ich bleibe hier und warte treu auf dich.',
+      'Jetzt seht ihr rechts, wie die Landschaft erblüht. Ich denke ihr fühlt euch hier auch gleich wohler',
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'farewell', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'lutra_exit',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { farewell: 'farewell' },
     },
   },
+
   {
-    id: 'lutra_exit',
+    id: 'farewell',
     companionDialogue:
-      'Möchtest du noch tiefer in meine Welt eintauchen und sehen, was wir in Zukunft noch alles erreichen können? Dann geh einfach rüber zur Maus auf dem anderen Sockel. Auf dem Monitor dort erfährst du mehr zu unserer App-Vision!',
+      'Das war es von mir. Danke fürs Zuschauen, an Jury und Publikum gleichermassen. Ich hoffe, ihr habt einen guten Einblick bekommen in das, was wir vorhaben. Ihr könnt gerne das Konzept links genauer durchstöbern. Bleibt in Bewegung',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
         {
           id: 'hub_transition',
-          label: 'Von [companionName] verabschieden',
+          label: '',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        hub_transition: 'hub_transition',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { hub_transition: 'hub_transition' },
     },
   },
 
@@ -587,15 +302,14 @@ export const FLOW_STEPS: FlowStep[] = [
     id: 'hub_transition',
     creatorView: {
       type: 'transition',
-      prompt: [
-        'Du findest dein Lutra [companionName] nun im Zeltlager. Danke das du ihn erschaffen hast.',
-      ],
+      prompt: [],
     },
     transitions: {
       [FLOW_EVENTS.EXIT_COMPLETE]: null,
     },
   },
 ];
+
 export const FLOW_STEP_MAP = new Map<string, FlowStep>(
   FLOW_STEPS.map((step) => [step.id, step]),
 );

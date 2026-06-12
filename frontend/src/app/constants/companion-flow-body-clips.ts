@@ -1,10 +1,10 @@
 import type { CompanionBodyClip } from './companion-body-clips';
 
 /** Interaction flow steps that play a one-shot wave (re-triggers when `stepId` changes). */
-const INTERACTION_WAVE_STEP_IDS = new Set(['firstLook']);
+const INTERACTION_WAVE_STEP_IDS = new Set(['greeting', 'farewell']);
 const INTERACTION_EXIT_STEP_IDS = new Set(['hub_transition']);
 const INTERACTION_WIN_STEP_IDS = new Set(['store_energy_3']);
-const INTERACTION_RUN_STEP_IDS = new Set(['activity_started']);
+const INTERACTION_RUN_STEP_IDS = new Set(['']);
 
 export function resolveInteractionBodyClip(stepId: string): CompanionBodyClip {
   if (

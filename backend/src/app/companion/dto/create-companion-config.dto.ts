@@ -21,7 +21,7 @@ class ColorDto {
 }
 
 export class CreateCompanionConfigDto {
-  @ApiPropertyOptional({ example: 'My Lutra' })
+  @ApiPropertyOptional({ example: 'Lutra' })
   @IsOptional()
   @IsString()
   name?: string;

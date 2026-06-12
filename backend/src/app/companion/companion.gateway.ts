@@ -95,7 +95,7 @@ export class CompanionGateway
     this.session = {
       companionId: companion.id,
       companionConfig: this.extractConfig(companion),
-      companionName: null,
+      companionName: companion.name ?? null,
       companionCreatedAt: companion.createdAt.toISOString(),
       currentStepId: FIRST_STEP_ID,
       moreInfoVisited: false,

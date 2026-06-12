@@ -12,7 +12,7 @@ export class Companion {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'varchar', length: 80, default: 'My Lutra' })
+  @Column({ type: 'varchar', length: 80, default: 'Lutra' })
   name!: string;
 
   @Column({
