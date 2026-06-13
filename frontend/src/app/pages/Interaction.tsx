@@ -32,6 +32,7 @@ import {
   isInteractionExitStep,
   resolveInteractionBodyClip,
 } from '../constants/companion-flow-body-clips';
+import { useFlowAudio } from '../hooks/useFlowAudio';
 import styles from './Interaction.module.scss';
 
 const EXIT_ANIMATION_FALLBACK_MS = 8_000;
@@ -283,6 +284,7 @@ export function Interaction() {
     SCREENS.INTERACTION,
   );
   const totalEffortScore = useTotalEffortScore(activityRefreshToken);
+  useFlowAudio(flowState?.stepId);
 
   useEffect(() => {
     if (!flowState || flowState.creatorView.type !== 'transition') return;
