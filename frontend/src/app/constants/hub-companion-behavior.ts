@@ -15,7 +15,7 @@ export const HUB_COMPANION_IDLE_MAX = 5;
 export const HUB_POI_IDLE_MIN = 30;
 export const HUB_POI_IDLE_MAX = 90;
 
-export const HUB_POI_DETECT_RADIUS = 25;
+export const HUB_POI_DETECT_RADIUS = 30;
 export const HUB_COMPANION_ROAM_CHANCE = 0.15;
 
 export const HUB_COMPANION_GROUND_OFFSET = 0.1;
