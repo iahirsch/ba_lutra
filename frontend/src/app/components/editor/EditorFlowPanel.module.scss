@@ -242,7 +242,7 @@
 .resetButton {
   @include s.icon-button($state: default, $shape: default);
   position: fixed;
-  top: s.$space-3xl;
+  top: 4rem;
   left: s.$space-lg;
   z-index: 100;
   span {
