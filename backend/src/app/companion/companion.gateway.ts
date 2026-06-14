@@ -58,6 +58,7 @@ export class CompanionGateway
   private readonly screenRegistry = new Map<string, ScreenId>();
   private session: FlowSession | null = null;
   private resetTimer: NodeJS.Timeout | null = null;
+  private activityLoadingTimer: NodeJS.Timeout | null = null;
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
@@ -83,6 +84,14 @@ export class CompanionGateway
   async refreshActivityForCompanion(companionId: string): Promise<void> {
     if (!this.session || this.session.companionId !== companionId) return;
     await this.refreshActivityEffortScore();
+
+    if (this.session.currentStepId === 'activity_loading') {
+      this.clearActivityLoadingTimer();
+      const score = this.session.activityEffortScore;
+      this.advanceTo(score ? 'store_energy' : 'no_activity_detected');
+      return;
+    }
+
     this.broadcastFlowState();
   }
 
@@ -148,6 +157,14 @@ export class CompanionGateway
       payload.choiceId === 'activity_finished'
     ) {
       await this.refreshActivityEffortScore();
+      const score = this.session.activityEffortScore;
+      if (score) {
+        this.advanceTo('store_energy');
+      } else {
+        this.advanceTo('activity_loading');
+        this.startActivityLoadingTimer();
+      }
+      return;
     }
     if (
       this.session.currentStepId === 'store_energy_2' &&
@@ -198,9 +215,26 @@ export class CompanionGateway
     this.startResetTimer();
   }
 
+  private startActivityLoadingTimer(): void {
+    this.activityLoadingTimer = setTimeout(() => {
+      if (this.session?.currentStepId === 'activity_loading') {
+        this.advanceTo('no_activity_detected');
+      }
+      this.activityLoadingTimer = null;
+    }, 15_000);
+  }
+
+  private clearActivityLoadingTimer(): void {
+    if (this.activityLoadingTimer) {
+      clearTimeout(this.activityLoadingTimer);
+      this.activityLoadingTimer = null;
+    }
+  }
+
   private endSession(): void {
     if (!this.session) return;
     this.clearResetTimer();
+    this.clearActivityLoadingTimer();
 
     this.server.emit(FLOW_EVENTS.COMPANION_ENTERED_HUB, {
       id: this.session.companionId,
@@ -216,6 +250,7 @@ export class CompanionGateway
   private async resetSession(): Promise<void> {
     if (!this.session) return;
     this.clearResetTimer();
+    this.clearActivityLoadingTimer();
 
     await this.companionRepository.delete(this.session.companionId);
 
@@ -260,10 +295,18 @@ export class CompanionGateway
         .replace(/\[activityDistance\]/g, this.formatActivityDistance())
         .replace(/\[activityDuration\]/g, this.formatActivityDuration());
 
-    const rawDialogue =
-      step.id === 'moreInfo' && this.session.moreInfoVisited
-        ? 'Was möchtest du sonst noch erfahren?'
-        : step.companionDialogue;
+    const session = this.session;
+    const rawDialogue = (() => {
+      if (step.id === 'moreInfo' && session.moreInfoVisited)
+        return 'Was möchtest du sonst noch erfahren?';
+      if (step.id === 'activity_finished') {
+        const score = session.activityEffortScore ?? 0;
+        return score >= 0.5
+          ? 'Wow, du warst ja richtig fleissig! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.'
+          : 'Gut gemacht! Du hast [effortScore] von 1000 Energie gesammelt und [activityDistance] in [activityDuration] zurückgelegt. Jedes bisschen zählt!';
+      }
+      return step.companionDialogue;
+    })();
     const dialogue = rawDialogue ? replace(rawDialogue) : '';
 
     const creatorView = {
@@ -305,24 +348,21 @@ export class CompanionGateway
 
   private formatActivityDistance(): string {
     const meters = this.session?.activityDistanceMeters;
-    if (!meters || meters <= 0) return '0 km';
+    if (!meters || meters <= 0) return '0 m';
+    if (meters < 1000) return `${Math.round(meters)} m`;
     const km = meters / 1000;
-    const rounded = km >= 10 ? km.toFixed(0) : km.toFixed(1);
-    return `${rounded.replace('.', ',')} km`;
+    return `${km.toFixed(1).replace('.', ',')} km`;
   }
 
   private formatActivityDuration(): string {
     const seconds = this.session?.activityDurationSeconds;
-    if (!seconds || seconds <= 0) return '0 min';
+    if (!seconds || seconds <= 0) return '0 s';
     const totalSeconds = Math.max(0, Math.round(seconds));
-    const totalMinutes = Math.floor(totalSeconds / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+    const minutes = Math.floor(totalSeconds / 60);
     const remainingSeconds = totalSeconds % 60;
-    if (hours > 0) return `${hours} h ${minutes} min`;
-    if (remainingSeconds === 0) return `${totalMinutes} min`;
-    if (totalMinutes === 0) return `${remainingSeconds} s`;
-    return `${totalMinutes} min ${remainingSeconds} s`;
+    if (minutes === 0) return `${totalSeconds} s`;
+    const paddedSeconds = String(remainingSeconds).padStart(2, '0');
+    return `${minutes}:${paddedSeconds} min`;
   }
 
   private resolveTransition(

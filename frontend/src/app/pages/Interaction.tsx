@@ -143,7 +143,7 @@ function InteractionScene({
     useEnvironmentSpawnTransform(ENVIRONMENT_SPAWN.interact);
 
   const showConduitGlow =
-    activityEffortScore != null && stepId !== 'activity_finished';
+    activityEffortScore != null && activityEffortScore > 0;
 
   const isStoreEnergyStep = STORE_ENERGY_STEP_IDS.has(stepId);
 

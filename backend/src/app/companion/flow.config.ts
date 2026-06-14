@@ -213,7 +213,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'conduitInfo3',
     companionDialogue:
-      'In der echten Welt sind Otter „Schlüsselarten“: Unsere Jagd reguliert die Fischbestände, was den Flüssen, Pflanzen und der Wasserqualität guttut. Wir verbinden das Ökosystem. In unserer Spielwelt übernimmt diese wichtige Aufgabe mein Conduit!',
+      'In der echten Welt sind wir Otter auch hilfreich: Unsere Jagd reguliert die Fischbestände, was den Flüssen, Pflanzen und der Wasserqualität guttut. Wir verbinden das Ökosystem. In meiner Welt übernimmt diese wichtige Aufgabe mein Conduit!',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -427,8 +427,7 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'activity_started',
-    companionDialogue:
-      'Schau mal! Der Conduit reagiert! Er leuchtet! Das hat er seit dem grossen Kollaps nicht mehr getan. Du bist einfach spitze, danke! Je mehr du dich auspowerst, desto mehr Energie fliesst in meine Welt!',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
       prompt: [
@@ -451,7 +450,45 @@ export const FLOW_STEPS: FlowStep[] = [
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        activity_finished: 'activity_finished',
+        activity_finished: 'store_energy',
+      },
+    },
+  },
+  {
+    id: 'activity_loading',
+    companionDialogue:
+      'Einen Moment... Ich überprüfe deine Aktivität! Gleich geht es weiter.',
+    creatorView: {
+      type: 'idle',
+      prompt: [],
+      choices: [],
+    },
+    transitions: {},
+  },
+  {
+    id: 'no_activity_detected',
+    companionDialogue:
+      'Hmm, ich konnte leider keine neue Aktivität von dir finden. Bist du den Schritten auf dem Laufband korrekt gefolgt? Möchtest du es erneut versuchen?',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [
+        {
+          id: 'retry',
+          label: 'Erneut versuchen',
+          variant: 'primary',
+        },
+        {
+          id: 'lutra_exit',
+          label: 'Abbrechen',
+          variant: 'secondary',
+        },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        retry: 'activity_started',
+        lutra_exit: 'lutra_exit',
       },
     },
   },
@@ -461,16 +498,12 @@ export const FLOW_STEPS: FlowStep[] = [
       'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'Speichere deine Energie im Conduit und setzte sie in der Welt frei!',
-      ],
-      choices: [
-        { id: 'store_energy', label: 'Energie speichern', variant: 'primary' },
-      ],
+      prompt: [],
+      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        store_energy: 'store_energy',
+        lutra_exit: 'lutra_exit',
       },
     },
   },
@@ -542,7 +575,7 @@ export const FLOW_STEPS: FlowStep[] = [
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'lutra_exit',
+        lutra_exit: 'activity_finished',
       },
     },
   },
