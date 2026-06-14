@@ -399,11 +399,8 @@ export const FLOW_STEPS: FlowStep[] = [
         'So startest du deine Aktivität. Lies zuerst alles durch:',
         'Schritt 1: Starte auf diesem Tablet mittels „Aktivität starten“.',
         'Schritt 2: Geh zum Laufband und lege den Sicherheits-Clip an.',
-        'Schritt 3: Starte die Strava-App auf dem vorliegenden Tablet beim Laufband.',
-        'Schritt 4: Schalte das Laufband ein. Laufe so schnell und so lange du möchtest!',
-        'Schritt 5: Schalte das Laufband danach wieder aus.',
-        'Schritt 6: Beende den Lauf in Strava und veröffentliche ihn.',
-        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
+        'Schritt 3: Folge der Anleitung, welche sich auf dem Laufband befindet Schritt für Schritt. (Schritt 1 bis und mit Schritt 6)',
+        'Schritt 4: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
       ],
       choices: [
         {
@@ -434,11 +431,8 @@ export const FLOW_STEPS: FlowStep[] = [
         'So startest du deine Aktivität. Lies zuerst alles durch:',
         'Schritt 1: Starte auf diesem Tablet mittels „Aktivität starten“.',
         'Schritt 2: Geh zum Laufband und lege den Sicherheits-Clip an.',
-        'Schritt 3: Starte die Strava-App auf dem vorliegenden Tablet beim Laufband.',
-        'Schritt 4: Schalte das Laufband ein. Laufe so schnell und so lange du möchtest!',
-        'Schritt 5: Schalte das Laufband danach wieder aus.',
-        'Schritt 6: Beende den Lauf in Strava und veröffentliche ihn.',
-        'Schritt 7: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
+        'Schritt 3: Folge der Anleitung, welche sich auf dem Laufband befindet Schritt für Schritt. (Schritt 1 bis und mit Schritt 6)',
+        'Schritt 4: Komm wieder hierher zurück und drücke „Aktivität beenden“.',
       ],
       choices: [
         {
