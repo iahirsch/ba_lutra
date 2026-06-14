@@ -17,6 +17,7 @@ import { ENVIRONMENT_SPAWN, INTERACTION_CAMERA } from '../constants/hub-scene';
 import { useEnvironmentSpawnTransform } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
+import { useCompanionAudio } from '../hooks/useCompanionAudio';
 import { HubBackground } from '../components/hub/HubBackground';
 import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import { HubLights } from '../components/hub/HubLights';
@@ -283,6 +284,7 @@ export function Interaction() {
     SCREENS.INTERACTION,
   );
   const totalEffortScore = useTotalEffortScore(activityRefreshToken);
+  useCompanionAudio(flowState?.stepId, flowState?.companionDialogue ?? undefined);
 
   useEffect(() => {
     if (!flowState || flowState.creatorView.type !== 'transition') return;
