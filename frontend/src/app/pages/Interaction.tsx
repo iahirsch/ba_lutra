@@ -67,8 +67,8 @@ function getStoreEnergyGlowTarget(stepId: string, effort: number): number {
   return effortToConduitGlow(effort);
 }
 
-/** Rotation speed in radians per second — covers 180° in ~0.9 s. */
-const TURN_SPEED = 3.5;
+/** Rotation speed in radians per second — covers 180° in ~0.6 s. */
+const TURN_SPEED = 5.0;
 
 interface CompanionTurnGroupProps {
   position: [number, number, number];
@@ -76,6 +76,8 @@ interface CompanionTurnGroupProps {
   showBackpack: boolean;
   visible?: boolean;
   children: ReactNode;
+  onTurningChange?: (turning: boolean) => void;
+  onTurnComplete?: () => void;
 }
 
 function CompanionTurnGroup({
@@ -84,14 +86,29 @@ function CompanionTurnGroup({
   showBackpack,
   visible = true,
   children,
+  onTurningChange,
+  onTurnComplete,
 }: CompanionTurnGroupProps) {
   const groupRef = useRef<Group>(null);
   const turnOffsetRef = useRef(0);
+  const isTurningRef = useRef(false);
+  const onTurningChangeRef = useRef(onTurningChange);
+  const onTurnCompleteRef = useRef(onTurnComplete);
+  onTurningChangeRef.current = onTurningChange;
+  onTurnCompleteRef.current = onTurnComplete;
 
   useFrame((_state, delta) => {
     const target = showBackpack ? Math.PI : 0;
     const diff = target - turnOffsetRef.current;
-    if (Math.abs(diff) < 0.001) return;
+    const nowTurning = Math.abs(diff) >= 0.001;
+
+    if (nowTurning !== isTurningRef.current) {
+      isTurningRef.current = nowTurning;
+      onTurningChangeRef.current?.(nowTurning);
+      if (!nowTurning) onTurnCompleteRef.current?.();
+    }
+
+    if (!nowTurning) return;
     turnOffsetRef.current +=
       Math.sign(diff) * Math.min(Math.abs(diff), TURN_SPEED * delta);
     if (groupRef.current) {
@@ -149,13 +166,41 @@ function InteractionScene({
   const isStoreEnergyStep = STORE_ENERGY_STEP_IDS.has(stepId);
 
   const [showBackpack, setShowBackpack] = useState(false);
+  const [isTurning, setIsTurning] = useState(false);
+  const [playWin, setPlayWin] = useState(false);
+
   useEffect(() => {
-    setShowBackpack(isStoreEnergyStep);
-  }, [isStoreEnergyStep]);
-  const handleBackpackWinComplete = useCallback(
-    () => setShowBackpack(false),
-    [],
-  );
+    if (stepId === 'store_energy_3') {
+      setShowBackpack(false);
+      setPlayWin(false);
+    } else {
+      setShowBackpack(isStoreEnergyStep);
+    }
+  }, [stepId, isStoreEnergyStep]);
+
+  const winTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (winTimerRef.current) clearTimeout(winTimerRef.current);
+    };
+  }, [stepId]);
+
+  const handleTurningChange = useCallback((turning: boolean) => {
+    setIsTurning(turning);
+  }, []);
+
+  const handleTurnComplete = useCallback(() => {
+    if (stepId === 'store_energy_3') {
+      winTimerRef.current = setTimeout(() => setPlayWin(true), 600);
+    }
+  }, [stepId]);
+
+  const activeClip = isTurning
+    ? 'walking'
+    : playWin
+      ? 'win'
+      : resolveInteractionBodyClip(stepId);
 
   const conduitGlow = showConduitGlow
     ? isStoreEnergyStep
@@ -204,19 +249,21 @@ function InteractionScene({
             baseRotationY={interactRotationY}
             showBackpack={showBackpack}
             visible={companionVisible}
+            onTurningChange={handleTurningChange}
+            onTurnComplete={handleTurnComplete}
           >
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}
               eyeColor={companionConfig.eyeColor}
               noseColor={companionConfig.noseColor}
-              activeClip={resolveInteractionBodyClip(stepId)}
+              activeClip={activeClip}
               activeClipKey={companionVisible ? stepId : `${stepId}-hidden`}
               onRestoredToIdle={
                 isInteractionExitStep(stepId)
                   ? onExitAnimationComplete
                   : stepId === 'store_energy_3'
-                    ? handleBackpackWinComplete
+                    ? () => setPlayWin(false)
                     : undefined
               }
             >
@@ -284,7 +331,10 @@ export function Interaction() {
     SCREENS.INTERACTION,
   );
   const totalEffortScore = useTotalEffortScore(activityRefreshToken);
-  useCompanionAudio(flowState?.stepId, flowState?.companionDialogue ?? undefined);
+  useCompanionAudio(
+    flowState?.stepId,
+    flowState?.companionDialogue ?? undefined,
+  );
 
   useEffect(() => {
     if (!flowState || flowState.creatorView.type !== 'transition') return;

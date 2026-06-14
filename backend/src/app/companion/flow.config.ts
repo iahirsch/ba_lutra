@@ -530,8 +530,6 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'store_energy_1',
-    companionDialogue:
-      'Ja! Ich spüre es! Die erste Welle Energie fliesst in meine Welt!',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -547,8 +545,6 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'store_energy_2',
-    companionDialogue:
-      'Unglaublich! Der Conduit leuchtet immer heller! Noch ein letzter Schub!',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -565,7 +561,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'store_energy_3',
     companionDialogue:
-      'PERFEKT! Der Conduit ist aufgeladen! Deine Energie hat sich in Form von diverser Vegetation in der Welt freigesetzt. Kannst du es sehen?',
+      'Der Conduit ist aufgeladen! Deine Energie hat sich in Form von diverser Vegetation in der Welt freigesetzt. Kannst du es sehen?',
     creatorView: {
       type: 'choices',
       prompt: [
