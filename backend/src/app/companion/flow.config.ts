@@ -89,10 +89,10 @@ export const FLOW_STEPS: FlowStep[] = [
 
   {
     id: 'usp_1',
-    companionDialogue: 'Heii heii Laura? Darf ich sagen was uns von anderen unterscheidet?',
+    companionDialogue: 'Darf ich sagen was uns von anderen unterscheidet?',
     creatorView: {
       type: 'choices',
-      prompt: ['Worldbuilding & Story'],
+      prompt: [''],
       choices: [
         {
           id: 'usp_2',
@@ -130,6 +130,44 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
+      prompt: ['Nach Motivierender Otter folgt lacher von Lutra.'],
+      choices: [
+        {
+          id: 'laura_funny',
+          label: 'Weiter bei Folie 11',
+          variant: 'primary',
+        },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { laura_funny: 'laura_funny' },
+    },
+  },
+
+  {
+    id: 'laura_funny',
+    companionDialogue: 'Der war gut Laura!',
+    creatorView: {
+      type: 'choices',
+      prompt: [''],
+      choices: [
+        {
+          id: 'empty_3',
+          label: 'Weiter bei Folie 13',
+          variant: 'primary',
+        },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_3: 'empty_3' },
+    },
+  },
+
+  {
+    id: 'empty_3',
+    companionDialogue: '',
+    creatorView: {
+      type: 'choices',
       prompt: [''],
       choices: [
         {
@@ -151,15 +189,15 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'empty_3', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'empty_4', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_3: 'empty_3' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_4: 'empty_4' },
     },
   },
 
   {
-    id: 'empty_3',
+    id: 'empty_4',
     companionDialogue: '',
     creatorView: {
       type: 'choices',
@@ -185,18 +223,18 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'empty_4', label: 'Weiter', variant: 'primary' },
+        { id: 'empty_5', label: 'Weiter', variant: 'primary' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        empty_4: 'empty_4',
+        empty_5: 'empty_5',
       },
     },
   },
 
   {
-    id: 'empty_4',
+    id: 'empty_5',
     companionDialogue: '',
     creatorView: {
       type: 'choices',
@@ -221,15 +259,15 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'empty_5', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'empty_6', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_5: 'empty_5' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_6: 'empty_6' },
     },
   },
 
   {
-    id: 'empty_5',
+    id: 'empty_6',
     companionDialogue: '',
     creatorView: {
       type: 'choices',
@@ -255,15 +293,15 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'empty_6', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'empty_7', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_6: 'empty_6' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_7: 'empty_7' },
     },
   },
 
   {
-    id: 'empty_6',
+    id: 'empty_7',
     companionDialogue: '',
     creatorView: {
       type: 'choices',
@@ -288,15 +326,15 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'empty_7', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'empty_8', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_7: 'empty_7' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_8: 'empty_8' },
     },
   },
 
   {
-    id: 'empty_7',
+    id: 'empty_8',
     companionDialogue: '',
     creatorView: {
       type: 'choices',
@@ -397,7 +435,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'farewell_1',
     companionDialogue:
-      'Das war es von mir. Danke fürs Zuschauen, an Jury und Publikum gleichermassen. Ich hoffe, ihr habt einen guten Einblick bekommen in das, was wir vorhaben. Leider konnten wir zeitlich nicht auf alle Details eingehen, daher könnt ihr gerne das Konzept links genauer durchstöbern.',
+      'Das war es von mir. Danke an die Jury und das Publikum für eure Aufmerksamkeit. Ich hoffe, ihr habt einen guten Einblick bekommen in das, was wir vorhaben. Leider konnten wir zeitlich nicht auf alle Details eingehen, daher könnt ihr gerne anschliessend das Konzept links genauer durchstöbern.',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -412,7 +450,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'farewell_2',
     companionDialogue:
-      'Mein Team steht euch nun für Fragen zur Verfügung. Bleibt in Bewegung. Tschüüüüss!',
+      'Mein Team steht euch nun für Fragen zur Verfügung. Bleibt in Bewegung.',
     creatorView: {
       type: 'choices',
       prompt: [],
