@@ -19,7 +19,7 @@ export const HUB_POI_CONFIG: Record<string, HubPoiConfig> = {
   EMPTY_POI_Tent02: { weight: 2 },
   EMPTY_POI_Board01: { weight: 1.5, idleMin: 10, idleMax: 45 },
   EMPTY_POI_Board02: { weight: 2, idleMin: 10, idleMax: 45 },
-  EMPTY_POI_User: { idleMin: 15, idleMax: 30 },
+  EMPTY_POI_User: { weight: 2, idleMin: 15, idleMax: 30 },
 };
 
 export function getHubPoiConfig(poiName: string): HubPoiConfig {

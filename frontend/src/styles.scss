@@ -6,13 +6,20 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   font-family: s.$font-secondary;
   font-size: s.$font-size-lg;
   -webkit-font-smoothing: antialiased;
   color: s.$color-neutral-900;
-  background: s.$color-neutral-50;
+  background: #000;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 #root {

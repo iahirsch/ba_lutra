@@ -8,6 +8,7 @@
   height: 100dvh;
   overflow: hidden;
   touch-action: none;
+  padding-top: env(safe-area-inset-top);
 }
 
 .header {
@@ -19,8 +20,8 @@
 }
 
 .canvasZone {
-  flex: 1 1 auto;
-  min-height: 0;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
   z-index: 0;
 }

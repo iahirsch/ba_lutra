@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, type ReactNode } from 'react';
+import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import {
@@ -46,6 +46,7 @@ export function CompanionBody({
   children,
 }: CompanionBodyProps) {
   const { scene: source, animations } = useGLTF(COMPANION_BODY_GLB_URL);
+
   const resolvedFurColor = resolveFurColor(furColor);
   const resolvedEyeColor = resolveEyeColor(eyeColor);
   const resolvedNoseColor = resolveNoseColor(noseColor);
@@ -57,7 +58,11 @@ export function CompanionBody({
     return cloned;
   }, [source]);
 
+  const prevAppearanceKeyRef = useRef('');
   useLayoutEffect(() => {
+    const key = `${JSON.stringify(bodyMorphs)}|${JSON.stringify(resolvedFurColor)}|${JSON.stringify(resolvedEyeColor)}|${resolvedNoseColor}`;
+    if (key === prevAppearanceKeyRef.current) return;
+    prevAppearanceKeyRef.current = key;
     applyBodyMorphsToObject(scene, bodyMorphs);
     applyFurColorsToObject(scene, resolvedFurColor);
     applyEyeColorsToObject(scene, resolvedEyeColor);

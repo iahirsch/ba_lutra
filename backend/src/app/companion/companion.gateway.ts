@@ -80,6 +80,12 @@ export class CompanionGateway
     this.server.emit(COMPANION_EVENTS.DELETED, { id });
   }
 
+  async refreshActivityForCompanion(companionId: string): Promise<void> {
+    if (!this.session || this.session.companionId !== companionId) return;
+    await this.refreshActivityEffortScore();
+    this.broadcastFlowState();
+  }
+
   startFlowSession(companion: Companion): void {
     if (this.session) {
       this.logger.warn(
@@ -147,6 +153,7 @@ export class CompanionGateway
       this.session.currentStepId === 'store_energy_2' &&
       payload.choiceId === 'store_energy_3'
     ) {
+      await this.refreshActivityEffortScore();
       this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {
         companionId: this.session.companionId,
       });
