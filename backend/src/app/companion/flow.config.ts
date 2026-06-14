@@ -16,7 +16,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'team_intro', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'team_intro', label: 'Weiter 1/4', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: { team_intro: 'team_intro' },
@@ -31,7 +31,7 @@ export const FLOW_STEPS: FlowStep[] = [
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'worldbuilding_teaser', label: 'Weiter', variant: 'primary' },
+        { id: 'worldbuilding_teaser', label: 'Weiter 2/4', variant: 'primary' },
       ],
     },
     transitions: {
@@ -48,7 +48,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'handover_vision', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'handover_vision', label: 'Weiter 3/4', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: { handover_vision: 'handover_vision' },
@@ -61,7 +61,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'empty_1', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'empty_1', label: 'Weiter 4/4', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: { empty_1: 'empty_1' },
@@ -73,46 +73,52 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: ['Worldbuilding & Story'],
+      prompt: [''],
       choices: [
         {
-          id: 'world_chapter',
-          label: 'Weiter',
+          id: 'usp_1',
+          label: 'Weiter bei USP',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { world_chapter: 'world_chapter' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { usp_1: 'usp_1' },
     },
   },
 
   {
-    id: 'world_chapter',
-    companionDialogue:
-      'Das Herzland ist mein Zuhause. Früher war es eine lebendige Gegend voller Leben, mit Wäldern, Flüssen und allem, was dazugehört. Dann wurde das Ankernetz schwächer, bis es irgendwann ganz kollabierte. Der Urzeitanker liegt jetzt tief unter Sand begraben. Genau das soll sich ändern.',
+    id: 'usp_1',
+    companionDialogue: 'Heii heii Laura? Darf ich sagen was uns von anderen unterscheidet?',
     creatorView: {
       type: 'choices',
-      prompt: [],
+      prompt: ['Worldbuilding & Story'],
       choices: [
-        { id: 'world_chapter_conduit', label: 'Weiter', variant: 'primary' },
+        {
+          id: 'usp_2',
+          label: 'Weiter 1/2',
+          variant: 'primary',
+        },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        world_chapter_conduit: 'world_chapter_conduit',
-      },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { usp_2: 'usp_2' },
     },
   },
 
   {
-    id: 'world_chapter_conduit',
-    companionDialogue:
-      'Die leuchtende Kugel auf meinem Rucksack ist übrigens mein Conduit, ein Fragment eines Weltenankers. Er überträgt eure Bewegungsenergie direkt zu mir. Ich bringe dann diese Energie zum Weltenanker um diese permanent zu speichern.',
+    id: 'usp_2',
+    companionDialogue: 'Ich möchte Bewegungswilligen, die im Alltag mit fehlender Motivation und fehlenden Verbindung zu anderen kämpfen helfen, indem ihre Aktivität eine spielerisch erlebbare Welt formt und ich sie dabei emotional unterstütze.',
     creatorView: {
       type: 'choices',
-      prompt: [],
-      choices: [{ id: 'empty_2', label: 'Weiter', variant: 'primary' }],
+      prompt: [''],
+      choices: [
+        {
+          id: 'empty_2',
+          label: 'Weiter 2/2',
+          variant: 'primary',
+        },
+      ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: { empty_2: 'empty_2' },
@@ -128,7 +134,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'gameplay_remark',
-          label: 'Weiter',
+          label: 'Weiter bei Folie 13',
           variant: 'primary',
         },
       ],
@@ -157,31 +163,35 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
+      prompt: [''],
       choices: [
         {
-          id: 'companion_thanks',
-          label: 'Weiter',
+          id: 'world_chapter',
+          label: 'Weiter bei Folie 14',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { companion_thanks: 'companion_thanks' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { world_chapter: 'world_chapter' },
     },
   },
 
   {
-    id: 'companion_thanks',
+    id: 'world_chapter',
     companionDialogue:
-      'Danke Marco, dass du mein Aussehen entwickelt hast, vom Designkonzept bis zur 3D-Modellierung. Das war viel Arbeit. Ich bin sehr zufrieden mit mir.',
+      'Das Herzland ist mein Zuhause. Früher war es eine lebendige Gegend voller Leben, mit Wäldern, Flüssen und allem, was dazugehört. Dann wurde das Ankernetz schwächer, bis es irgendwann ganz kollabierte. Der Urzeitanker liegt jetzt tief unter Sand begraben. Genau das soll sich ändern.',
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'empty_4', label: 'Weiter', variant: 'primary' }],
+      choices: [
+        { id: 'empty_4', label: 'Weiter', variant: 'primary' },
+      ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_4: 'empty_4' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        empty_4: 'empty_4',
+      },
     },
   },
 
@@ -190,24 +200,24 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
+      prompt: [''],
       choices: [
         {
-          id: 'app_features',
-          label: 'Weiter',
+          id: 'world_chapter_conduit',
+          label: 'Weiter bei Folie 15',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { app_features: 'app_features' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { world_chapter_conduit: 'world_chapter_conduit' },
     },
   },
 
   {
-    id: 'app_features',
+    id: 'world_chapter_conduit',
     companionDialogue:
-      'Die Hauptfunktionen der App habt ihr zu Beginn anhand der Storyboards gesehen. Es gibt noch einige weitere Features, von denen "Person x" euch noch welche zeigt.',
+      'Die leuchtende Kugel auf meinem Rucksack ist übrigens mein Conduit, ein Fragment eines Weltenankers. Er überträgt eure Bewegungsenergie direkt zu mir. Ich bringe dann diese Energie zum Weltenanker um diese permanent zu speichern.',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -223,23 +233,25 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
+      prompt: [''],
       choices: [
         {
-          id: 'funny_remark',
-          label: 'Weiter',
+          id: 'companion_thanks',
+          label: 'Weiter Ende Folie 26',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { funny_remark: 'funny_remark' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { companion_thanks: 'companion_thanks' },
     },
   },
 
+
   {
-    id: 'funny_remark',
-    companionDialogue: '[Funny remark]',
+    id: 'companion_thanks',
+    companionDialogue:
+      'Danke Marco, dass du mein Aussehen entwickelt hast, vom Designkonzept bis zur 3D-Modellierung. Das war viel Arbeit. Ich bin sehr zufrieden mit mir.',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -255,11 +267,44 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: ['Weitere Schritte'],
+      prompt: [],
+      choices: [
+        {
+          id: 'app_features',
+          label: 'Weiter bei Folie 42',
+          variant: 'primary',
+        },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { app_features: 'app_features' },
+    },
+  },
+
+  {
+    id: 'app_features',
+    companionDialogue:
+      'Die Hauptfunktionen der App habt ihr zu Beginn anhand der Storyboards gesehen. Es gibt noch einige weitere Features, von denen euch Marco und Marin noch zwei weitere zeigen.',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'empty_7', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: { empty_7: 'empty_7' },
+    },
+  },
+
+  {
+    id: 'empty_7',
+    companionDialogue: '',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
       choices: [
         {
           id: 'activity_finished',
-          label: 'Weiter',
+          label: 'Weiter nach Marin Laufband',
           variant: 'primary',
         },
       ],
@@ -268,6 +313,7 @@ export const FLOW_STEPS: FlowStep[] = [
       [FLOW_EVENTS.CHOICE_SELECTED]: { activity_finished: 'activity_finished' },
     },
   },
+
 
   {
     id: 'activity_finished',
@@ -341,17 +387,32 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'farewell', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'farewell_1', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { farewell: 'farewell' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { farewell_1: 'farewell_1' },
     },
   },
 
   {
-    id: 'farewell',
+    id: 'farewell_1',
     companionDialogue:
-      'Das war es von mir. Danke fürs Zuschauen, an Jury und Publikum gleichermassen. Ich hoffe, ihr habt einen guten Einblick bekommen in das, was wir vorhaben. Ihr könnt gerne das Konzept links genauer durchstöbern. Bleibt in Bewegung.',
+      'Das war es von mir. Danke fürs Zuschauen, an Jury und Publikum gleichermassen. Ich hoffe, ihr habt einen guten Einblick bekommen in das, was wir vorhaben. Leider konnten wir zeitlich nicht auf alle Details eingehen, daher könnt ihr gerne das Konzept links genauer durchstöbern.',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'farewell_2', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        farewell_2: 'farewell_2',
+      },
+    },
+  },
+  {
+    id: 'farewell_2',
+    companionDialogue:
+      'Mein Team steht euch nun für Fragen zur Verfügung. Bleibt in Bewegung. Tschüüüüss!',
     creatorView: {
       type: 'choices',
       prompt: [],

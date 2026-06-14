@@ -21,13 +21,20 @@ interface EditorComposerProps {
   disableDOF?: boolean;
 }
 
-export function EditorComposer({ target, disableDOF = false }: EditorComposerProps) {
+export function EditorComposer({
+  target,
+  disableDOF = false,
+}: EditorComposerProps) {
   return (
     <EffectComposer depthBuffer multisampling={4}>
       <DepthOfField
         target={target}
-        bokehScale={disableDOF ? 0 : EDITOR_COMPOSER_PRESET.depthOfFieldBokehScale}
-        focusRange={disableDOF ? 0 : EDITOR_COMPOSER_PRESET.depthOfFieldFocusRange}
+        bokehScale={
+          disableDOF ? 0 : EDITOR_COMPOSER_PRESET.depthOfFieldBokehScale
+        }
+        focusRange={
+          disableDOF ? 0 : EDITOR_COMPOSER_PRESET.depthOfFieldFocusRange
+        }
       />
       <BrightnessContrast
         brightness={EDITOR_COMPOSER_PRESET.brightness}
