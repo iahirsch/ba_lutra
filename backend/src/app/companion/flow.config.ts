@@ -28,7 +28,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Hallo zusammen. Ich bin Lutra und begleite das Team heute durch die Präsentation, sozusagen als Co-Moderator. Schön, dass ihr alle hier seid.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'team_intro', label: 'Weiter 1/4', variant: 'primary' }],
     },
     transitions: {
@@ -42,7 +41,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Das Team besteht aus Laura, Marco und Marin. Die drei haben dieses Projekt entwickelt und mich dabei auch erschaffen. Ich weiss das zu schätzen. Gemeinsam stellen wir euch heute ihr Bachelorprojekt Lutra vor.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         { id: 'worldbuilding_teaser', label: 'Weiter 2/4', variant: 'primary' },
       ],
@@ -60,7 +58,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Ihr seht hinter mir das Herzland, oder besser gesagt, ein Teil der davon übrig ist. Der grosse Stein dort rechts ist ein Weltenanker, einer der vielen Energiequellen dieser Welt. Gerade ist alles leblos. Das Ziel ist, das zu ändern, und zwar durch Bewegung. Mehr dazu gleich.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         { id: 'handover_vision', label: 'Weiter 3/4', variant: 'primary' },
       ],
@@ -75,7 +72,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: 'Alles klar, dann übergebe ich an mein Team.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'empty_1', label: 'Weiter 4/4', variant: 'primary' }],
     },
     transitions: {
@@ -88,7 +84,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'usp_1',
@@ -107,7 +102,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: 'Darf ich sagen was uns von anderen unterscheidet?',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'usp_2',
@@ -127,7 +121,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Ich möchte Bewegungswilligen, die im Alltag mit fehlender Motivation und fehlenden Verbindung zu anderen kämpfen helfen, indem ihre Aktivität eine spielerisch erlebbare Welt formt und ich sie dabei emotional unterstütze.',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'empty_2',
@@ -165,7 +158,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: 'Der war gut Laura!',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'empty_3',
@@ -184,7 +176,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'gameplay_remark',
@@ -204,7 +195,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Kurze Unterbrechung von mir. Wusstet ihr, dass echte Otter zu den wenigen Tieren gehören, die Werkzeuge benutzen? Wir legen Steine auf den Bauch, um Muscheln aufzuschlagen. Entschuldige die Unterbrechung Marin.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'empty_4', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -217,7 +207,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'world_chapter',
@@ -237,7 +226,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Das Herzland ist mein Zuhause. Früher war es eine lebendige Gegend voller Leben, mit Wäldern, Flüssen und allem, was dazugehört. Dann wurde das Ankernetz schwächer, bis es irgendwann ganz kollabierte. Der Urzeitanker liegt jetzt tief unter Sand begraben. Genau das soll sich ändern.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'empty_5', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -252,7 +240,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'world_chapter_conduit',
@@ -274,7 +261,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Die leuchtende Kugel auf meinem Rucksack ist übrigens mein Conduit, ein Fragment eines Weltenankers. Er überträgt eure Bewegungsenergie direkt zu mir. Ich bringe dann diese Energie zum Weltenanker um diese permanent zu speichern.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'empty_6', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -287,7 +273,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [''],
       choices: [
         {
           id: 'companion_thanks',
@@ -323,35 +308,34 @@ export const FLOW_STEPS: FlowStep[] = [
       prompt: [],
       choices: [
         {
-          id: 'i_love_gras',
+          id: 'funfact',
           label: 'Weiter bei Folie 42',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { i_love_gras: 'i_love_gras' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { funfact: 'funfact' },
     },
   },
 
   {
-    id: 'i_love_grass',
-    companionDialogue: 'Ich liebe Gras!!!',
+    id: 'funfact',
+    companionDialogue:
+      'Noch etwas, das nur wir Lutras wissen. Im Herzland gibt es eine Pflanzengattung, die ausschliesslich in der Nacht und in der Nähe von Lutras wächst. Am Morgen verwelken sie wieder. Niemand weiss warum.',
     creatorView: {
       type: 'confirm',
       confirmLabel: 'Weiter',
     },
     transitions: {
-      empty_75: 'empty_75',
+      [FLOW_EVENTS.ACTION_CONFIRMED]: 'empty_75',
     },
   },
   {
     id: 'empty_75',
     companionDialogue: '',
     creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [],
+      type: 'idle',
     },
     transitions: {
       [FLOW_EVENTS.ACTION_CONFIRMED]: 'app_features',
@@ -364,7 +348,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Die Hauptfunktionen der App habt ihr zu Beginn anhand der Storyboards gesehen. Es gibt noch einige weitere Features, von denen euch Marco und Marin noch zwei weitere zeigen.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'empty_8', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -377,7 +360,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         {
           id: 'activity_finished',
@@ -397,7 +379,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Wow, danke Marin für deinen kurzen, eleganten Spaziergang. Du kannst sonst gleich deine gesammelte Energie in meinem Conduit speichern.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         { id: 'store_energy', label: 'Energie speichern', variant: 'primary' },
       ],
@@ -412,7 +393,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         {
           id: 'store_energy_1',
@@ -431,7 +411,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         { id: 'store_energy_2', label: 'Noch mehr!', variant: 'primary' },
       ],
@@ -446,7 +425,6 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue: '',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [
         { id: 'store_energy_3', label: 'Das letzte Mal!', variant: 'primary' },
       ],
@@ -462,7 +440,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Jetzt seht ihr rechts, wie die Landschaft erblüht. Ich denke ihr fühlt euch hier auch gleich wohler',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'farewell_1', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -476,7 +453,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Das war es von mir. Danke an die Jury und das Publikum für eure Aufmerksamkeit. Ich hoffe, ihr habt einen guten Einblick bekommen in das, was wir vorhaben. Leider konnten wir zeitlich nicht auf alle Details eingehen, daher könnt ihr gerne anschliessend das Konzept links genauer durchstöbern.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'farewell_2', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -491,7 +467,6 @@ export const FLOW_STEPS: FlowStep[] = [
       'Mein Team steht euch nun für Fragen zur Verfügung. Bleibt in Bewegung.',
     creatorView: {
       type: 'choices',
-      prompt: [],
       choices: [{ id: 'hub_transition', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
