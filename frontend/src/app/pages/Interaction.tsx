@@ -171,6 +171,8 @@ function InteractionScene({
   const isStoreEnergyStep = STORE_ENERGY_STEP_IDS.has(stepId);
 
   const [showBackpack, setShowBackpack] = useState(false);
+  const [backpackTurnPhase, setBackpackTurnPhase] = useState<'idle' | 'turning' | 'done'>('idle');
+
   useEffect(() => {
     // store_energy_3: turn to face camera immediately; win clip plays after turn
     if (stepId === 'store_energy_3') {
@@ -179,13 +181,28 @@ function InteractionScene({
       setShowBackpack(isStoreEnergyStep);
     }
   }, [isStoreEnergyStep, stepId]);
+
+  // Start walk animation when companion begins turning to face away (backpack side)
+  useEffect(() => {
+    if (showBackpack) {
+      setBackpackTurnPhase('turning');
+    } else {
+      setBackpackTurnPhase('idle');
+    }
+  }, [showBackpack]);
+
+  const handleBackpackTurnComplete = useCallback(
+    () => setBackpackTurnPhase('done'),
+    [],
+  );
   const handleBackpackWinComplete = useCallback(
     () => setShowBackpack(false),
     [],
   );
 
   const effectiveBodyClip =
-    stepId === 'store_energy_3' && store3Phase !== 'done'
+    (stepId === 'store_energy_3' && store3Phase !== 'done') ||
+    backpackTurnPhase === 'turning'
       ? 'walking'
       : resolveInteractionBodyClip(stepId);
 
@@ -237,9 +254,11 @@ function InteractionScene({
             showBackpack={showBackpack}
             visible={companionVisible}
             onTurnComplete={
-              stepId === 'store_energy_3' && store3Phase === 'turning'
-                ? onStore3TurnComplete
-                : undefined
+              showBackpack && backpackTurnPhase === 'turning'
+                ? handleBackpackTurnComplete
+                : stepId === 'store_energy_3' && store3Phase === 'turning'
+                  ? onStore3TurnComplete
+                  : undefined
             }
           >
             <CompanionBody
@@ -248,7 +267,7 @@ function InteractionScene({
               eyeColor={companionConfig.eyeColor}
               noseColor={companionConfig.noseColor}
               activeClip={effectiveBodyClip}
-              activeClipKey={companionVisible ? `${stepId}-${store3Phase}` : `${stepId}-${store3Phase}-hidden`}
+              activeClipKey={companionVisible ? `${stepId}-${store3Phase}-${backpackTurnPhase}` : `${stepId}-${store3Phase}-${backpackTurnPhase}-hidden`}
               onRestoredToIdle={
                 isInteractionExitStep(stepId)
                   ? onExitAnimationComplete

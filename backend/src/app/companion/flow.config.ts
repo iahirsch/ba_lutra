@@ -1,4 +1,5 @@
 import { FLOW_EVENTS, EditorViewConfig } from '@ba-praktisch/shared-types';
+import { EMPTY_OBSERVER } from 'rxjs/internal/Subscriber';
 
 export interface FlowStep {
   id: string;
@@ -14,10 +15,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'name-input',
       title: ['Name des Lutras', 'Dein Name'],
-      prompt: [
-        'Wie soll dein Lutra heissen?',
-        'Wie lautet dein Spitzname?',
-      ],
+      prompt: ['Wie soll dein Lutra heissen?', 'Wie lautet dein Spitzname?'],
     },
     transitions: {
       [FLOW_EVENTS.NAME_SUBMITTED]: 'greeting',
@@ -63,7 +61,9 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'handover_vision', label: 'Weiter 3/4', variant: 'primary' }],
+      choices: [
+        { id: 'handover_vision', label: 'Weiter 3/4', variant: 'primary' },
+      ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: { handover_vision: 'handover_vision' },
@@ -123,7 +123,8 @@ export const FLOW_STEPS: FlowStep[] = [
 
   {
     id: 'usp_2',
-    companionDialogue: 'Ich möchte Bewegungswilligen, die im Alltag mit fehlender Motivation und fehlenden Verbindung zu anderen kämpfen helfen, indem ihre Aktivität eine spielerisch erlebbare Welt formt und ich sie dabei emotional unterstütze.',
+    companionDialogue:
+      'Ich möchte Bewegungswilligen, die im Alltag mit fehlender Motivation und fehlenden Verbindung zu anderen kämpfen helfen, indem ihre Aktivität eine spielerisch erlebbare Welt formt und ich sie dabei emotional unterstütze.',
     creatorView: {
       type: 'choices',
       prompt: [''],
@@ -237,9 +238,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [
-        { id: 'empty_5', label: 'Weiter', variant: 'primary' },
-      ],
+      choices: [{ id: 'empty_5', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
@@ -263,7 +262,9 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { world_chapter_conduit: 'world_chapter_conduit' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        world_chapter_conduit: 'world_chapter_conduit',
+      },
     },
   },
 
@@ -300,7 +301,6 @@ export const FLOW_STEPS: FlowStep[] = [
     },
   },
 
-
   {
     id: 'companion_thanks',
     companionDialogue:
@@ -323,14 +323,38 @@ export const FLOW_STEPS: FlowStep[] = [
       prompt: [],
       choices: [
         {
-          id: 'app_features',
+          id: 'i_love_gras',
           label: 'Weiter bei Folie 42',
           variant: 'primary',
         },
       ],
     },
     transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: { app_features: 'app_features' },
+      [FLOW_EVENTS.CHOICE_SELECTED]: { i_love_gras: 'i_love_gras' },
+    },
+  },
+
+  {
+    id: 'i_love_grass',
+    companionDialogue: 'Ich liebe Gras!!!',
+    creatorView: {
+      type: 'confirm',
+      confirmLabel: 'Weiter',
+    },
+    transitions: {
+      empty_75: 'empty_75',
+    },
+  },
+  {
+    id: 'empty_75',
+    companionDialogue: '',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [],
+    },
+    transitions: {
+      [FLOW_EVENTS.ACTION_CONFIRMED]: 'app_features',
     },
   },
 
@@ -366,7 +390,6 @@ export const FLOW_STEPS: FlowStep[] = [
       [FLOW_EVENTS.CHOICE_SELECTED]: { activity_finished: 'activity_finished' },
     },
   },
-
 
   {
     id: 'activity_finished',

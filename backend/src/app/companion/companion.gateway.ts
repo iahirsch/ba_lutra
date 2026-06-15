@@ -232,7 +232,7 @@ export class CompanionGateway
         );
         this.resetSession();
       },
-      10 * 60 * 1000,
+      10 * 60 * 5000,
     );
   }
 
