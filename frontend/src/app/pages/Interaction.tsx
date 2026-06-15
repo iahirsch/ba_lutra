@@ -67,14 +67,15 @@ function getStoreEnergyGlowTarget(stepId: string, effort: number): number {
   return effortToConduitGlow(effort);
 }
 
-/** Rotation speed in radians per second — covers 180° in ~0.9 s. */
-const TURN_SPEED = 3.5;
+/** Rotation speed in radians per second — covers 180° in ~0.6 s. */
+const TURN_SPEED = 5.0;
 
 interface CompanionTurnGroupProps {
   position: [number, number, number];
   baseRotationY: number;
   showBackpack: boolean;
   visible?: boolean;
+  onTurnComplete?: () => void;
   children: ReactNode;
 }
 
@@ -83,15 +84,30 @@ function CompanionTurnGroup({
   baseRotationY,
   showBackpack,
   visible = true,
+  onTurnComplete,
   children,
 }: CompanionTurnGroupProps) {
   const groupRef = useRef<Group>(null);
   const turnOffsetRef = useRef(0);
+  const prevTargetRef = useRef<number | null>(null);
+  const turnCompleteCalledRef = useRef(false);
 
   useFrame((_state, delta) => {
     const target = showBackpack ? Math.PI : 0;
+
+    if (target !== prevTargetRef.current) {
+      prevTargetRef.current = target;
+      turnCompleteCalledRef.current = false;
+    }
+
     const diff = target - turnOffsetRef.current;
-    if (Math.abs(diff) < 0.001) return;
+    if (Math.abs(diff) < 0.001) {
+      if (!turnCompleteCalledRef.current && onTurnComplete) {
+        turnCompleteCalledRef.current = true;
+        onTurnComplete();
+      }
+      return;
+    }
     turnOffsetRef.current +=
       Math.sign(diff) * Math.min(Math.abs(diff), TURN_SPEED * delta);
     if (groupRef.current) {
@@ -111,6 +127,8 @@ function CompanionTurnGroup({
   );
 }
 
+type Store3Phase = 'idle' | 'turning' | 'done';
+
 interface InteractionSceneProps {
   companionConfig: CompanionConfig | null;
   stepId: string;
@@ -124,6 +142,8 @@ interface InteractionSceneProps {
   onReformComplete?: () => void;
   onDissolveComplete?: () => void;
   conduitFlashTrigger?: number;
+  store3Phase?: Store3Phase;
+  onStore3TurnComplete?: () => void;
 }
 
 function InteractionScene({
@@ -139,6 +159,8 @@ function InteractionScene({
   onReformComplete,
   onDissolveComplete,
   conduitFlashTrigger,
+  store3Phase = 'idle',
+  onStore3TurnComplete,
 }: InteractionSceneProps) {
   const { position: interactSpawn, rotationY: interactRotationY } =
     useEnvironmentSpawnTransform(ENVIRONMENT_SPAWN.interact);
@@ -150,12 +172,22 @@ function InteractionScene({
 
   const [showBackpack, setShowBackpack] = useState(false);
   useEffect(() => {
-    setShowBackpack(isStoreEnergyStep);
-  }, [isStoreEnergyStep]);
+    // store_energy_3: turn to face camera immediately; win clip plays after turn
+    if (stepId === 'store_energy_3') {
+      setShowBackpack(false);
+    } else {
+      setShowBackpack(isStoreEnergyStep);
+    }
+  }, [isStoreEnergyStep, stepId]);
   const handleBackpackWinComplete = useCallback(
     () => setShowBackpack(false),
     [],
   );
+
+  const effectiveBodyClip =
+    stepId === 'store_energy_3' && store3Phase !== 'done'
+      ? 'walking'
+      : resolveInteractionBodyClip(stepId);
 
   const conduitGlow = showConduitGlow
     ? isStoreEnergyStep
@@ -204,14 +236,19 @@ function InteractionScene({
             baseRotationY={interactRotationY}
             showBackpack={showBackpack}
             visible={companionVisible}
+            onTurnComplete={
+              stepId === 'store_energy_3' && store3Phase === 'turning'
+                ? onStore3TurnComplete
+                : undefined
+            }
           >
             <CompanionBody
               bodyMorphs={companionConfig.bodyMorphs ?? {}}
               furColor={companionConfig.furColor}
               eyeColor={companionConfig.eyeColor}
               noseColor={companionConfig.noseColor}
-              activeClip={resolveInteractionBodyClip(stepId)}
-              activeClipKey={companionVisible ? stepId : `${stepId}-hidden`}
+              activeClip={effectiveBodyClip}
+              activeClipKey={companionVisible ? `${stepId}-${store3Phase}` : `${stepId}-${store3Phase}-hidden`}
               onRestoredToIdle={
                 isInteractionExitStep(stepId)
                   ? onExitAnimationComplete
@@ -284,7 +321,33 @@ export function Interaction() {
     SCREENS.INTERACTION,
   );
   const totalEffortScore = useTotalEffortScore(activityRefreshToken);
-  useFlowAudio(flowState?.stepId);
+
+  const [store3Phase, setStore3Phase] = useState<Store3Phase>('idle');
+  const store3TimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (store3TimerRef.current !== null) {
+      clearTimeout(store3TimerRef.current);
+      store3TimerRef.current = null;
+    }
+    setStore3Phase(flowState?.stepId === 'store_energy_3' ? 'turning' : 'idle');
+  }, [flowState?.stepId]);
+
+  useEffect(() => {
+    return () => {
+      if (store3TimerRef.current !== null) clearTimeout(store3TimerRef.current);
+    };
+  }, []);
+
+  const handleStore3TurnComplete = useCallback(() => {
+    if (store3TimerRef.current !== null) clearTimeout(store3TimerRef.current);
+    store3TimerRef.current = setTimeout(() => setStore3Phase('done'), 600);
+  }, []);
+
+  const isStore3Pending =
+    flowState?.stepId === 'store_energy_3' && store3Phase !== 'done';
+  const audioStepId = isStore3Pending ? null : flowState?.stepId;
+  useFlowAudio(audioStepId);
 
   useEffect(() => {
     if (!flowState || flowState.creatorView.type !== 'transition') return;
@@ -343,7 +406,9 @@ export function Interaction() {
   const companionVisible =
     (!isFirstLook || reformState === 'done') && !dissolveActive;
   const showDialogue =
-    !!flowState?.companionDialogue && (!isFirstLook || reformState === 'done');
+    !!flowState?.companionDialogue &&
+    (!isFirstLook || reformState === 'done') &&
+    !isStore3Pending;
 
   return (
     <div className={styles.page}>
@@ -361,6 +426,8 @@ export function Interaction() {
           onReformComplete={handleReformComplete}
           onDissolveComplete={handleDissolveComplete}
           conduitFlashTrigger={flashTrigger}
+          store3Phase={store3Phase}
+          onStore3TurnComplete={handleStore3TurnComplete}
         />
       </div>
 

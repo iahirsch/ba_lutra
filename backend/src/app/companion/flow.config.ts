@@ -10,6 +10,21 @@ export interface FlowStep {
 // Presentation flow
 export const FLOW_STEPS: FlowStep[] = [
   {
+    id: 'nameInput',
+    creatorView: {
+      type: 'name-input',
+      title: ['Name des Lutras', 'Dein Name'],
+      prompt: [
+        'Wie soll dein Lutra heissen?',
+        'Wie lautet dein Spitzname?',
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.NAME_SUBMITTED]: 'greeting',
+    },
+  },
+
+  {
     id: 'greeting',
     companionDialogue:
       'Hallo zusammen. Ich bin Lutra und begleite das Team heute durch die Präsentation, sozusagen als Co-Moderator. Schön, dass ihr alle hier seid.',
