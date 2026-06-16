@@ -16,7 +16,7 @@ function getAudioContext(): AudioContext {
     warmup.start(0);
   }
   if (_ctx.state === 'suspended') {
-    _ctx.resume().catch(() => {});
+    _ctx.resume().catch(() => { });
   }
   return _ctx;
 }
@@ -78,7 +78,12 @@ export function useCompanionAudio(
         gain.gain.exponentialRampToValueAtTime(1, startAt + FADE_S);
         source.start(startAt);
       } else {
-        const src = `/assets/audio/${stepId}.mp3`;
+        let src: string;
+        if (stepId === 'moreInfo' && dialogue === 'Was möchtest du sonst noch erfahren?') {
+          src = `/assets/audio/moreInfo_visited.mp3`;
+        } else {
+          src = `/assets/audio/${stepId}.mp3`;
+        }
         const el = new Audio(src);
         const source = ctx.createMediaElementSource(el);
         const gain = ctx.createGain();
@@ -98,7 +103,7 @@ export function useCompanionAudio(
       }
     };
 
-    run().catch(() => {});
+    run().catch(() => { });
 
     return () => {
       cancelled = true;
@@ -121,7 +126,7 @@ export function useCompanionAudio(
             if (source) {
               try {
                 source.stop();
-              } catch {}
+              } catch { }
             }
           },
           FADE_S * 1000 + 20,
