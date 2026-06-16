@@ -32,6 +32,7 @@ import {
   computeTerrainWorldWidth,
   useVegetationGrow,
 } from '../../utils/vegetationGrow';
+import { withSeededRandom } from '../../utils/seededRandom';
 import { useTotalEffortScore } from '../../hooks/useTotalEffortScore';
 
 useGLTF.preload(hub.HUB_GLTF_URL);
@@ -416,16 +417,19 @@ export function GrassField({
     const terrainWorldWidth = computeTerrainWorldWidth(terrainMesh, envScale);
     const lodDistances = computeLodDistances(terrainWorldWidth);
 
-    const { chunks, samplingGeometry, instanceGeometries } = buildGrassChunks(
-      terrainMesh,
-      lodGeometries,
-      veg.GRASS_INSTANCE_COUNT,
-      veg.GRASS_BLADE_WIDTH,
-      veg.GRASS_BLADE_HEIGHT,
-      veg.GRASS_CHUNK_GRID,
-      materialState.material,
-      veg.GRASS_MIN_SAMPLE_WEIGHT,
-    );
+    const { chunks, samplingGeometry, instanceGeometries } =
+      withSeededRandom(veg.VEGETATION_RNG_SEED, () =>
+        buildGrassChunks(
+          terrainMesh,
+          lodGeometries,
+          veg.GRASS_INSTANCE_COUNT,
+          veg.GRASS_BLADE_WIDTH,
+          veg.GRASS_BLADE_HEIGHT,
+          veg.GRASS_CHUNK_GRID,
+          materialState.material,
+          veg.GRASS_MIN_SAMPLE_WEIGHT,
+        ),
+      );
 
     return {
       chunks,

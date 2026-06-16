@@ -18,6 +18,7 @@ import {
   useVegetationGrow,
 } from '../../utils/vegetationGrow';
 import { VegetationProp, type VegetationPropHandle } from './VegetationProp';
+import { withSeededRandom } from '../../utils/seededRandom';
 
 useGLTF.preload(HUB_GLTF_URL);
 for (const url of veg.TREE_GLBS) {
@@ -61,33 +62,41 @@ export function VegetationProps({
     applyEnvironmentTransform,
   );
 
-  const treePlacements = useMemo(() => {
-    const markers = collectHubSceneMarkers(
-      scene,
-      veg.TREE_SPAWN_PREFIX,
-      applyEnvironmentTransform,
-    );
-    return markers.map((marker) => {
-      const override = veg.ENVIRONMENT_VEGETATION.find(
-        (e) => e.spawn === marker.name,
-      );
-      return {
-        id: marker.name,
-        glbUrl:
-          override?.glbUrl ??
-          veg.TREE_GLBS[Math.floor(Math.random() * veg.TREE_GLBS.length)],
-        position: [marker.position.x, marker.position.y, marker.position.z] as [
-          number,
-          number,
-          number,
-        ],
-        scale: override?.scale ?? 0.6 + Math.random() * 0.6,
-        rotation: override
-          ? undefined
-          : ([0, Math.random() * Math.PI * 2, 0] as [number, number, number]),
-      };
-    });
-  }, [scene, applyEnvironmentTransform]);
+  const treePlacements = useMemo(
+    () =>
+      withSeededRandom(veg.VEGETATION_RNG_SEED + 2, () => {
+        const markers = collectHubSceneMarkers(
+          scene,
+          veg.TREE_SPAWN_PREFIX,
+          applyEnvironmentTransform,
+        );
+        return markers.map((marker) => {
+          const override = veg.ENVIRONMENT_VEGETATION.find(
+            (e) => e.spawn === marker.name,
+          );
+          return {
+            id: marker.name,
+            glbUrl:
+              override?.glbUrl ??
+              veg.TREE_GLBS[Math.floor(Math.random() * veg.TREE_GLBS.length)],
+            position: [
+              marker.position.x,
+              marker.position.y,
+              marker.position.z,
+            ] as [number, number, number],
+            scale: override?.scale ?? 0.6 + Math.random() * 0.6,
+            rotation: override
+              ? undefined
+              : ([0, Math.random() * Math.PI * 2, 0] as [
+                  number,
+                  number,
+                  number,
+                ]),
+          };
+        });
+      }),
+    [scene, applyEnvironmentTransform],
+  );
 
   const bushPlacements = useMemo(() => {
     const markers = collectHubSceneMarkers(

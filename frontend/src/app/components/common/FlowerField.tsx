@@ -26,6 +26,7 @@ import {
   useVegetationGrow,
 } from '../../utils/vegetationGrow';
 import { VegetationProp, type VegetationPropHandle } from './VegetationProp';
+import { withSeededRandom } from '../../utils/seededRandom';
 
 useGLTF.preload(HUB_GLTF_URL);
 for (const url of veg.FLOWER_GLBS) {
@@ -72,39 +73,41 @@ export function FlowerField({
     hubScene.updateMatrixWorld(true);
     const { scale, position: envPosition } = HUB_ENVIRONMENT_TRANSFORM;
 
-    const placements: Array<{
-      id: string;
-      glbUrl: string;
-      position: [number, number, number];
-      rotation: [number, number, number];
-    }> = [];
+    return withSeededRandom(veg.VEGETATION_RNG_SEED + 1, () => {
+      const placements: Array<{
+        id: string;
+        glbUrl: string;
+        position: [number, number, number];
+        rotation: [number, number, number];
+      }> = [];
 
-    for (let i = 0; i < veg.FLOWER_COUNT; i++) {
-      const localPoint = sampleTerrainLocalPoint(
-        sampler,
-        veg.GRASS_MIN_SAMPLE_WEIGHT,
-        veg.FLOWER_SPAWN_MAX_ATTEMPTS,
-      );
-      if (!localPoint) continue;
+      for (let i = 0; i < veg.FLOWER_COUNT; i++) {
+        const localPoint = sampleTerrainLocalPoint(
+          sampler,
+          veg.GRASS_MIN_SAMPLE_WEIGHT,
+          veg.FLOWER_SPAWN_MAX_ATTEMPTS,
+        );
+        if (!localPoint) continue;
 
-      const worldPoint = terrainLocalToHubWorld(localPoint, terrainMesh);
+        const worldPoint = terrainLocalToHubWorld(localPoint, terrainMesh);
 
-      if (applyEnvironmentTransform) {
-        worldPoint.multiplyScalar(scale);
-        worldPoint.add(new Vector3(...envPosition));
+        if (applyEnvironmentTransform) {
+          worldPoint.multiplyScalar(scale);
+          worldPoint.add(new Vector3(...envPosition));
+        }
+
+        placements.push({
+          id: `flower-${i}`,
+          glbUrl:
+            veg.FLOWER_GLBS[Math.floor(Math.random() * veg.FLOWER_GLBS.length)],
+          position: [worldPoint.x, worldPoint.y, worldPoint.z],
+          rotation: [0, Math.random() * Math.PI * 2, 0],
+        });
       }
 
-      placements.push({
-        id: `flower-${i}`,
-        glbUrl:
-          veg.FLOWER_GLBS[Math.floor(Math.random() * veg.FLOWER_GLBS.length)],
-        position: [worldPoint.x, worldPoint.y, worldPoint.z],
-        rotation: [0, Math.random() * Math.PI * 2, 0],
-      });
-    }
-
-    samplingGeometry.dispose();
-    return placements;
+      samplingGeometry.dispose();
+      return placements;
+    });
   }, [hubScene, applyEnvironmentTransform]);
 
   const propRefs = useMemo(
