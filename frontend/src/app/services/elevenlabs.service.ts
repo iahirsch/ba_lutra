@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-export async function fetchSpeech(text: string): Promise<string> {
+export async function fetchSpeech(text: string): Promise<ArrayBuffer> {
   const { data } = await axios.post(
     '/api/elevenlabs/speech',
     { text },
-    { responseType: 'blob' },
+    { responseType: 'arraybuffer' },
   );
-  return URL.createObjectURL(data as Blob);
+  return data as ArrayBuffer;
 }

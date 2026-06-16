@@ -349,20 +349,21 @@ export class CompanionGateway
   private formatActivityDistance(): string {
     const meters = this.session?.activityDistanceMeters;
     if (!meters || meters <= 0) return '0 m';
-    if (meters < 1000) return `${Math.round(meters)} m`;
+    if (meters < 1000) return `${Math.round(meters)} Meter`;
     const km = meters / 1000;
-    return `${km.toFixed(1).replace('.', ',')} km`;
+    return `${km.toFixed(1).replace('.', ',')} Kilometer`;
   }
 
   private formatActivityDuration(): string {
     const seconds = this.session?.activityDurationSeconds;
-    if (!seconds || seconds <= 0) return '0 s';
+    if (!seconds || seconds <= 0) return '0 Sekunden';
     const totalSeconds = Math.max(0, Math.round(seconds));
     const minutes = Math.floor(totalSeconds / 60);
     const remainingSeconds = totalSeconds % 60;
-    if (minutes === 0) return `${totalSeconds} s`;
+    if (minutes === 0) return `${totalSeconds} Sekunden`;
     const paddedSeconds = String(remainingSeconds).padStart(2, '0');
-    return `${minutes}:${paddedSeconds} min`;
+    if (minutes === 1) return `${minutes} Minute und ${paddedSeconds} Sekunden`;
+    return `${minutes} Minuten und ${paddedSeconds} Sekunden`;
   }
 
   private resolveTransition(
