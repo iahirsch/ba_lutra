@@ -6,6 +6,12 @@ export const EYE_SCLERA_PRESETS = [
   '#F5F0E8',
   '#E8E4DC',
   '#1F1F1F',
+  '#4F3E33',
+  '#2E5C4A',
+  '#7598C9',
+  '#D6A61E',
+  '#8A2F2F',
+  '#7B5C99',
 ] as const;
 
 /** Iris (`iris` material). */
@@ -17,6 +23,9 @@ export const IRIS_COLOR_PRESETS = [
   '#D6A61E',
   '#8A2F2F',
   '#7B5C99',
+  '#F5F0E8',
+  '#f6f67d',
+  '#a1693f'
 ] as const;
 
 export const DEFAULT_EYE_COLOR: EyeColor = {
@@ -29,16 +38,16 @@ export function resolveEyeColor(
 ): EyeColor {
   const primary =
     eyeColor?.primary &&
-    EYE_SCLERA_PRESETS.includes(
-      eyeColor.primary as (typeof EYE_SCLERA_PRESETS)[number],
-    )
+      EYE_SCLERA_PRESETS.includes(
+        eyeColor.primary as (typeof EYE_SCLERA_PRESETS)[number],
+      )
       ? eyeColor.primary
       : DEFAULT_EYE_COLOR.primary;
   const secondary =
     eyeColor?.secondary &&
-    IRIS_COLOR_PRESETS.includes(
-      eyeColor.secondary as (typeof IRIS_COLOR_PRESETS)[number],
-    )
+      IRIS_COLOR_PRESETS.includes(
+        eyeColor.secondary as (typeof IRIS_COLOR_PRESETS)[number],
+      )
       ? eyeColor.secondary
       : DEFAULT_EYE_COLOR.secondary;
   return { primary, secondary };
