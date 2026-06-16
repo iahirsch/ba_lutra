@@ -381,6 +381,38 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
+      choices: [{ id: 'max_energy_1', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        max_energy_1: 'max_energy_1',
+      },
+    },
+  },
+
+  {
+    id: 'max_energy_1',
+    companionDialogue:
+      'Du willst wissen, wie du die maximale Energie aus diesem Laufband herausholst?',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
+      choices: [{ id: 'max_energy_2', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        max_energy_2: 'max_energy_2',
+      },
+    },
+  },
+
+  {
+    id: 'max_energy_2',
+    companionDialogue:
+      'Als grober Richtwert: Bei ca. 10 Minuten und 2 Kilometern erreichst du theoretisch die volle Power! Aber ganz wichtig: Lauf einfach so lange und so schnell du willst, denn jeder Schritt zählt! 2 Minuten reichen auch schon vollkommen aus, um einen Fortschritt zu sehen.',
+    creatorView: {
+      type: 'choices',
+      prompt: [],
       choices: [{ id: 'treadmill', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
@@ -555,7 +587,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'store_energy_3',
     companionDialogue:
-      'Der Conduit ist aufgeladen! Deine Energie hat sich in Form von diverser Vegetation in der Welt freigesetzt. Kannst du es sehen?',
+      'Der Conduit ist aufgeladen! Sobald ich gleich drüben im Hub eintreffe, klicke auf weiter und die Welt erwacht zum Leben und du siehst, wie sich deine Energie als neue Vegetation freigesetzt hat. Achte auf die Leinwand!',
     creatorView: {
       type: 'choices',
       prompt: [
