@@ -6,11 +6,16 @@ export const FUR_COLOR_PRESETS: FurColor[] = [
   { primary: '#BF7B3F', secondary: '#F2BC8D' },
   { primary: '#696D7B', secondary: '#C1C9D9' },
   { primary: '#A36881', secondary: '#EBC3D4' },
-  { primary: '#E3E3E3', secondary: '#F7F7F7' },
+  { primary: '#cfcece', secondary: '#dedede' },
   { primary: '#5A776B', secondary: '#A2B9B0' },
   { primary: '#91949d', secondary: '#cfd2d9' },
   { primary: '#a08e67', secondary: '#ccb492' },
   { primary: '#967c6e', secondary: '#e5ccc1' },
+  { primary: '#721900', secondary: '#b04516' },
+  { primary: '#1f497c', secondary: '#7e78c1' },
+  { primary: '#4b2e83', secondary: '#a9a0c8' },
+  { primary: '#ceab1f', secondary: '#e6ec99' },
+  { primary: '#694c28', secondary: '#e2a836' },
 ];
 
 export const DEFAULT_FUR_COLOR = FUR_COLOR_PRESETS[0];
