@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   GRASS_DEBUG_SLIDER,
-  GRASS_GROW_EFFORT_REF,
+  // GRASS_GROW_EFFORT_REF,
 } from '../constants/environment-vegetation';
 import { useCompanionSocket } from '../hooks/useCompanionSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
 import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import { HubCanvas } from '../components/hub/HubCanvas';
-import { ConnectionBadge } from '../components/common/ConnectionBadge';
+// import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import styles from './Hub.module.scss';
 
 export function Hub() {
@@ -35,12 +35,12 @@ export function Hub() {
     bc.close();
   }, []);
 
-  const setDebugEffortScore = useCallback((score: number) => {
-    setTotalEffortScore(score);
-    const bc = new BroadcastChannel('vegetation-sync');
-    bc.postMessage({ type: 'companion-appeared', effortScore: score });
-    bc.close();
-  }, []);
+  // const setDebugEffortScore = useCallback((score: number) => {
+  //   setTotalEffortScore(score);
+  //   const bc = new BroadcastChannel('vegetation-sync');
+  //   bc.postMessage({ type: 'companion-appeared', effortScore: score });
+  //   bc.close();
+  // }, []);
 
   const effortForGrass = GRASS_DEBUG_SLIDER
     ? totalEffortScore
