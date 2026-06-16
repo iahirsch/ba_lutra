@@ -178,7 +178,7 @@ export const GROUND_NORMAL_SCALE = 1;
 export const GRASS_GROW_EFFORT_REF = 3;
 /** Max grow radius as a fraction of terrain world width at {@link GRASS_GROW_EFFORT_REF}. */
 export const GRASS_GROW_RADIUS_RATIO = 0.6;
-export const GROUND_GROW_RADIUS_RATIO = 0.75;
+export const GROUND_GROW_RADIUS_RATIO = 0.65;
 export const VEGETATION_GROW_FADE_RATIO = 0.05;
 
 export function effortTotalToGrowRadius(

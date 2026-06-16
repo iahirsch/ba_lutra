@@ -17,7 +17,7 @@ import { ENVIRONMENT_SPAWN, INTERACTION_CAMERA } from '../constants/hub-scene';
 import { useEnvironmentSpawnTransform } from '../utils/environmentSpawn';
 import { useFlowSocket, SCREENS } from '../hooks/useFlowSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
-import { useCompanionAudio } from '../hooks/useCompanionAudio';
+import { useCompanionAudio, preloadSpeech } from '../hooks/useCompanionAudio';
 import { HubBackground } from '../components/hub/HubBackground';
 import { EnvironmentVegetation } from '../components/common/EnvironmentVegetation';
 import { HubLights } from '../components/hub/HubLights';
@@ -223,7 +223,7 @@ function InteractionScene({
       <EnvironmentAtmosphere variant="interaction" />
       <HubLights variant="interaction" />
       <Suspense fallback={null}>
-        <HubBackground />
+        <HubBackground totalEffortScore={totalEffortScore} />
         <EnvironmentVegetation totalEffortScore={totalEffortScore} />
         <ConduitEnergyBurst
           position={[
@@ -330,7 +330,10 @@ export function Interaction() {
   const { flowState, notifyExitComplete, activityRefreshToken } = useFlowSocket(
     SCREENS.INTERACTION,
   );
-  const totalEffortScore = useTotalEffortScore(activityRefreshToken);
+  const liveEffort = useTotalEffortScore(activityRefreshToken);
+  const [vegetationEffortScore, setVegetationEffortScore] = useState(0);
+  const liveEffortRef = useRef(liveEffort);
+  liveEffortRef.current = liveEffort;
 
   const prevStepRef = useRef<string | null>(null);
   const [reformState, setReformState] = useState<'idle' | 'reforming' | 'done'>(
@@ -363,6 +366,10 @@ export function Interaction() {
     prevStepRef.current = curr;
 
     if (prev === 'nameInput' && curr === 'firstLook') {
+      // Kick off TTS fetch+decode now — we have ≥3.5 s before audio must play.
+      if (flowState?.companionDialogue) {
+        preloadSpeech(flowState.companionDialogue);
+      }
       const timer = setTimeout(
         () => setReformState('reforming'),
         REFORM_DELAY_MS,
@@ -386,10 +393,10 @@ export function Interaction() {
 
   const handleReformComplete = useCallback(() => setReformState('done'), []);
   const startDissolve = useCallback(() => setDissolveActive(true), []);
-  const handleDissolveComplete = useCallback(
-    () => notifyExitComplete(),
-    [notifyExitComplete],
-  );
+  const handleDissolveComplete = useCallback(() => {
+    setVegetationEffortScore(liveEffortRef.current);
+    notifyExitComplete();
+  }, [notifyExitComplete]);
 
   const isFirstLook = flowState?.stepId === 'firstLook';
   const isNameInput = flowState?.stepId === 'nameInput';
@@ -407,7 +414,7 @@ export function Interaction() {
           companionConfig={flowState?.companionConfig ?? null}
           stepId={flowState?.stepId ?? ''}
           activityEffortScore={flowState?.activityEffortScore}
-          totalEffortScore={totalEffortScore}
+          totalEffortScore={vegetationEffortScore}
           onExitAnimationComplete={startDissolve}
           showReform={showReform}
           showDissolve={dissolveActive}

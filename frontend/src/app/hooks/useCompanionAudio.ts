@@ -3,7 +3,6 @@ import { fetchSpeech } from '../services/elevenlabs.service';
 
 const DYNAMIC_AUDIO_STEP_IDS = new Set(['firstLook', 'activity_finished']);
 
-/** Fade duration in seconds — short enough to be imperceptible, long enough to kill click artifacts. */
 const FADE_S = 0.04;
 
 let _ctx: AudioContext | null = null;
@@ -11,11 +10,32 @@ let _ctx: AudioContext | null = null;
 function getAudioContext(): AudioContext {
   if (!_ctx || _ctx.state === 'closed') {
     _ctx = new AudioContext();
+    const warmup = _ctx.createBufferSource();
+    warmup.buffer = _ctx.createBuffer(1, 1, _ctx.sampleRate);
+    warmup.connect(_ctx.destination);
+    warmup.start(0);
   }
   if (_ctx.state === 'suspended') {
     _ctx.resume().catch(() => {});
   }
   return _ctx;
+}
+
+/** Module-level cache of decoded AudioBuffers keyed by dialogue text. */
+const _bufferCache = new Map<string, Promise<AudioBuffer>>();
+
+/**
+ * Kick off the TTS fetch + decode for the given dialogue and store it in the
+ * cache. Call this as early as possible (e.g. during a loading animation) so
+ * the buffer is ready by the time audio actually needs to play.
+ */
+export function preloadSpeech(dialogue: string): void {
+  if (_bufferCache.has(dialogue)) return;
+  const ctx = getAudioContext();
+  _bufferCache.set(
+    dialogue,
+    fetchSpeech(dialogue).then((ab) => ctx.decodeAudioData(ab)),
+  );
 }
 
 export function useCompanionAudio(
@@ -34,13 +54,10 @@ export function useCompanionAudio(
       const ctx = getAudioContext();
 
       if (DYNAMIC_AUDIO_STEP_IDS.has(stepId)) {
-        // TTS path: use decodeAudioData + AudioBufferSourceNode so gain is
-        // guaranteed to be 0.001 before the first sample plays — no render-
-        // quantum window where the GainNode default of 1.0 could leak through.
-        const arrayBuffer = await fetchSpeech(dialogue);
-        if (cancelled) return;
-
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        if (!_bufferCache.has(dialogue)) {
+          preloadSpeech(dialogue);
+        }
+        const audioBuffer = await _bufferCache.get(dialogue)!;
         if (cancelled) return;
 
         const source = ctx.createBufferSource();
@@ -55,13 +72,12 @@ export function useCompanionAudio(
 
         if (cancelled) return;
 
-        const startAt = ctx.currentTime + 0.01;
+        const startAt =
+          ctx.currentTime + Math.max((ctx.baseLatency ?? 0) * 2, 0.1);
         gain.gain.setValueAtTime(0.001, startAt);
         gain.gain.exponentialRampToValueAtTime(1, startAt + FADE_S);
         source.start(startAt);
       } else {
-        // Static MP3 path: keep HTMLAudioElement, fix gain init to avoid the
-        // same render-quantum gap.
         const src = `/assets/audio/${stepId}.mp3`;
         const el = new Audio(src);
         const source = ctx.createMediaElementSource(el);
@@ -96,15 +112,20 @@ export function useCompanionAudio(
         gain.gain.cancelScheduledValues(now);
         gain.gain.setValueAtTime(Math.max(0.001, gain.gain.value), now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + FADE_S);
-        setTimeout(() => {
-          if (el) {
-            el.pause();
-            el.src = '';
-          }
-          if (source) {
-            try { source.stop(); } catch {}
-          }
-        }, FADE_S * 1000 + 20);
+        setTimeout(
+          () => {
+            if (el) {
+              el.pause();
+              el.src = '';
+            }
+            if (source) {
+              try {
+                source.stop();
+              } catch {}
+            }
+          },
+          FADE_S * 1000 + 20,
+        );
       }
     };
   }, [stepId, dialogue]);

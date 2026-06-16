@@ -121,7 +121,7 @@ export function useVegetationGrow({
       growRadiusRatio,
     );
     growRadiusRef.current +=
-      (target - growRadiusRef.current) * Math.min(1, delta * GROW_RADIUS_LERP);
+      (target - growRadiusRef.current) * (1 - Math.exp(-GROW_RADIUS_LERP * delta));
   });
 
   return {
