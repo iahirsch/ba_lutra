@@ -341,7 +341,7 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
     },
     transitions: {
-      [FLOW_EVENTS.ACTION_CONFIRMED]: 'app_features',
+      [FLOW_EVENTS.CHOICE_SELECTED]: 'app_features',
     },
   },
 
