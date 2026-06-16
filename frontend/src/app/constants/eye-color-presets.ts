@@ -12,6 +12,9 @@ export const EYE_SCLERA_PRESETS = [
   '#D6A61E',
   '#8A2F2F',
   '#7B5C99',
+  '#1a3824',
+  '#2431df',
+  '#9ef6bb',
 ] as const;
 
 /** Iris (`iris` material). */
@@ -25,7 +28,9 @@ export const IRIS_COLOR_PRESETS = [
   '#7B5C99',
   '#F5F0E8',
   '#f6f67d',
-  '#a1693f'
+  '#a1693f',
+  '#2431df',
+  '#9ef6bb',
 ] as const;
 
 export const DEFAULT_EYE_COLOR: EyeColor = {
