@@ -7,7 +7,7 @@ import { useCompanionSocket } from '../hooks/useCompanionSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
 import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import { HubCanvas } from '../components/hub/HubCanvas';
-// import { ConnectionBadge } from '../components/common/ConnectionBadge';
+import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import styles from './Hub.module.scss';
 
 export function Hub() {
@@ -35,7 +35,16 @@ export function Hub() {
     bc.close();
   }, []);
 
-  const effortForGrass = GRASS_DEBUG_SLIDER ? totalEffortScore : vegetationEffortScore;
+  const setDebugEffortScore = useCallback((score: number) => {
+    setTotalEffortScore(score);
+    const bc = new BroadcastChannel('vegetation-sync');
+    bc.postMessage({ type: 'companion-appeared', effortScore: score });
+    bc.close();
+  }, []);
+
+  const effortForGrass = GRASS_DEBUG_SLIDER
+    ? totalEffortScore
+    : vegetationEffortScore;
 
   return (
     <div className={styles.page}>
@@ -65,7 +74,7 @@ export function Hub() {
         </div>*/}
 
       {/* Temporary debug slider. Controlled by GRASS_DEBUG_SLIDER in environment-vegetation.ts */}
-      {GRASS_DEBUG_SLIDER && (
+      {/*{GRASS_DEBUG_SLIDER && (
         <div className={styles.debugControl}>
           <label className={styles.debugLabel} htmlFor="hub-effort-score">
             Total effort
@@ -78,14 +87,14 @@ export function Hub() {
             step={0.01}
             value={totalEffortScore}
             className={styles.debugSlider}
-            onChange={(e) => setTotalEffortScore(parseFloat(e.target.value))}
+            onChange={(e) => setDebugEffortScore(parseFloat(e.target.value))}
           />
           <span className={styles.debugValue}>
             {totalEffortScore.toFixed(2)}
           </span>
         </div>
       )}
-      {/*</header>*/}
+      </header>*/}
 
       {error && <div className={styles.errorBanner}>{error}</div>}
 
