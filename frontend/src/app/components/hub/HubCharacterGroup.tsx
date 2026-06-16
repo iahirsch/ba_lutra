@@ -18,6 +18,7 @@ interface HubCharacterGroupProps {
   walkTerrain: HubWalkTerrain;
   initialPosition: Vector3;
   effortScore?: number;
+  onReformDone?: () => void;
 }
 
 /** One saved companion roaming the hub camp. */
@@ -26,6 +27,7 @@ export function HubCharacterGroup({
   walkTerrain,
   initialPosition,
   effortScore,
+  onReformDone,
 }: HubCharacterGroupProps) {
   const bodyMorphs = companion.bodyMorphs ?? {};
   const conduitGlow = effortToConduitGlow(effortScore ?? 0.1);
@@ -48,7 +50,7 @@ export function HubCharacterGroup({
     <>
       {!reformDone && (
         <CompanionParticleReform
-          onComplete={() => setReformDone(true)}
+          onComplete={() => { setReformDone(true); onReformDone?.(); }}
           parentWorldPosition={[
             initialPosition.x,
             initialPosition.y,
