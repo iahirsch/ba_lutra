@@ -324,18 +324,21 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue:
       'Noch etwas, das nur wir Lutras wissen. Im Herzland gibt es eine Pflanzengattung, die ausschliesslich in der Nacht und in der Nähe von Lutras wächst. Am Morgen verwelken sie wieder. Niemand weiss warum.',
     creatorView: {
-      type: 'confirm',
-      confirmLabel: 'Weiter',
+      type: 'choices',
+      choices: [{ id: 'funfact', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
-      [FLOW_EVENTS.ACTION_CONFIRMED]: 'empty_75',
+      [FLOW_EVENTS.CHOICE_SELECTED]: 'empty_75',
     },
   },
   {
     id: 'empty_75',
     companionDialogue: '',
     creatorView: {
-      type: 'idle',
+      type: 'choices',
+      choices: [
+        { id: 'empty_75', label: 'Hauptfunktionen', variant: 'primary' },
+      ],
     },
     transitions: {
       [FLOW_EVENTS.ACTION_CONFIRMED]: 'app_features',
