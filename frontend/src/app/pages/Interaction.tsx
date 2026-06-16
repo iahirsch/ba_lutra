@@ -394,9 +394,18 @@ export function Interaction() {
   const handleReformComplete = useCallback(() => setReformState('done'), []);
   const startDissolve = useCallback(() => setDissolveActive(true), []);
   const handleDissolveComplete = useCallback(() => {
-    setVegetationEffortScore(liveEffortRef.current);
     notifyExitComplete();
   }, [notifyExitComplete]);
+
+  useEffect(() => {
+    const bc = new BroadcastChannel('vegetation-sync');
+    bc.onmessage = (event: MessageEvent<{ type: string; effortScore: number }>) => {
+      if (event.data.type === 'companion-appeared') {
+        setVegetationEffortScore(event.data.effortScore);
+      }
+    };
+    return () => bc.close();
+  }, []);
 
   const isFirstLook = flowState?.stepId === 'firstLook';
   const isNameInput = flowState?.stepId === 'nameInput';

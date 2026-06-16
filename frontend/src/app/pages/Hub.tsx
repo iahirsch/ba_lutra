@@ -28,7 +28,11 @@ export function Hub() {
   }, [liveEffort]);
 
   const handleCompanionAppeared = useCallback(() => {
-    setVegetationEffortScore(liveEffortRef.current);
+    const score = liveEffortRef.current;
+    setVegetationEffortScore(score);
+    const bc = new BroadcastChannel('vegetation-sync');
+    bc.postMessage({ type: 'companion-appeared', effortScore: score });
+    bc.close();
   }, []);
 
   const effortForGrass = GRASS_DEBUG_SLIDER ? totalEffortScore : vegetationEffortScore;
