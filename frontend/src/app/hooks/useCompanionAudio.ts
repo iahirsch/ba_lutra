@@ -92,6 +92,7 @@ export function useCompanionAudio(
         if (cancelled) return;
 
         await el.play();
+        if (cancelled) return;
         const now = ctx.currentTime;
         gain.gain.setValueAtTime(0.001, now);
         gain.gain.exponentialRampToValueAtTime(1, now + FADE_S);
