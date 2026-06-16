@@ -27,7 +27,7 @@ export const HUB_CAMERA = {
 
 /** Exhibition layout: left 1920×1080, right 1607×1080. */
 const LEFT_SCREEN_WIDTH = 1920;
-const RIGHT_SCREEN_WIDTH = 1607;
+const RIGHT_SCREEN_WIDTH = 1920;
 const SCREEN_HEIGHT = 1080;
 const fullWidth = LEFT_SCREEN_WIDTH + RIGHT_SCREEN_WIDTH;
 const fullHeight = SCREEN_HEIGHT;
