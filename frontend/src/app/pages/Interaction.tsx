@@ -331,8 +331,19 @@ export function Interaction() {
     SCREENS.INTERACTION,
   );
   const totalEffortScore = useTotalEffortScore(activityRefreshToken);
+
+  const prevStepRef = useRef<string | null>(null);
+  const [reformState, setReformState] = useState<'idle' | 'reforming' | 'done'>(
+    'idle',
+  );
+  const [dissolveActive, setDissolveActive] = useState(false);
+
+  // For firstLook, the companion reforms after a delay and the wave animation
+  // plays only once reform is done — hold audio back until that point.
+  const isFirstLookPending =
+    flowState?.stepId === 'firstLook' && reformState !== 'done';
   useCompanionAudio(
-    flowState?.stepId,
+    isFirstLookPending ? undefined : flowState?.stepId,
     flowState?.companionDialogue ?? undefined,
   );
 
@@ -342,12 +353,6 @@ export function Interaction() {
     const timer = setTimeout(notifyExitComplete, EXIT_ANIMATION_FALLBACK_MS);
     return () => clearTimeout(timer);
   }, [flowState, notifyExitComplete]);
-
-  const prevStepRef = useRef<string | null>(null);
-  const [reformState, setReformState] = useState<'idle' | 'reforming' | 'done'>(
-    'idle',
-  );
-  const [dissolveActive, setDissolveActive] = useState(false);
 
   const [flashTrigger, setFlashTrigger] = useState(0);
   const prevStepForFlashRef = useRef('');
