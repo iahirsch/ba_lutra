@@ -11,6 +11,7 @@ const STEP_AUDIO_MAP: Partial<Record<string, string>> = {
   world_chapter_conduit: '/assets/audio/world_chapter_conduit.mp3',
   companion_thanks: '/assets/audio/companion_thanks.mp3',
   app_features: '/assets/audio/app_features.mp3',
+  funfact: '/assets/audio/funfact.mp3',
   activity_finished: '/assets/audio/activity_finished.mp3',
   store_energy_3: '/assets/audio/store_energy_3.mp3',
   farewell_1: '/assets/audio/farewell_1.mp3',
