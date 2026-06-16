@@ -16,7 +16,7 @@ function getAudioContext(): AudioContext {
     warmup.start(0);
   }
   if (_ctx.state === 'suspended') {
-    _ctx.resume().catch(() => {});
+    _ctx.resume().catch(() => undefined);
   }
   return _ctx;
 }
@@ -29,13 +29,13 @@ const _bufferCache = new Map<string, Promise<AudioBuffer>>();
  * cache. Call this as early as possible (e.g. during a loading animation) so
  * the buffer is ready by the time audio actually needs to play.
  */
-export function preloadSpeech(dialogue: string): void {
-  if (_bufferCache.has(dialogue)) return;
+export function preloadSpeech(dialogue: string): Promise<AudioBuffer> {
+  const cached = _bufferCache.get(dialogue);
+  if (cached) return cached;
   const ctx = getAudioContext();
-  _bufferCache.set(
-    dialogue,
-    fetchSpeech(dialogue).then((ab) => ctx.decodeAudioData(ab)),
-  );
+  const promise = fetchSpeech(dialogue).then((ab) => ctx.decodeAudioData(ab));
+  _bufferCache.set(dialogue, promise);
+  return promise;
 }
 
 export function useCompanionAudio(
@@ -54,10 +54,7 @@ export function useCompanionAudio(
       const ctx = getAudioContext();
 
       if (DYNAMIC_AUDIO_STEP_IDS.has(stepId)) {
-        if (!_bufferCache.has(dialogue)) {
-          preloadSpeech(dialogue);
-        }
-        const audioBuffer = await _bufferCache.get(dialogue)!;
+        const audioBuffer = await preloadSpeech(dialogue);
         if (cancelled) return;
 
         const source = ctx.createBufferSource();
@@ -99,7 +96,7 @@ export function useCompanionAudio(
       }
     };
 
-    run().catch(() => {});
+    run().catch(() => undefined);
 
     return () => {
       cancelled = true;
@@ -122,7 +119,7 @@ export function useCompanionAudio(
             if (source) {
               try {
                 source.stop();
-              } catch {}
+              } catch { /* source may already be stopped */ }
             }
           },
           FADE_S * 1000 + 20,
