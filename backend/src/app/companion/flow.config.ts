@@ -143,7 +143,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'laura_funny',
-          label: 'Weiter bei Folie 11',
+          label: 'Weiter bei Folie 12',
           variant: 'primary',
         },
       ],
@@ -161,7 +161,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'empty_3',
-          label: 'Weiter bei Folie 13',
+          label: 'Weiter',
           variant: 'primary',
         },
       ],
@@ -179,7 +179,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'gameplay_remark',
-          label: 'Weiter bei Folie 13',
+          label: 'Weiter Mitte Folie 13 nach Otter Beschreibung',
           variant: 'primary',
         },
       ],
@@ -210,7 +210,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'world_chapter',
-          label: 'Weiter bei Folie 14',
+          label: 'Weiter Anfang Folie 14',
           variant: 'primary',
         },
       ],
@@ -243,7 +243,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'world_chapter_conduit',
-          label: 'Weiter bei Folie 15',
+          label: 'Weiter Ende Folie 14',
           variant: 'primary',
         },
       ],
@@ -276,7 +276,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'companion_thanks',
-          label: 'Weiter Ende Folie 26',
+          label: 'Weiter Ende Folie 25',
           variant: 'primary',
         },
       ],
@@ -309,7 +309,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'funfact',
-          label: 'Weiter bei Folie 42',
+          label: 'Weiter Ende Folie 33',
           variant: 'primary',
         },
       ],
@@ -337,7 +337,7 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       choices: [
-        { id: 'empty_75', label: 'Hauptfunktionen', variant: 'primary' },
+        { id: 'empty_75', label: 'Weiter Anfang Folie 41', variant: 'primary' },
       ],
     },
     transitions: {
@@ -366,7 +366,7 @@ export const FLOW_STEPS: FlowStep[] = [
       choices: [
         {
           id: 'activity_finished',
-          label: 'Weiter nach Marin Laufband',
+          label: 'Weiter Ende Marin Laufband',
           variant: 'primary',
         },
       ],
