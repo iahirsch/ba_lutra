@@ -154,7 +154,7 @@ export class CompanionGateway
     if (!this.session) return;
     if (
       this.session.currentStepId === 'activity_started' &&
-      payload.choiceId === 'activity_finished'
+      payload.choiceId === 'vegetation_growth'
     ) {
       await this.refreshActivityEffortScore();
       const score = this.session.activityEffortScore;
@@ -299,11 +299,11 @@ export class CompanionGateway
     const rawDialogue = (() => {
       if (step.id === 'moreInfo' && session.moreInfoVisited)
         return 'Was möchtest du sonst noch erfahren?';
-      if (step.id === 'activity_finished') {
+      if (step.id === 'vegetation_growth') {
         const score = session.activityEffortScore ?? 0;
         return score >= 0.5
-          ? 'Wow, du warst ja richtig fleissig! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.'
-          : 'Gut gemacht! Du hast [effortScore] von 1000 Energie gesammelt und [activityDistance] in [activityDuration] zurückgelegt. Jedes bisschen zählt!';
+          ? 'Der Conduit ist aufgeladen! Wow, du warst ja richtig fleissig! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.'
+          : 'Der Conduit ist aufgeladen! Gut gemacht! Du hast [effortScore] von 1000 Energie gesammelt und [activityDistance] in [activityDuration] zurückgelegt. Jedes bisschen zählt!';
       }
       return step.companionDialogue;
     })();

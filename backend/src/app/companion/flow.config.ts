@@ -473,7 +473,7 @@ export const FLOW_STEPS: FlowStep[] = [
       ],
       choices: [
         {
-          id: 'activity_finished',
+          id: 'store_energy',
           label: 'Aktivität beenden!',
           variant: 'primary',
         },
@@ -481,7 +481,7 @@ export const FLOW_STEPS: FlowStep[] = [
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        activity_finished: 'store_energy',
+        store_energy: 'store_energy',
       },
     },
   },
@@ -490,7 +490,7 @@ export const FLOW_STEPS: FlowStep[] = [
     companionDialogue:
       'Einen Moment... Ich überprüfe deine Aktivität! Gleich geht es weiter.',
     creatorView: {
-      type: 'idle',
+      type: 'transition',
       prompt: [],
       choices: [],
     },
@@ -524,21 +524,6 @@ export const FLOW_STEPS: FlowStep[] = [
     },
   },
   {
-    id: 'activity_finished',
-    companionDialogue:
-      'Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.',
-    creatorView: {
-      type: 'choices',
-      prompt: [],
-      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
-    },
-    transitions: {
-      [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'lutra_exit',
-      },
-    },
-  },
-  {
     id: 'store_energy',
     companionDialogue:
       'Schau dir den Conduit an! Deine Energie wartet darauf, gespeichert zu werden. Tippe, wenn du bereit bist!',
@@ -561,6 +546,7 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'store_energy_1',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -576,11 +562,16 @@ export const FLOW_STEPS: FlowStep[] = [
   },
   {
     id: 'store_energy_2',
+    companionDialogue: '',
     creatorView: {
       type: 'choices',
       prompt: [],
       choices: [
-        { id: 'store_energy_3', label: 'Das letzte Mal!', variant: 'primary' },
+        {
+          id: 'store_energy_3',
+          label: 'Das letzte Mal!',
+          variant: 'primary',
+        },
       ],
     },
     transitions: {
@@ -592,17 +583,32 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'store_energy_3',
     companionDialogue:
-      'Der Conduit ist aufgeladen! Sobald ich gleich drüben im Hub eintreffe, klicke auf weiter und die Welt erwacht zum Leben und du siehst, wie sich deine Energie als neue Vegetation freigesetzt hat. Achte auf die Leinwand!',
+      'Der Conduit ist aufgeladen! Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.',
     creatorView: {
       type: 'choices',
-      prompt: [
-        'Schau dir an, wie deine Energie die Welt zum Blühen gebracht hat.',
+      choices: [
+        { id: 'vegetation_growth', label: 'Weiter', variant: 'primary' },
       ],
-      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'activity_finished',
+        vegetation_growth: 'vegetation_growth',
+      },
+    },
+  },
+  {
+    id: 'vegetation_growth',
+    companionDialogue:
+      'Setze nun deine Energie beim Weltenanker frei und schau wie das Herzland auf der Leinwand erblüht.',
+    creatorView: {
+      type: 'choices',
+      choices: [
+        { id: 'lutra_exit', label: 'Energie freisetzen', variant: 'primary' },
+      ],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        lutra_exit: 'activity_exit',
       },
     },
   },

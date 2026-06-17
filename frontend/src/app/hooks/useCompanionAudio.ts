@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { fetchSpeech } from '../services/elevenlabs.service';
 
-const DYNAMIC_AUDIO_STEP_IDS = new Set(['firstLook', 'activity_finished']);
+const DYNAMIC_AUDIO_STEP_IDS = new Set(['firstLook', 'store_energy_3']);
 
 const FADE_S = 0.04;
 
@@ -76,7 +76,10 @@ export function useCompanionAudio(
         source.start(startAt);
       } else {
         let src: string;
-        if (stepId === 'moreInfo' && dialogue === 'Was möchtest du sonst noch erfahren?') {
+        if (
+          stepId === 'moreInfo' &&
+          dialogue === 'Was möchtest du sonst noch erfahren?'
+        ) {
           src = `/assets/audio/moreInfo_visited.mp3`;
         } else {
           src = `/assets/audio/${stepId}.mp3`;
@@ -124,7 +127,9 @@ export function useCompanionAudio(
             if (source) {
               try {
                 source.stop();
-              } catch { /* source may already be stopped */ }
+              } catch {
+                /* source may already be stopped */
+              }
             }
           },
           FADE_S * 1000 + 20,
