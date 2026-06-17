@@ -619,11 +619,11 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'growth_wait', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'growth_wait',
+        growth_wait: 'growth_wait',
       },
     },
   },
