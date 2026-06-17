@@ -608,7 +608,7 @@ export const FLOW_STEPS: FlowStep[] = [
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'activity_exit',
+        lutra_exit: 'lutra_exit',
       },
     },
   },

@@ -154,7 +154,7 @@ export class CompanionGateway
     if (!this.session) return;
     if (
       this.session.currentStepId === 'activity_started' &&
-      payload.choiceId === 'vegetation_growth'
+      payload.choiceId === 'store_energy'
     ) {
       await this.refreshActivityEffortScore();
       const score = this.session.activityEffortScore;
