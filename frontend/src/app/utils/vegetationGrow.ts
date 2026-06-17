@@ -15,7 +15,7 @@ import {
 } from '../constants/environment-vegetation';
 import { resolveEnvironmentSpawn } from './environmentSpawn';
 
-const GROW_RADIUS_LERP = 0.2;
+const GROW_RADIUS_LERP = 0.25;
 
 export function distanceFromGrowAnchorXZ(
   x: number,
@@ -121,7 +121,8 @@ export function useVegetationGrow({
       growRadiusRatio,
     );
     growRadiusRef.current +=
-      (target - growRadiusRef.current) * (1 - Math.exp(-GROW_RADIUS_LERP * delta));
+      (target - growRadiusRef.current) *
+      (1 - Math.exp(-GROW_RADIUS_LERP * delta));
   });
 
   return {

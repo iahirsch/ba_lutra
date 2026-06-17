@@ -18,14 +18,12 @@ interface HubCanvasContentsProps {
   companions: SavedCompanion[];
   latestActivitiesByCompanion: Map<string, Activity>;
   totalEffortScore: number;
-  onCompanionAppeared?: () => void;
 }
 
 function HubCanvasContents({
   companions,
   latestActivitiesByCompanion,
   totalEffortScore,
-  onCompanionAppeared,
 }: HubCanvasContentsProps) {
   const walkTerrain = useHubWalkTerrain();
   const hubSpawn = useEnvironmentSpawn(ENVIRONMENT_SPAWN.hub);
@@ -49,7 +47,6 @@ function HubCanvasContents({
           effortScore={
             latestActivitiesByCompanion.get(companion.id)?.effortScore
           }
-          onReformDone={onCompanionAppeared}
         />
       ))}
 
@@ -63,14 +60,12 @@ interface HubCanvasProps {
   companions: SavedCompanion[];
   latestActivitiesByCompanion: Map<string, Activity>;
   totalEffortScore: number;
-  onCompanionAppeared?: () => void;
 }
 
 export function HubCanvas({
   companions,
   latestActivitiesByCompanion,
   totalEffortScore,
-  onCompanionAppeared,
 }: HubCanvasProps) {
   return (
     <Canvas
@@ -83,7 +78,6 @@ export function HubCanvas({
         companions={companions}
         latestActivitiesByCompanion={latestActivitiesByCompanion}
         totalEffortScore={totalEffortScore}
-        onCompanionAppeared={onCompanionAppeared}
       />
     </Canvas>
   );

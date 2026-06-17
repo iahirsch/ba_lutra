@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   GRASS_DEBUG_SLIDER,
   GRASS_GROW_EFFORT_REF,
@@ -19,25 +19,14 @@ export function Hub() {
   );
   const liveEffort = useTotalEffortScore(activityRefreshToken);
   const [totalEffortScore, setTotalEffortScore] = useState(0);
-  const [vegetationEffortScore, setVegetationEffortScore] = useState(0);
-  const liveEffortRef = useRef(liveEffort);
-  liveEffortRef.current = liveEffort;
 
   useEffect(() => {
     setTotalEffortScore(liveEffort);
   }, [liveEffort]);
 
-  const handleCompanionAppeared = useCallback(() => {
-    setVegetationEffortScore(liveEffortRef.current);
-  }, []);
-
   const setDebugEffortScore = useCallback((score: number) => {
     setTotalEffortScore(score);
   }, []);
-
-  const effortForGrass = GRASS_DEBUG_SLIDER
-    ? totalEffortScore
-    : vegetationEffortScore;
 
   return (
     <div className={styles.page}>
@@ -45,8 +34,7 @@ export function Hub() {
         <HubCanvas
           companions={companions}
           latestActivitiesByCompanion={latestActivitiesByCompanion}
-          totalEffortScore={effortForGrass}
-          onCompanionAppeared={handleCompanionAppeared}
+          totalEffortScore={totalEffortScore}
         />
       </div>
 
