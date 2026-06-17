@@ -406,7 +406,7 @@ export const FLOW_STEPS: FlowStep[] = [
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
         max_energy_2: 'max_energy_2',
-        threadmill: 'treadmill',
+        treadmill: 'treadmill',
       },
     },
   },
