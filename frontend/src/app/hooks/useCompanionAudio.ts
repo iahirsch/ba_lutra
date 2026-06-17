@@ -43,7 +43,9 @@ export function useCompanionAudio(
   dialogue: string | undefined,
 ): void {
   useEffect(() => {
-    if (!stepId || !dialogue) return;
+    if (!stepId) return;
+    const isDynamic = DYNAMIC_AUDIO_STEP_IDS.has(stepId);
+    if (isDynamic && !dialogue) return;
 
     let cancelled = false;
     let audioEl: HTMLAudioElement | null = null;
@@ -53,8 +55,8 @@ export function useCompanionAudio(
     const run = async () => {
       const ctx = getAudioContext();
 
-      if (DYNAMIC_AUDIO_STEP_IDS.has(stepId)) {
-        const audioBuffer = await preloadSpeech(dialogue);
+      if (isDynamic) {
+        const audioBuffer = await preloadSpeech(dialogue as string);
         if (cancelled) return;
 
         const source = ctx.createBufferSource();
