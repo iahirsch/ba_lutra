@@ -348,7 +348,7 @@ export class CompanionGateway
 
   private formatActivityDistance(): string {
     const meters = this.session?.activityDistanceMeters;
-    if (!meters || meters <= 0) return '0 m';
+    if (!meters || meters <= 0) return '0 Meter';
     if (meters < 1000) return `${Math.round(meters)} Meter`;
     const km = meters / 1000;
     return `${km.toFixed(1).replace('.', ',')} Kilometer`;
