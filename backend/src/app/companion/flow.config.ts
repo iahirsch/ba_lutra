@@ -603,12 +603,12 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       choices: [
-        { id: 'lutra_exit', label: 'Energie freisetzen', variant: 'primary' },
+        { id: 'growth_wait', label: 'Energie freisetzen', variant: 'primary' },
       ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'lutra_exit',
+        growth_wait: 'growth_wait',
       },
     },
   },
@@ -619,11 +619,11 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'growth_wait', label: 'Weiter', variant: 'primary' }],
+      choices: [{ id: 'lutra_exit', label: 'Weiter', variant: 'primary' }],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        growth_wait: 'growth_wait',
+        lutra_exit: 'lutra_exit',
       },
     },
   },
