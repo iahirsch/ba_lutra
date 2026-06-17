@@ -158,6 +158,8 @@ export const GRASS_LIGHT_INTENSITY = 0.9;
 
 export const GRASS_CHUNK_GRID = 8;
 
+export const VEGETATION_RNG_SEED = 1337;
+
 export const GRASS_LOD1_DISTANCE_RATIO = 0.14;
 export const GRASS_LOD2_DISTANCE_RATIO = 0.28;
 export const GRASS_LOD_CULL_DISTANCE_RATIO = 0.55;
