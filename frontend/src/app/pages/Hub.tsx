@@ -28,18 +28,11 @@ export function Hub() {
   }, [liveEffort]);
 
   const handleCompanionAppeared = useCallback(() => {
-    const score = liveEffortRef.current;
-    setVegetationEffortScore(score);
-    const bc = new BroadcastChannel('vegetation-sync');
-    bc.postMessage({ type: 'companion-appeared', effortScore: score });
-    bc.close();
+    setVegetationEffortScore(liveEffortRef.current);
   }, []);
 
   const setDebugEffortScore = useCallback((score: number) => {
     setTotalEffortScore(score);
-    const bc = new BroadcastChannel('vegetation-sync');
-    bc.postMessage({ type: 'companion-appeared', effortScore: score });
-    bc.close();
   }, []);
 
   const effortForGrass = GRASS_DEBUG_SLIDER

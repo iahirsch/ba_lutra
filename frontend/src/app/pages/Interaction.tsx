@@ -331,9 +331,6 @@ export function Interaction() {
     SCREENS.INTERACTION,
   );
   const liveEffort = useTotalEffortScore(activityRefreshToken);
-  const [vegetationEffortScore, setVegetationEffortScore] = useState(0);
-  const liveEffortRef = useRef(liveEffort);
-  liveEffortRef.current = liveEffort;
 
   const prevStepRef = useRef<string | null>(null);
   const [reformState, setReformState] = useState<'idle' | 'reforming' | 'done'>(
@@ -397,16 +394,6 @@ export function Interaction() {
     notifyExitComplete();
   }, [notifyExitComplete]);
 
-  useEffect(() => {
-    const bc = new BroadcastChannel('vegetation-sync');
-    bc.onmessage = (event: MessageEvent<{ type: string; effortScore: number }>) => {
-      if (event.data.type === 'companion-appeared') {
-        setVegetationEffortScore(event.data.effortScore);
-      }
-    };
-    return () => bc.close();
-  }, []);
-
   const isFirstLook = flowState?.stepId === 'firstLook';
   const isNameInput = flowState?.stepId === 'nameInput';
   const showReform = isFirstLook && reformState === 'reforming';
@@ -423,7 +410,7 @@ export function Interaction() {
           companionConfig={flowState?.companionConfig ?? null}
           stepId={flowState?.stepId ?? ''}
           activityEffortScore={flowState?.activityEffortScore}
-          totalEffortScore={vegetationEffortScore}
+          totalEffortScore={liveEffort}
           onExitAnimationComplete={startDissolve}
           showReform={showReform}
           showDissolve={dissolveActive}
