@@ -167,8 +167,8 @@ export class CompanionGateway
       return;
     }
     if (
-      this.session.currentStepId === 'store_energy_3' &&
-      payload.choiceId === 'vegetation_growth'
+      this.session.currentStepId === 'vegetation_growth' &&
+      payload.choiceId === 'lutra_exit'
     ) {
       await this.refreshActivityEffortScore();
       this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {
@@ -299,7 +299,7 @@ export class CompanionGateway
     const rawDialogue = (() => {
       if (step.id === 'moreInfo' && session.moreInfoVisited)
         return 'Was möchtest du sonst noch erfahren?';
-      if (step.id === 'vegetation_growth') {
+      if (step.id === 'store_energy_3') {
         const score = session.activityEffortScore ?? 0;
         return score >= 0.5
           ? 'Der Conduit ist aufgeladen! Wow, du warst ja richtig fleissig! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.'
