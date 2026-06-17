@@ -167,8 +167,8 @@ export class CompanionGateway
       return;
     }
     if (
-      this.session.currentStepId === 'store_energy_2' &&
-      payload.choiceId === 'store_energy_3'
+      this.session.currentStepId === 'store_energy_3' &&
+      payload.choiceId === 'vegetation_growth'
     ) {
       await this.refreshActivityEffortScore();
       this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {
