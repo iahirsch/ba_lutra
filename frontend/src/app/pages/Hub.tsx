@@ -7,7 +7,7 @@ import { useCompanionSocket } from '../hooks/useCompanionSocket';
 import { useTotalEffortScore } from '../hooks/useTotalEffortScore';
 import { useLatestActivitiesByCompanion } from '../hooks/useLatestActivitiesByCompanion';
 import { HubCanvas } from '../components/hub/HubCanvas';
-import { ConnectionBadge } from '../components/common/ConnectionBadge';
+// import { ConnectionBadge } from '../components/common/ConnectionBadge';
 import styles from './Hub.module.scss';
 
 export function Hub() {
@@ -50,7 +50,7 @@ export function Hub() {
         />
       </div>
 
-      <header className={styles.overlay}>
+      {/*<header className={styles.overlay}>
         <div className={styles.left}>
           <span className={styles.title}>Companion Hub</span>
           <ConnectionBadge
@@ -64,30 +64,30 @@ export function Hub() {
               {companions.length !== 1 ? 's' : ''}
             </span>
           )}
-        </div>
+        </div>*/}
 
-        {/* Temporary debug slider. Controlled by GRASS_DEBUG_SLIDER in environment-vegetation.ts */}
-        {GRASS_DEBUG_SLIDER && (
-          <div className={styles.debugControl}>
-            <label className={styles.debugLabel} htmlFor="hub-effort-score">
-              Total effort
-            </label>
-            <input
-              id="hub-effort-score"
-              type="range"
-              min={0}
-              max={GRASS_GROW_EFFORT_REF}
-              step={0.01}
-              value={totalEffortScore}
-              className={styles.debugSlider}
-              onChange={(e) => setDebugEffortScore(parseFloat(e.target.value))}
-            />
-            <span className={styles.debugValue}>
-              {totalEffortScore.toFixed(2)}
-            </span>
-          </div>
-        )}
-      </header>
+      {/* Temporary debug slider. Controlled by GRASS_DEBUG_SLIDER in environment-vegetation.ts */}
+      {GRASS_DEBUG_SLIDER && (
+        <div className={styles.debugControl}>
+          <label className={styles.debugLabel} htmlFor="hub-effort-score">
+            Total effort
+          </label>
+          <input
+            id="hub-effort-score"
+            type="range"
+            min={0}
+            max={GRASS_GROW_EFFORT_REF}
+            step={0.01}
+            value={totalEffortScore}
+            className={styles.debugSlider}
+            onChange={(e) => setDebugEffortScore(parseFloat(e.target.value))}
+          />
+          <span className={styles.debugValue}>
+            {totalEffortScore.toFixed(2)}
+          </span>
+        </div>
+      )}
+      {/*</header>*/}
 
       {error && <div className={styles.errorBanner}>{error}</div>}
 
