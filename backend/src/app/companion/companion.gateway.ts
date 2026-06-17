@@ -168,7 +168,7 @@ export class CompanionGateway
     }
     if (
       this.session.currentStepId === 'vegetation_growth' &&
-      payload.choiceId === 'lutra_exit'
+      payload.choiceId === 'growth_wait'
     ) {
       await this.refreshActivityEffortScore();
       this.server.emit(FLOW_EVENTS.ACTIVITY_UPDATED, {

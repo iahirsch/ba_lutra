@@ -623,7 +623,19 @@ export const FLOW_STEPS: FlowStep[] = [
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
-        lutra_exit: 'lutra_exit',
+        lutra_exit: 'growth_wait',
+      },
+    },
+  },
+  {
+    id: 'growth_wait',
+    creatorView: {
+      type: 'choices',
+      choices: [{ id: 'growth_continue', label: 'Weiter', variant: 'primary' }],
+    },
+    transitions: {
+      [FLOW_EVENTS.CHOICE_SELECTED]: {
+        growth_continue: 'lutra_exit',
       },
     },
   },
