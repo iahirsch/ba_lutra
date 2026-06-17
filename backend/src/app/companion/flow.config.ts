@@ -1,4 +1,5 @@
 import { FLOW_EVENTS, EditorViewConfig } from '@ba-praktisch/shared-types';
+import { threadId } from 'worker_threads';
 
 export interface FlowStep {
   id: string;
@@ -397,11 +398,15 @@ export const FLOW_STEPS: FlowStep[] = [
     creatorView: {
       type: 'choices',
       prompt: [],
-      choices: [{ id: 'max_energy_2', label: 'Weiter', variant: 'primary' }],
+      choices: [
+        { id: 'max_energy_2', label: 'Ja', variant: 'primary' },
+        { id: 'treadmill', label: 'Nein', variant: 'secondary' },
+      ],
     },
     transitions: {
       [FLOW_EVENTS.CHOICE_SELECTED]: {
         max_energy_2: 'max_energy_2',
+        threadmill: 'treadmill',
       },
     },
   },
@@ -409,7 +414,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'max_energy_2',
     companionDialogue:
-      'Als grober Richtwert: Bei ca. 10 Minuten und 2 Kilometern erreichst du theoretisch die volle Power! Aber ganz wichtig: Lauf einfach so lange und so schnell du willst, denn jeder Schritt zählt! 2 Minuten reichen auch schon vollkommen aus, um einen Fortschritt zu sehen.',
+      'Als grober Richtwert: Bei ca. 5 Minuten und 1 Kilometern erreichst du theoretisch die volle Energie! Aber ganz wichtig: Lauf einfach so lange und so schnell du willst, denn jeder Schritt zählt! Eine Minute reichen auch schon vollkommen aus, um einen Fortschritt zu sehen.',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -442,7 +447,7 @@ export const FLOW_STEPS: FlowStep[] = [
         },
         {
           id: 'activity_exit',
-          label: 'Ich mag kein sport machen',
+          label: 'Ich mag kein Sport machen',
           variant: 'secondary',
         },
       ],
