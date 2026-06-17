@@ -79,12 +79,14 @@
 
 .title {
   @include s.text-headline();
+  font-size: s.$font-size-3xl;
   margin: 0;
   text-align: start;
 }
 
 .prompt {
   @include s.text-body();
+  font-size: s.$font-size-xl;
   margin: 0;
   color: s.$color-neutral-900;
   line-height: 1.45;
