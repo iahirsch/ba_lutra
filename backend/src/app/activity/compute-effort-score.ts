@@ -9,11 +9,11 @@ export interface EffortScoreInput {
 }
 
 /** Reference duration 5min. */
-const DURATION_REF_SECONDS = 5 * 60;
+const DURATION_REF_SECONDS = 4 * 60;
 
 /** Reference distance 1km. */
 // const DISTANCE_REF_METERS = 1_000;
-const DISTANCE_REF_METERS = 1000;
+const DISTANCE_REF_METERS = 750;
 
 /** Reference suffer score 80. */
 const SUFFER_REF = 80;

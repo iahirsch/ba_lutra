@@ -31,8 +31,8 @@ const LUTRA_TABS: {
 }[] = [
   { key: 'body', label: 'Körper', icon: 'accessibility_new' },
   { key: 'fur', label: 'Fell', icon: 'palette' },
-  { key: 'eyes', label: 'Augen', icon: 'visibility' },
   { key: 'iris', label: 'Iris', icon: 'radio_button_checked' },
+  { key: 'eyes', label: 'Augen', icon: 'visibility' },
   { key: 'nose', label: 'Nose', iconComponent: NoseIcon },
 ];
 

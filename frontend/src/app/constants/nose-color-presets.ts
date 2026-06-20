@@ -1,15 +1,15 @@
 export const NOSE_COLOR_PRESETS = [
   '#212121',
-  '#303030',
-  '#59362E',
-  '#FAB6AF',
-  '#8f6482',
-  '#F5F0E8',
-  '#f6f67d',
-  '#a1693f',
+  '#393939',
+  'rgb(72, 72, 72)',
   '#4F3E33',
-  '#2E5C4A',
-  '#7598C9',
+  '#a1693f',
+  '#a77d83',
+  '#9a748f',
+  '#FAB6AF',
+  '#c8c3bc',
+  '#8aa0c0',
+  '#486258',
 ] as const;
 
 export const DEFAULT_NOSE_COLOR = NOSE_COLOR_PRESETS[0];

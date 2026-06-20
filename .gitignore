@@ -46,3 +46,5 @@ vite.config.*.timestamp*
 .devcontainer/postgres_password.txt
 backend/.env
 .cursor
+
+/data/
