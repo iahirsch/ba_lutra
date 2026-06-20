@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# 1. Define your paths
-PROJECT_FOLDER="$HOME/Workspace/ba_praktisch"
+PROJECT_FOLDER="$HOME/Workspace/ba_lutra"
 TOE_FILE="$HOME/Desktop/BA_Mapping_Werkschau.toe"
 
-# 2. Run AppleScript with single quotes around the heredoc (<<'EOD') 
-# to prevent bash from messing with the internal strings, and pass variables via arguments.
 osascript - "$PROJECT_FOLDER" <<'EOD'
 on run argv
     set projectFolder to item 1 of argv
@@ -38,22 +35,15 @@ on run argv
 
     delay 12
 
-    -- Wrapped in try so a rollover failure never blocks the app from starting.
-    try
-        do shell script "/bin/bash " & quoted form of (projectFolder & "/scripts/exhibition-db-rollover.sh") & " " & quoted form of projectFolder
-    on error errMsg
-        log "exhibition-db-rollover.sh failed: " & errMsg
-    end try
-
     tell application "Terminal"
         do script "ngrok http 3000"
         activate
     end tell
 
-    -- Run docker exec in a new Terminal window
+    -- Export activity stats, then run docker exec in a new Terminal window
     tell application "Terminal"
         -- Using quoted form of to let AppleScript safely handle the internal quotes
-        do script "docker exec -it lutra-app zsh -c 'npx nx run-many --targets=serve --projects=backend,frontend; zsh'"
+        do script "cd " & quoted form of projectFolder & " && ./scripts/export-activity-stats.sh " & quoted form of projectFolder & " && docker exec -it lutra-app zsh -c 'npx nx run-many --targets=serve --projects=backend,frontend; zsh'"
         activate
     end tell
 end run
