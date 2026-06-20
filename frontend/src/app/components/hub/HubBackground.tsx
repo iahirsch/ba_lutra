@@ -1,15 +1,18 @@
 import { useEffect, useMemo } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import { TextureLoader } from 'three';
+import { Mesh, TextureLoader } from 'three';
 import {
   HUB_ENVIRONMENT_TRANSFORM,
   HUB_GLTF_URL,
+  HUB_SKY_MESH_NAME,
+  HUB_SKY_ROTATION_SPEED,
 } from '../../constants/hub-scene';
 import * as veg from '../../constants/environment-vegetation';
 import {
   ANCHOR_CONDUIT_MESH_NAME,
   applyCelShading,
+  applyHubSkyMaterial,
   applyHubTerrainMaterial,
   effortToConduitGlow,
   setConduitGlow,
@@ -60,6 +63,7 @@ export function HubBackground({
   const celScene = useMemo(() => {
     const cloned = scene.clone(true);
     applyHubTerrainMaterial(cloned);
+    applyHubSkyMaterial(cloned);
     applyCelShading(cloned);
     attachTerrainGrowShader(cloned, {
       sandColor,
@@ -82,6 +86,11 @@ export function HubBackground({
     dirtNormal,
   ]);
 
+  const skyMesh = useMemo(() => {
+    const sky = celScene.getObjectByName(HUB_SKY_MESH_NAME);
+    return sky instanceof Mesh ? sky : null;
+  }, [celScene]);
+
   const anchorConduitGlow = effortToConduitGlow(
     totalEffortScore / veg.GRASS_GROW_EFFORT_REF,
   );
@@ -97,8 +106,11 @@ export function HubBackground({
     growRadiusRatio: veg.GROUND_GROW_RADIUS_RATIO,
   });
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     setTerrainGrowReveal(anchorX, anchorZ, growRadiusRef.current, fadeWidth);
+    if (skyMesh) {
+      skyMesh.rotation.y += delta * HUB_SKY_ROTATION_SPEED;
+    }
   });
 
   return <primitive object={celScene} position={position} scale={scale} />;

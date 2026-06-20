@@ -5,6 +5,15 @@ export const HUB_GLTF_URL = '/assets/environment/hub.glb';
 
 export const HUB_TERRAIN_MESH_NAME = 'ground';
 
+export const HUB_SKY_MESH_NAME = 'sky';
+
+/** skyAction rotation: 360° in 160s. */
+export const HUB_SKY_ROTATION_SPEED = (Math.PI * 2) / 700;
+
+/** Counteracts ACES tone mapping + scene lighting washing out the sky texture. */
+export const HUB_SKY_BRIGHTNESS = 0.9;
+export const HUB_SKY_SATURATION = 1.3;
+
 export const HUB_ENVIRONMENT_TRANSFORM = {
   position: [0, 0, 0] as [number, number, number],
   scale: 1 as number,

@@ -3,6 +3,7 @@ import {
   Color,
   DataTexture,
   Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   MeshPhongMaterial,
   MeshPhysicalMaterial,
@@ -15,7 +16,12 @@ import {
   type Material,
   type Object3D,
 } from 'three';
-import { HUB_TERRAIN_MESH_NAME } from '../constants/hub-scene';
+import {
+  HUB_SKY_BRIGHTNESS,
+  HUB_SKY_MESH_NAME,
+  HUB_SKY_SATURATION,
+  HUB_TERRAIN_MESH_NAME,
+} from '../constants/hub-scene';
 
 let sharedGradient: DataTexture | null = null;
 
@@ -110,10 +116,46 @@ export function applyHubTerrainMaterial(root: Object3D): void {
   ground.material = new MeshStandardMaterial({ color: 0xffffff });
 }
 
+/**
+ * Sky dome should read as a flat backdrop, not a lit/tone-mapped surface:
+ * swaps the lit PBR material for an unlit one and boosts brightness/
+ * saturation to counter ACES tone mapping washing out the texture.
+ */
+export function applyHubSkyMaterial(root: Object3D): void {
+  const sky = root.getObjectByName(HUB_SKY_MESH_NAME);
+  if (!(sky instanceof Mesh)) return;
+  const source = Array.isArray(sky.material) ? sky.material[0] : sky.material;
+  if (!source) return;
+
+  const material = new MeshBasicMaterial({
+    map: source.map,
+    side: source.side,
+    toneMapped: false,
+  });
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uSkyBrightness = { value: HUB_SKY_BRIGHTNESS };
+    shader.uniforms.uSkySaturation = { value: HUB_SKY_SATURATION };
+    shader.fragmentShader = `
+      uniform float uSkyBrightness;
+      uniform float uSkySaturation;
+    ${shader.fragmentShader}`;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <map_fragment>',
+      `
+        #include <map_fragment>
+        float skyLuma = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+        diffuseColor.rgb = mix(vec3(skyLuma), diffuseColor.rgb, uSkySaturation) * uSkyBrightness;
+      `,
+    );
+  };
+  sky.material = material;
+}
+
 /** Replaces lit materials with stepped toon shading */
 export function applyCelShading(root: Object3D): void {
   root.traverse((node) => {
     if (!(node instanceof Mesh) || !node.material) return;
+    if (node.name === HUB_SKY_MESH_NAME) return;
     const { material } = node;
     if (Array.isArray(material)) {
       node.material = material.map((m) => upgradeMaterial(m));
