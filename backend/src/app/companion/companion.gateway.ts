@@ -302,8 +302,8 @@ export class CompanionGateway
       if (step.id === 'store_energy_3') {
         const score = session.activityEffortScore ?? 0;
         return score >= 0.5
-          ? 'Der Conduit ist aufgeladen! Wow, du warst ja richtig fleissig! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.'
-          : 'Der Conduit ist aufgeladen! Gut gemacht! Du hast [effortScore] von 1000 Energie gesammelt und [activityDistance] in [activityDuration] zurückgelegt. Jedes bisschen zählt!';
+          ? 'Der Conduit ist zu [effortScore] Prozent aufgeladen! Wow, du warst ja richtig fleissig! Du hast eine Distanz von [activityDistance] innerhalb von [activityDuration] zurückgelegt.'
+          : 'Der Conduit ist zu [effortScore] Prozent aufgeladen! Gut gemacht! Du hast [activityDistance] in [activityDuration] zurückgelegt. Jedes bisschen zählt!';
       }
       return step.companionDialogue;
     })();
@@ -343,7 +343,7 @@ export class CompanionGateway
 
   private formatEffortScore(): string {
     if (!this.session?.activityEffortScore) return '0';
-    return Math.round(this.session.activityEffortScore * 1000).toString();
+    return Math.round(this.session.activityEffortScore * 100).toString();
   }
 
   private formatActivityDistance(): string {

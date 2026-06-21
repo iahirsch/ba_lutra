@@ -414,7 +414,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'max_energy_2',
     companionDialogue:
-      'Als grober Richtwert: Bei ca. 5 Minuten und 1 Kilometern erreichst du theoretisch die volle Energie! Aber ganz wichtig: Lauf einfach so lange und so schnell du willst, denn jeder Schritt zählt! Eine Minute reichen auch schon vollkommen aus, um einen Fortschritt zu sehen.',
+      'Bei 4 Minuten und 750 Meter erreichst du die volle Energie! Aber ganz wichtig: Lauf einfach so lange und so schnell du willst, denn jeder Schritt zählt! Eine Minute reichen auch schon vollkommen aus, um einen Fortschritt zu sehen.',
     creatorView: {
       type: 'choices',
       prompt: [],
@@ -583,7 +583,7 @@ export const FLOW_STEPS: FlowStep[] = [
   {
     id: 'store_energy_3',
     companionDialogue:
-      'Der Conduit ist aufgeladen! Wow, du warst einfach der Wahnsinn! Du hast [effortScore] von 1000 Energie gesammelt und hast eine Distanz von [activityDistance] innerhalb [activityDuration] zurückgelegt.',
+      'Der Conduit ist zu [effortScore] Prozent aufgeladen! Wow, du warst einfach der Wahnsinn! Du hast eine Distanz von [activityDistance] innerhalb von [activityDuration] zurückgelegt.',
     creatorView: {
       type: 'choices',
       choices: [
