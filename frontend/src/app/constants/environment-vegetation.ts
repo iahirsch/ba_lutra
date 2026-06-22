@@ -177,7 +177,7 @@ export const GROUND_DISPLACEMENT_SCALE = 0.15;
 export const GROUND_NORMAL_SCALE = 1;
 
 /** Total companion effort at which grass reaches full spread. */
-export const GRASS_GROW_EFFORT_REF = 14;
+export const GRASS_GROW_EFFORT_REF = 10;
 /** Max grow radius as a fraction of terrain world width at {@link GRASS_GROW_EFFORT_REF}. */
 export const GRASS_GROW_RADIUS_RATIO = 1;
 export const GROUND_GROW_RADIUS_RATIO = 1.05;

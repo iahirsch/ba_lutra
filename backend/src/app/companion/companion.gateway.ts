@@ -263,11 +263,11 @@ export class CompanionGateway
     this.resetTimer = setTimeout(
       () => {
         this.logger.warn(
-          'Flow session timed out after 10 minutes — resetting.',
+          'Flow session timed out after 15 minutes — resetting.',
         );
         this.resetSession();
       },
-      10 * 60 * 1000,
+      15 * 60 * 1000,
     );
   }
 
